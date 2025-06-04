@@ -26,7 +26,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -41,8 +40,8 @@ public class SingularityGeneratorBlockEntity extends AENetworkedBlockEntity impl
     public static final @NotNull AEKey FE_KEY = FluxKey.of(EnergyType.FE);
     public static final AEKey SINGULARITY_KEY = AEItemKey.of(AEItems.SINGULARITY);
     public static final int FE_CAPACITY = 1048576;
-    public static final int GENERATE_PER_TICK = 50;
-    public static final int FE_PER_SINGULARITY = 10000;
+    public static final int GENERATE_PER_TICK = 5000;
+    public static final int FE_PER_SINGULARITY = 100000;
 
     private final GenericStackInv inv;
     private int generatableFE;
@@ -69,19 +68,6 @@ public class SingularityGeneratorBlockEntity extends AENetworkedBlockEntity impl
         return AECableType.COVERED;
     }
 
-    protected boolean readFromStream(RegistryFriendlyByteBuf data) {
-        boolean c = super.readFromStream(data);
-        boolean wasOn = this.isOn;
-        this.isOn = data.readBoolean();
-        return wasOn != this.isOn || c;
-    }
-
-    protected void writeToStream(RegistryFriendlyByteBuf data) {
-        super.writeToStream(data);
-        this.isOn = this.getGeneratableFE() > 0;
-        data.writeBoolean(this.isOn);
-    }
-
     public void saveAdditional(CompoundTag data, HolderLookup.Provider registries) {
         super.saveAdditional(data, registries);
         this.inv.writeToChildTag(data, "inv", registries);
@@ -96,15 +82,15 @@ public class SingularityGeneratorBlockEntity extends AENetworkedBlockEntity impl
 
     @Override
     public void setChanged() {
-        if (this.getGeneratableFE() <= 0 && this.canEatFuel() || this.isFull && this.getGeneratableFE() > 0) {
+        this.updateBlockEntity(this.shouldUpdateIsOn() || this.shouldUpdateIsFull());
+        if (this.getGeneratableFE() <= 0 && this.canEatFuel() || !this.isFull && this.getGeneratableFE() > 0) {
             System.out.println("Singularity Generator state changed, start charging");
-            this.isFull = false;
             this.getMainNode().ifPresent((grid, node) -> grid.getTickManager().wakeDevice(node));
         }
         super.setChanged();
     }
 
-    private boolean canEatFuel() {
+    public boolean canEatFuel() {
         GenericStack is = this.inv.getStack(0);
         if (is != null && is.what() != null && is.what().equals(SINGULARITY_KEY)) {
             return is.amount() > 0;
@@ -151,7 +137,7 @@ public class SingularityGeneratorBlockEntity extends AENetworkedBlockEntity impl
             int fixedNewFE = (int) (newFE + outputAmount > this.inv.getCapacity(ExternalTypes.FLUX) ? this.inv.getCapacity(ExternalTypes.FLUX) - outputAmount : newFE);
             if (fixedNewFE <= 0) {
                 System.out.println("Singularity Generator is full, cannot generate more FE");
-                this.isFull = true;
+                this.updateBlockEntity(this.shouldUpdateIsFull());
                 return TickRateModulation.SLEEP;
             }
             this.setGeneratableFE(this.getGeneratableFE() - fixedNewFE);
@@ -183,12 +169,23 @@ public class SingularityGeneratorBlockEntity extends AENetworkedBlockEntity impl
             this.getMainNode().ifPresent((grid, node) -> grid.getTickManager().wakeDevice(node));
         }
 
-        if (!this.isOn && this.getGeneratableFE() > 0 || this.isOn && this.getGeneratableFE() <= 0) {
-            this.isOn = this.getGeneratableFE() > 0;
-            this.markForUpdate();
-            if (this.hasLevel()) {
-                Platform.notifyBlocksOfNeighbors(this.level, this.worldPosition);
-            }
+        this.updateBlockEntity(this.shouldUpdateIsOn());
+    }
+
+    public boolean shouldUpdateIsOn() {
+        return !this.isOn && (this.getGeneratableFE() > 0 || this.canEatFuel()) || this.isOn && this.getGeneratableFE() <= 0 && !this.canEatFuel();
+    }
+
+    public boolean shouldUpdateIsFull() {
+        long feAmount = this.getGenericInv().getAmount(1);
+        return !this.isFull && feAmount >= FE_CAPACITY || this.isFull && feAmount < FE_CAPACITY;
+    }
+
+    public void updateBlockEntity(boolean condition) {
+        if (!condition) return;
+        this.markForUpdate();
+        if (this.hasLevel()) {
+            Platform.notifyBlocksOfNeighbors(this.level, this.worldPosition);
         }
     }
 

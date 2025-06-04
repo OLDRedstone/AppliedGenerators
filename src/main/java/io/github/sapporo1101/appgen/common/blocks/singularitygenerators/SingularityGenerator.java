@@ -26,8 +26,7 @@ public class SingularityGenerator extends BlockBaseGui<SingularityGeneratorBlock
 
     public SingularityGenerator() {
         super(metalProps().strength(4.2F));
-        this.registerDefaultState(this.defaultBlockState().setValue(ACTIVE, false));
-        this.registerDefaultState(this.defaultBlockState().setValue(FULL, false));
+        this.registerDefaultState(this.defaultBlockState().setValue(ACTIVE, false).setValue(FULL, false));
     }
 
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
@@ -37,6 +36,8 @@ public class SingularityGenerator extends BlockBaseGui<SingularityGeneratorBlock
     }
 
     protected BlockState updateBlockStateFromBlockEntity(BlockState currentState, SingularityGeneratorBlockEntity be) {
+        be.isOn = be.getGeneratableFE() > 0 || be.canEatFuel();
+        be.isFull = be.getGenericInv().getAmount(1) >= SingularityGeneratorBlockEntity.FE_CAPACITY;
         return currentState.setValue(ACTIVE, be.isOn).setValue(FULL, be.isFull);
     }
 

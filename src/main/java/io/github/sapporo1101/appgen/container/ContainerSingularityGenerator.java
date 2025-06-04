@@ -33,10 +33,8 @@ public class ContainerSingularityGenerator extends AEBaseMenu implements IProgre
 
     @Override
     public void broadcastChanges() {
-        System.out.println("Broadcasting changes for Singularity Generator");
         if (isServerSide()) {
             this.generatableFE = this.host.getGeneratableFE();
-            System.out.println("Broadcasting changes for Singularity Generator, generatableFE: " + this.generatableFE + ", host: " + this.host);
         }
         super.broadcastChanges();
     }
