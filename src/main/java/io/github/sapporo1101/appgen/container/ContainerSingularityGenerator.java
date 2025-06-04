@@ -2,7 +2,9 @@ package io.github.sapporo1101.appgen.container;
 
 import appeng.menu.AEBaseMenu;
 import appeng.menu.SlotSemantics;
+import appeng.menu.guisync.GuiSync;
 import appeng.menu.implementations.MenuTypeBuilder;
+import appeng.menu.interfaces.IProgressProvider;
 import appeng.menu.slot.AppEngSlot;
 import appeng.util.ConfigMenuInventory;
 import io.github.sapporo1101.appgen.AppliedGenerators;
@@ -10,7 +12,12 @@ import io.github.sapporo1101.appgen.common.blockentities.SingularityGeneratorBlo
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
 
-public class ContainerSingularityGenerator extends AEBaseMenu {
+public class ContainerSingularityGenerator extends AEBaseMenu implements IProgressProvider {
+
+    @GuiSync(3)
+    public int generatableFE = 0;
+
+    public SingularityGeneratorBlockEntity host;
 
     public static final MenuType<ContainerSingularityGenerator> TYPE = MenuTypeBuilder
             .create(ContainerSingularityGenerator::new, SingularityGeneratorBlockEntity.class)
@@ -21,5 +28,26 @@ public class ContainerSingularityGenerator extends AEBaseMenu {
         this.addSlot(new AppEngSlot(new ConfigMenuInventory(host.getGenericInv()), 0), SlotSemantics.MACHINE_INPUT);
         this.addSlot(new AppEngSlot(new ConfigMenuInventory(host.getGenericInv()), 1), SlotSemantics.MACHINE_OUTPUT);
         this.createPlayerInventorySlots(playerInventory);
+        this.host = host;
+    }
+
+    @Override
+    public void broadcastChanges() {
+        System.out.println("Broadcasting changes for Singularity Generator");
+        if (isServerSide()) {
+            this.generatableFE = this.host.getGeneratableFE();
+            System.out.println("Broadcasting changes for Singularity Generator, generatableFE: " + this.generatableFE + ", host: " + this.host);
+        }
+        super.broadcastChanges();
+    }
+
+    @Override
+    public int getCurrentProgress() {
+        return this.generatableFE;
+    }
+
+    @Override
+    public int getMaxProgress() {
+        return SingularityGeneratorBlockEntity.FE_PER_SINGULARITY;
     }
 }

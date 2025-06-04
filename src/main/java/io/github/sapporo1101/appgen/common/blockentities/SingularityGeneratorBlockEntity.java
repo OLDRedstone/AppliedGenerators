@@ -30,6 +30,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
@@ -37,23 +38,30 @@ import java.util.Objects;
 import java.util.Set;
 
 public class SingularityGeneratorBlockEntity extends AENetworkedBlockEntity implements IGridTickable, IGenericInvHost {
+    public static final @NotNull AEKey FE_KEY = FluxKey.of(EnergyType.FE);
+    public static final AEKey SINGULARITY_KEY = AEItemKey.of(AEItems.SINGULARITY);
+    public static final int FE_CAPACITY = 1048576;
+    public static final int GENERATE_PER_TICK = 50;
+    public static final int FE_PER_SINGULARITY = 10000;
+
     private final GenericStackInv inv;
-    private double generatableEnergy;
+    private int generatableFE;
     public boolean isOn;
+    public boolean isFull;
 
     public SingularityGeneratorBlockEntity(BlockPos pos, BlockState blockState) {
         super(GlodUtil.getTileType(SingularityGeneratorBlockEntity.class, SingularityGeneratorBlockEntity::new, AGSingletons.SINGULARITY_GENERATOR), pos, blockState);
         this.inv = new CustomStackInv(
-                Map.of(0, Set.of(this.getFuelKey()), 1, Set.of(this.getEnergyKey())),
+                Map.of(0, Set.of(SINGULARITY_KEY), 1, Set.of(FE_KEY)),
                 Map.of(0, CustomIOFilter.INSERT_ONLY, 1, CustomIOFilter.EXTRACT_ONLY),
                 this::setChanged, GenericStackInv.Mode.STORAGE, 2
         );
         this.inv.setCapacity(AEKeyType.fluids(), 0);
         if (ExternalTypes.GAS != null) this.inv.setCapacity(ExternalTypes.GAS, 0);
         if (ExternalTypes.MANA != null) this.inv.setCapacity(ExternalTypes.MANA, 0);
-        if (ExternalTypes.FLUX != null) this.inv.setCapacity(ExternalTypes.FLUX, this.getEnergyCapacity());
+        if (ExternalTypes.FLUX != null) this.inv.setCapacity(ExternalTypes.FLUX, FE_CAPACITY);
         if (ExternalTypes.SOURCE != null) this.inv.setCapacity(ExternalTypes.SOURCE, 0);
-        this.generatableEnergy = 0F;
+        this.generatableFE = 0;
         this.getMainNode().setIdlePowerUsage(0F).setFlags().addService(IGridTickable.class, this);
     }
 
@@ -70,25 +78,27 @@ public class SingularityGeneratorBlockEntity extends AENetworkedBlockEntity impl
 
     protected void writeToStream(RegistryFriendlyByteBuf data) {
         super.writeToStream(data);
-        this.isOn = this.getGeneratableEnergy() > 0;
+        this.isOn = this.getGeneratableFE() > 0;
         data.writeBoolean(this.isOn);
     }
 
     public void saveAdditional(CompoundTag data, HolderLookup.Provider registries) {
         super.saveAdditional(data, registries);
         this.inv.writeToChildTag(data, "inv", registries);
-        data.putDouble("burnTime", this.getGeneratableEnergy());
+        data.putDouble("generatableFE", this.getGeneratableFE());
     }
 
     public void loadTag(CompoundTag data, HolderLookup.Provider registries) {
         super.loadTag(data, registries);
         this.inv.readFromChildTag(data, "inv", registries);
-        this.setGeneratableEnergy(data.getDouble("burnTime"));
+        this.setGeneratableFE(data.getInt("generatableFE"));
     }
 
     @Override
     public void setChanged() {
-        if (this.getGeneratableEnergy() <= 0 && this.canEatFuel()) {
+        if (this.getGeneratableFE() <= 0 && this.canEatFuel() || this.isFull && this.getGeneratableFE() > 0) {
+            System.out.println("Singularity Generator state changed, start charging");
+            this.isFull = false;
             this.getMainNode().ifPresent((grid, node) -> grid.getTickManager().wakeDevice(node));
         }
         super.setChanged();
@@ -96,7 +106,7 @@ public class SingularityGeneratorBlockEntity extends AENetworkedBlockEntity impl
 
     private boolean canEatFuel() {
         GenericStack is = this.inv.getStack(0);
-        if (is != null && is.what() != null && is.what().equals(this.getFuelKey())) {
+        if (is != null && is.what() != null && is.what().equals(SINGULARITY_KEY)) {
             return is.amount() > 0;
         }
         return false;
@@ -118,41 +128,46 @@ public class SingularityGeneratorBlockEntity extends AENetworkedBlockEntity impl
     }
 
     public TickingRequest getTickingRequest(IGridNode node) {
-        System.out.println("Singularity Generator Ticking Request: " + this.getGeneratableEnergy() + " FE remaining, " + this.isOn);
-        if (this.getGeneratableEnergy() <= 0) {
+        System.out.println("Singularity Generator Ticking Request: " + this.getGeneratableFE() + " FE remaining, " + this.isOn);
+        if (this.getGeneratableFE() <= 0) {
             this.charge();
         }
 
-        return new TickingRequest(TickRates.VibrationChamber, this.getGeneratableEnergy() <= 0);
+        return new TickingRequest(TickRates.VibrationChamber, this.getGeneratableFE() <= 0);
     }
 
     public TickRateModulation tickingRequest(IGridNode node, int ticksSinceLastCall) {
-        System.out.println("Singularity Generator Ticking: " + this.getGeneratableEnergy() + " FE remaining, " + this.isOn);
-        if (this.getGeneratableEnergy() <= 0) {
+        System.out.println("Singularity Generator Ticking: " + this.getGeneratableFE() + " FE remaining, " + this.isOn);
+        if (this.getGeneratableFE() <= 0) {
             this.charge();
-            if (this.getGeneratableEnergy() > 0) {
+            if (this.getGeneratableFE() > 0) {
                 return TickRateModulation.URGENT;
             } else {
                 return TickRateModulation.SLEEP;
             }
         } else {
-            long newFE = (int) Math.min(ticksSinceLastCall * this.getGeneratePerTick(), this.getGeneratableEnergy());
+            int newFE = Math.min(ticksSinceLastCall * GENERATE_PER_TICK, this.getGeneratableFE());
             long outputAmount = this.inv.getStack(1) != null ? Objects.requireNonNull(this.inv.getStack(1)).amount() : 0L;
-            long fixedNewFE = newFE + outputAmount > this.inv.getCapacity(ExternalTypes.FLUX) ? this.inv.getCapacity(ExternalTypes.FLUX) - outputAmount : newFE;
-            this.setGeneratableEnergy(this.getGeneratableEnergy() - fixedNewFE);
-            this.inv.setStack(1, new GenericStack(this.getEnergyKey(), fixedNewFE + outputAmount));
-            return fixedNewFE < newFE ? TickRateModulation.FASTER : TickRateModulation.SLOWER;
+            int fixedNewFE = (int) (newFE + outputAmount > this.inv.getCapacity(ExternalTypes.FLUX) ? this.inv.getCapacity(ExternalTypes.FLUX) - outputAmount : newFE);
+            if (fixedNewFE <= 0) {
+                System.out.println("Singularity Generator is full, cannot generate more FE");
+                this.isFull = true;
+                return TickRateModulation.SLEEP;
+            }
+            this.setGeneratableFE(this.getGeneratableFE() - fixedNewFE);
+            this.inv.setStack(1, new GenericStack(FE_KEY, fixedNewFE + outputAmount));
+            return TickRateModulation.SAME;
         }
     }
 
     private void charge() {
-        System.out.println("Singularity Generator charging: " + this.getGeneratableEnergy() + " FE remaining, " + this.isOn);
+        System.out.println("Singularity Generator charging: " + this.getGeneratableFE() + " FE remaining, " + this.isOn);
         GenericStack stack = this.inv.getStack(0);
         System.out.println("Singularity Generator fuel item: " + stack);
-        if (stack != null && stack.what().equals(this.getFuelKey())) {
+        if (stack != null && stack.what().equals(SINGULARITY_KEY)) {
             System.out.println("Singularity Generator charging singularity fuel");
             if (stack.amount() > 0) {
-                this.setGeneratableEnergy(this.getGeneratableEnergy() + this.getEnergyPerSingularity());
+                this.setGeneratableFE(this.getGeneratableFE() + FE_PER_SINGULARITY);
                 if (stack.amount() <= 1) {
                     this.inv.setStack(0, GenericStack.fromItemStack(ItemStack.EMPTY));
                 } else {
@@ -164,12 +179,12 @@ public class SingularityGeneratorBlockEntity extends AENetworkedBlockEntity impl
             }
         }
 
-        if (this.getGeneratableEnergy() > 0) {
+        if (this.getGeneratableFE() > 0) {
             this.getMainNode().ifPresent((grid, node) -> grid.getTickManager().wakeDevice(node));
         }
 
-        if (!this.isOn && this.getGeneratableEnergy() > 0 || this.isOn && this.getGeneratableEnergy() <= 0) {
-            this.isOn = this.getGeneratableEnergy() > 0;
+        if (!this.isOn && this.getGeneratableFE() > 0 || this.isOn && this.getGeneratableFE() <= 0) {
+            this.isOn = this.getGeneratableFE() > 0;
             this.markForUpdate();
             if (this.hasLevel()) {
                 Platform.notifyBlocksOfNeighbors(this.level, this.worldPosition);
@@ -177,32 +192,12 @@ public class SingularityGeneratorBlockEntity extends AENetworkedBlockEntity impl
         }
     }
 
-    public AEKey getEnergyKey() {
-        return FluxKey.of(EnergyType.FE);
+    public int getGeneratableFE() {
+        return this.generatableFE;
     }
 
-    public AEKey getFuelKey() {
-        return AEItemKey.of(AEItems.SINGULARITY);
-    }
-
-    public long getEnergyCapacity() {
-        return 1048576; // FE
-    }
-
-    public int getGeneratePerTick() {
-        return 50; // FE per tick
-    }
-
-    public int getEnergyPerSingularity() {
-        return 10000; // FE per singularity
-    }
-
-    public double getGeneratableEnergy() {
-        return this.generatableEnergy;
-    }
-
-    private void setGeneratableEnergy(double generatableEnergy) {
-        this.generatableEnergy = generatableEnergy;
+    private void setGeneratableFE(int generatableFE) {
+        this.generatableFE = generatableFE;
     }
 
     @Override

@@ -3,5 +3,6 @@
     "block.appgen.flux_cell": "Flux Cell",
     "block.appgen.singularity_generator": "Singularity Generator",
     "gui.appgen.flux_cell": "Flux Cell",
-    "gui.appgen.singularity_generator": "Singularity Generator"
+    "gui.appgen.singularity_generator": "Singularity Generator",
+    "gui.appgen.singularity_generator.progress": "%s FE remaining"
 }
