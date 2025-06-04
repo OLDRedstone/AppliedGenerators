@@ -2,39 +2,42 @@ package io.github.sapporo1101.appgen.common.blocks.cells;
 
 import appeng.menu.MenuOpener;
 import appeng.menu.locator.MenuLocators;
+import io.github.sapporo1101.appgen.common.blockentities.FluxCellBlockEntity;
 import io.github.sapporo1101.appgen.common.blocks.BlockBaseGui;
-import io.github.sapporo1101.appgen.common.tileentities.TileFluxCell;
 import io.github.sapporo1101.appgen.container.ContainerFluxCell;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
-import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import org.jetbrains.annotations.Nullable;
 
-public class FluxCell extends BlockBaseGui<TileFluxCell> {
+public class FluxCell extends BlockBaseGui<FluxCellBlockEntity> {
+    public static final int MAX_FULLNESS = 4;
+    public static final IntegerProperty FE_STORAGE = IntegerProperty.create("fullness", 0, MAX_FULLNESS);
+
     public FluxCell() {
-        super(glassProps().noOcclusion().isViewBlocking((a, b, c) -> false));
+        super(glassProps());
+        this.registerDefaultState(this.defaultBlockState().setValue(FE_STORAGE, 0));
     }
 
     @Override
-    public @NotNull VoxelShape getVisualShape(@NotNull BlockState state, @NotNull BlockGetter blockGetter, @NotNull BlockPos pos, @NotNull CollisionContext context) {
-        return Shapes.empty();
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
+        builder.add(FE_STORAGE);
     }
 
     @Override
-    public float getShadeBrightness(@NotNull BlockState state, @NotNull BlockGetter blockGetter, @NotNull BlockPos pos) {
-        return 0.5f;
-    }
-
-    public boolean propagatesSkylightDown(@NotNull BlockState state, @NotNull BlockGetter blockGetter, @NotNull BlockPos p4) {
-        return true;
+    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        return level.isClientSide() ? null : (level1, pos1, state1, be) -> ((FluxCellBlockEntity) be).tick(level1, pos1, state1, (FluxCellBlockEntity) be);
     }
 
     @Override
-    public void openGui(TileFluxCell tile, Player p) {
+    public void openGui(FluxCellBlockEntity tile, Player p) {
         MenuOpener.open(ContainerFluxCell.TYPE, p, MenuLocators.forBlockEntity(tile));
     }
 }

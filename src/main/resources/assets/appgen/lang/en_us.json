@@ -1,5 +1,7 @@
 {
-    "itemGroup.appgen": "Example Mod Tab",
-    "block.appgen.example_block": "Example Block",
-    "item.appgen.example_item": "Example Item"
+    "itemGroup.appgen": "Applied Generators",
+    "block.appgen.flux_cell": "Flux Cell",
+    "block.appgen.singularity_generator": "Singularity Generator",
+    "gui.appgen.flux_cell": "Flux Cell",
+    "gui.appgen.singularity_generator": "Singularity Generator"
 }

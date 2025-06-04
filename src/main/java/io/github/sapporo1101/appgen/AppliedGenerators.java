@@ -1,8 +1,10 @@
 package io.github.sapporo1101.appgen;
 
+import appeng.init.InitCapabilityProviders;
 import io.github.sapporo1101.appgen.client.ClientRegistryHandler;
 import io.github.sapporo1101.appgen.common.AGRegistryHandler;
 import io.github.sapporo1101.appgen.common.AGSingletons;
+import io.github.sapporo1101.appgen.util.LazyInits;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -45,13 +47,14 @@ public class AppliedGenerators {
         }
 
         bus.addListener(this::commonSetup);
+        bus.addListener(InitCapabilityProviders::register);
 
         bus.register(AGRegistryHandler.INSTANCE);
     }
 
-    private void commonSetup(final FMLCommonSetupEvent event) {
-        // Some common setup code
-        LOGGER.info("HELLO FROM COMMON SETUP");
+    public void commonSetup(FMLCommonSetupEvent event) {
+        AGRegistryHandler.INSTANCE.onInit();
+        LazyInits.initCommon();
     }
 
     @SubscribeEvent

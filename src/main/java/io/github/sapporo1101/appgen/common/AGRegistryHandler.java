@@ -1,17 +1,24 @@
 package io.github.sapporo1101.appgen.common;
 
 import appeng.api.AECapabilities;
+import appeng.api.implementations.blockentities.ICraftingMachine;
+import appeng.api.implementations.items.IAEItemPowerStorage;
+import appeng.api.networking.IInWorldGridNodeHost;
 import appeng.block.AEBaseBlockItem;
 import appeng.block.AEBaseEntityBlock;
 import appeng.blockentity.AEBaseBlockEntity;
+import appeng.blockentity.AEBaseInvBlockEntity;
 import appeng.blockentity.ClientTickingBlockEntity;
 import appeng.blockentity.ServerTickingBlockEntity;
+import appeng.blockentity.powersink.AEBasePoweredBlockEntity;
 import appeng.items.AEBaseItem;
+import appeng.items.tools.powered.powersink.PoweredItemCapabilities;
 import com.glodblock.github.glodium.registry.RegistryHandler;
 import com.glodblock.github.glodium.util.GlodUtil;
 import io.github.sapporo1101.appgen.AppliedGenerators;
 import io.github.sapporo1101.appgen.api.caps.IGenericInvHost;
 import io.github.sapporo1101.appgen.container.ContainerFluxCell;
+import io.github.sapporo1101.appgen.container.ContainerSingularityGenerator;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -22,8 +29,11 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.Collection;
 
 public class AGRegistryHandler extends RegistryHandler {
 
@@ -31,6 +41,11 @@ public class AGRegistryHandler extends RegistryHandler {
 
     public AGRegistryHandler() {
         super(AppliedGenerators.MODID);
+        this.cap(AEBaseInvBlockEntity.class, Capabilities.ItemHandler.BLOCK, AEBaseInvBlockEntity::getExposedItemHandler);
+        this.cap(AEBasePoweredBlockEntity.class, Capabilities.EnergyStorage.BLOCK, AEBasePoweredBlockEntity::getEnergyStorage);
+        this.cap(IInWorldGridNodeHost.class, AECapabilities.IN_WORLD_GRID_NODE_HOST, (object, context) -> object);
+        this.cap(IAEItemPowerStorage.class, Capabilities.EnergyStorage.ITEM, (object, context) -> new PoweredItemCapabilities(object, (IAEItemPowerStorage) object.getItem()));
+        this.cap(ICraftingMachine.class, AECapabilities.CRAFTING_MACHINE, (object, context) -> object);
         this.cap(IGenericInvHost.class, AECapabilities.GENERIC_INTERNAL_INV, IGenericInvHost::getGenericInv);
     }
 
@@ -38,6 +53,10 @@ public class AGRegistryHandler extends RegistryHandler {
         bindTileEntity(clazz, block, supplier);
         block(name, block, b -> new AEBaseBlockItem(b, new Item.Properties()));
         tile(name, block.getBlockEntityType());
+    }
+
+    public Collection<Block> getBlocks() {
+        return this.blocks.stream().map(Pair::getRight).toList();
     }
 
     @Override
@@ -53,6 +72,7 @@ public class AGRegistryHandler extends RegistryHandler {
 
     private void onRegisterContainer() {
         Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("flux_cell"), ContainerFluxCell.TYPE);
+        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("singularity_generator"), ContainerSingularityGenerator.TYPE);
     }
 
     private <T extends AEBaseBlockEntity> void bindTileEntity(Class<T> clazz, AEBaseEntityBlock<T> block, BlockEntityType.BlockEntitySupplier<? extends T> supplier) {
@@ -69,7 +89,7 @@ public class AGRegistryHandler extends RegistryHandler {
 
     public void registerTab(Registry<CreativeModeTab> registry) {
         var tab = CreativeModeTab.builder()
-                .icon(() -> new ItemStack(AGSingletons.flux_cell))
+                .icon(() -> new ItemStack(AGSingletons.FLUX_CELL))
                 .title(Component.translatable("itemGroup.appgen"))
                 .displayItems((p, o) -> {
                     for (Pair<String, Item> entry : items) {
@@ -85,5 +105,17 @@ public class AGRegistryHandler extends RegistryHandler {
                 })
                 .build();
         Registry.register(registry, AppliedGenerators.id("tab_main"), tab);
+    }
+
+    public void onInit() {
+        for (Pair<String, Block> entry : blocks) {
+            Block block = entry.getRight();
+            if (block instanceof AEBaseEntityBlock<?>) {
+                AEBaseBlockEntity.registerBlockEntityItem(
+                        ((AEBaseEntityBlock<?>) block).getBlockEntityType(),
+                        block.asItem()
+                );
+            }
+        }
     }
 }
