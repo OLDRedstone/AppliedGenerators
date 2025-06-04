@@ -18,8 +18,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static io.github.sapporo1101.appgen.common.blocks.cells.FluxCell.FE_STORAGE;
-import static io.github.sapporo1101.appgen.common.blocks.cells.FluxCell.MAX_FULLNESS;
+import static io.github.sapporo1101.appgen.common.blocks.fluxcells.FluxCell.FE_STORAGE;
+import static io.github.sapporo1101.appgen.common.blocks.fluxcells.FluxCell.MAX_FULLNESS;
 
 public class FluxCellBlockEntity extends AEBaseBlockEntity implements IGenericInvHost, BlockEntityTicker<FluxCellBlockEntity> {
     private final GenericStackInv feInv;

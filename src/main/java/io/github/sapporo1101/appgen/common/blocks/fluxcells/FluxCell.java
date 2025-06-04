@@ -1,4 +1,4 @@
-package io.github.sapporo1101.appgen.common.blocks.cells;
+package io.github.sapporo1101.appgen.common.blocks.fluxcells;
 
 import appeng.menu.MenuOpener;
 import appeng.menu.locator.MenuLocators;

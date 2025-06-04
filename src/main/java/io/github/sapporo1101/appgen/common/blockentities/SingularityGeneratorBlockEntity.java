@@ -10,13 +10,9 @@ import appeng.api.networking.ticking.TickingRequest;
 import appeng.api.stacks.AEItemKey;
 import appeng.api.stacks.AEKeyType;
 import appeng.api.stacks.GenericStack;
-import appeng.api.upgrades.IUpgradeInventory;
-import appeng.api.upgrades.IUpgradeableObject;
-import appeng.api.upgrades.UpgradeInventories;
 import appeng.api.util.AECableType;
 import appeng.blockentity.grid.AENetworkedBlockEntity;
 import appeng.core.AEConfig;
-import appeng.core.definitions.AEBlocks;
 import appeng.core.definitions.AEItems;
 import appeng.core.settings.TickRates;
 import appeng.helpers.externalstorage.GenericStackInv;
@@ -26,6 +22,8 @@ import com.glodblock.github.appflux.common.me.key.type.EnergyType;
 import com.glodblock.github.glodium.util.GlodUtil;
 import io.github.sapporo1101.appgen.api.caps.IGenericInvHost;
 import io.github.sapporo1101.appgen.common.AGSingletons;
+import io.github.sapporo1101.appgen.util.CustomIOFilter;
+import io.github.sapporo1101.appgen.util.CustomStackInv;
 import io.github.sapporo1101.appgen.xmod.ExternalTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -38,11 +36,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
-public class SingularityGeneratorBlockEntity extends AENetworkedBlockEntity implements IGridTickable, IUpgradeableObject, IGenericInvHost {
+public class SingularityGeneratorBlockEntity extends AENetworkedBlockEntity implements IGridTickable, IGenericInvHost {
     private final GenericStackInv inv;
-    private final IUpgradeInventory upgrades;
     private double currentFuelTicksPerTick;
     private double remainingFuelTicks;
     private double fuelItemFuelTicks;
@@ -56,7 +55,11 @@ public class SingularityGeneratorBlockEntity extends AENetworkedBlockEntity impl
 
     public SingularityGeneratorBlockEntity(BlockPos pos, BlockState blockState) {
         super(GlodUtil.getTileType(SingularityGeneratorBlockEntity.class, SingularityGeneratorBlockEntity::new, AGSingletons.SINGULARITY_GENERATOR), pos, blockState);
-        this.inv = new GenericStackInv(this::setChanged, 2);
+        this.inv = new CustomStackInv(
+                Map.of(0, Set.of(AEItemKey.of(AEItems.SINGULARITY)), 1, Set.of(FluxKey.of(EnergyType.FE))),
+                Map.of(0, CustomIOFilter.INSERT_ONLY, 1, CustomIOFilter.EXTRACT_ONLY),
+                this::setChanged, GenericStackInv.Mode.STORAGE, 2
+        );
         this.inv.setCapacity(AEKeyType.fluids(), 0);
         if (ExternalTypes.GAS != null) this.inv.setCapacity(ExternalTypes.GAS, 0);
         if (ExternalTypes.MANA != null) this.inv.setCapacity(ExternalTypes.MANA, 0);
@@ -65,7 +68,6 @@ public class SingularityGeneratorBlockEntity extends AENetworkedBlockEntity impl
         this.remainingFuelTicks = 0.0F;
         this.fuelItemFuelTicks = 0.0F;
         this.getMainNode().setIdlePowerUsage(0.0F).setFlags().addService(IGridTickable.class, this);
-        this.upgrades = UpgradeInventories.forMachine(AEBlocks.VIBRATION_CHAMBER, 3, this::saveChanges);
         this.minEnergyRate = AEConfig.instance().getVibrationChamberMinEnergyPerGameTick();
         this.baseMaxEnergyRate = AEConfig.instance().getVibrationChamberMaxEnergyPerGameTick();
         this.initialEnergyRate = Mth.clamp(AEConfig.instance().getVibrationChamberBaseEnergyPerFuelTick(), this.minEnergyRate, this.baseMaxEnergyRate);
@@ -94,7 +96,6 @@ public class SingularityGeneratorBlockEntity extends AENetworkedBlockEntity impl
 
     public void saveAdditional(CompoundTag data, HolderLookup.Provider registries) {
         super.saveAdditional(data, registries);
-        this.upgrades.writeToNBT(data, "upgrades", registries);
         this.inv.writeToChildTag(data, "inv", registries);
         data.putDouble("burnTime", this.getRemainingFuelTicks());
         data.putDouble("maxBurnTime", this.getFuelItemFuelTicks());
@@ -104,7 +105,6 @@ public class SingularityGeneratorBlockEntity extends AENetworkedBlockEntity impl
 
     public void loadTag(CompoundTag data, HolderLookup.Provider registries) {
         super.loadTag(data, registries);
-        this.upgrades.readFromNBT(data, "upgrades", registries);
         this.inv.readFromChildTag(data, "inv", registries);
         this.setRemainingFuelTicks(data.getDouble("burnTime"));
         this.setFuelItemFuelTicks(data.getDouble("maxBurnTime"));
@@ -131,10 +131,6 @@ public class SingularityGeneratorBlockEntity extends AENetworkedBlockEntity impl
 
     public void addAdditionalDrops(Level level, BlockPos pos, List<ItemStack> drops) {
         super.addAdditionalDrops(level, pos, drops);
-
-        for (ItemStack upgrade : this.upgrades) {
-            drops.add(upgrade);
-        }
         for (int index = 0; index < this.inv.size(); index++) {
             var stack = this.inv.getStack(index);
             if (stack != null) {
@@ -145,12 +141,7 @@ public class SingularityGeneratorBlockEntity extends AENetworkedBlockEntity impl
 
     public void clearContent() {
         super.clearContent();
-        this.upgrades.clear();
         this.inv.clear();
-    }
-
-    public IUpgradeInventory getUpgrades() {
-        return this.upgrades;
     }
 
     public TickingRequest getTickingRequest(IGridNode node) {
@@ -270,7 +261,7 @@ public class SingularityGeneratorBlockEntity extends AENetworkedBlockEntity impl
     }
 
     public double getEnergyPerFuelTick() {
-        return AEConfig.instance().getVibrationChamberBaseEnergyPerFuelTick() * (double) (1.0F + (float) this.upgrades.getInstalledUpgrades(AEItems.ENERGY_CARD) / 2.0F);
+        return AEConfig.instance().getVibrationChamberBaseEnergyPerFuelTick();
     }
 
     public double getMaxFuelTicksPerTick() {
@@ -278,7 +269,7 @@ public class SingularityGeneratorBlockEntity extends AENetworkedBlockEntity impl
     }
 
     public double getMaxEnergyRate() {
-        return this.baseMaxEnergyRate + this.baseMaxEnergyRate * (double) this.upgrades.getInstalledUpgrades(AEItems.SPEED_CARD) / (double) 2.0F;
+        return this.baseMaxEnergyRate;
     }
 
     @Override

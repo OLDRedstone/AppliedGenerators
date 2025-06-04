@@ -1,4 +1,4 @@
-package io.github.sapporo1101.appgen.common.blocks.generatos;
+package io.github.sapporo1101.appgen.common.blocks.singularitygenerators;
 
 import appeng.api.orientation.IOrientationStrategy;
 import appeng.api.orientation.OrientationStrategies;

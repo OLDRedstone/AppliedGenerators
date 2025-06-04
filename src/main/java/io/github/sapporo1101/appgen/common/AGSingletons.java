@@ -2,8 +2,8 @@ package io.github.sapporo1101.appgen.common;
 
 import io.github.sapporo1101.appgen.common.blockentities.FluxCellBlockEntity;
 import io.github.sapporo1101.appgen.common.blockentities.SingularityGeneratorBlockEntity;
-import io.github.sapporo1101.appgen.common.blocks.cells.FluxCell;
-import io.github.sapporo1101.appgen.common.blocks.generatos.SingularityGenerator;
+import io.github.sapporo1101.appgen.common.blocks.fluxcells.FluxCell;
+import io.github.sapporo1101.appgen.common.blocks.singularitygenerators.SingularityGenerator;
 
 public class AGSingletons {
     public static FluxCell FLUX_CELL;
