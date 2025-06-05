@@ -19,7 +19,7 @@ import com.glodblock.github.appflux.common.me.key.type.EnergyType;
 import com.glodblock.github.glodium.util.GlodUtil;
 import io.github.sapporo1101.appgen.api.caps.IGenericInternalInvHost;
 import io.github.sapporo1101.appgen.common.AGSingletons;
-import io.github.sapporo1101.appgen.util.CombinedStackInv;
+import io.github.sapporo1101.appgen.util.CombinedGenericInv;
 import io.github.sapporo1101.appgen.util.CustomIOFilter;
 import io.github.sapporo1101.appgen.util.CustomStackInv;
 import io.github.sapporo1101.appgen.xmod.ExternalTypes;
@@ -43,7 +43,7 @@ public class SingularityGeneratorBlockEntity extends AENetworkedBlockEntity impl
     public static final int GENERATE_PER_TICK = 5000;
     public static final int FE_PER_SINGULARITY = 100000;
 
-    private final CombinedStackInv inv;
+    private final CombinedGenericInv inv;
     private int generatableFE;
     public boolean isOn;
     public boolean isFull;
@@ -54,7 +54,7 @@ public class SingularityGeneratorBlockEntity extends AENetworkedBlockEntity impl
         singularityInv.setCapacity(AEKeyType.items(), 64);
         GenericStackInv feInv = new CustomStackInv(Set.of(FE_KEY), CustomIOFilter.EXTRACT_ONLY, this::feSetChanged, GenericStackInv.Mode.STORAGE, 1);
         feInv.setCapacity(ExternalTypes.FLUX, FE_CAPACITY);
-        this.inv = new CombinedStackInv(singularityInv, feInv);
+        this.inv = new CombinedGenericInv(singularityInv, feInv);
         this.generatableFE = 0;
         this.getMainNode().setIdlePowerUsage(0F).setFlags().addService(IGridTickable.class, this);
     }
@@ -203,7 +203,7 @@ public class SingularityGeneratorBlockEntity extends AENetworkedBlockEntity impl
     }
 
     @Override
-    public CombinedStackInv getGenericInv() {
+    public CombinedGenericInv getGenericInv() {
         return this.inv;
     }
 }

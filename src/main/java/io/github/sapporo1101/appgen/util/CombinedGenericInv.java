@@ -9,14 +9,13 @@ import appeng.helpers.externalstorage.GenericStackInv;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @SuppressWarnings("UnstableApiUsage")
-public class CombinedStackInv implements GenericInternalInventory {
+public class CombinedGenericInv implements GenericInternalInventory {
     final ArrayList<GenericStackInv> invs;
 
-    public CombinedStackInv(GenericStackInv... invs) {
+    public CombinedGenericInv(GenericStackInv... invs) {
         this.invs = new ArrayList<>(List.of(invs));
     }
 
@@ -63,14 +62,17 @@ public class CombinedStackInv implements GenericInternalInventory {
 
     @Override
     public long getMaxAmount(AEKey aeKey) {
-        return invs.stream().mapToLong(inv -> inv.getMaxAmount(aeKey)).sum();
+        // this returns average max amount with empty slots considered
+        int canInsertSlot = 0;
+        for (int i = 0; i < this.size(); i++) {
+            if (this.isAllowedIn(i, aeKey) || this.getKey(i) == null) canInsertSlot++;
+        }
+        System.out.println("getMaxAmount called with key: " + aeKey + ", maxAmount: " + invs.stream().mapToLong(inv -> inv.getMaxAmount(aeKey)).sum() + ", fixed: " + (invs.stream().mapToLong(inv -> inv.getMaxAmount(aeKey)).sum() / canInsertSlot));
+        return invs.stream().mapToLong(inv -> inv.getMaxAmount(aeKey)).sum() / canInsertSlot;
     }
 
     @Override
     public long getCapacity(AEKeyType aeKeyType) {
-        System.out.println("CombinedStackInv.getCapacity called for type: " + aeKeyType);
-        System.out.println("Capacity of each inv: " + Arrays.toString(invs.stream().mapToLong(inv -> inv.getCapacity(aeKeyType)).toArray()));
-        System.out.println("Total capacity: " + invs.stream().mapToLong(inv -> inv.getCapacity(aeKeyType)).sum());
         return invs.stream().mapToLong(inv -> inv.getCapacity(aeKeyType)).sum();
     }
 
