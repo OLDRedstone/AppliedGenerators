@@ -67,7 +67,6 @@ public class CombinedGenericInv implements GenericInternalInventory {
         for (int i = 0; i < this.size(); i++) {
             if (this.isAllowedIn(i, aeKey) || this.getKey(i) == null) canInsertSlot++;
         }
-        System.out.println("getMaxAmount called with key: " + aeKey + ", maxAmount: " + invs.stream().mapToLong(inv -> inv.getMaxAmount(aeKey)).sum() + ", fixed: " + (invs.stream().mapToLong(inv -> inv.getMaxAmount(aeKey)).sum() / canInsertSlot));
         return invs.stream().mapToLong(inv -> inv.getMaxAmount(aeKey)).sum() / canInsertSlot;
     }
 

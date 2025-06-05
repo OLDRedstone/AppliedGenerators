@@ -79,7 +79,7 @@ public class SingularityGeneratorBlockEntity extends AENetworkedBlockEntity impl
 
     public void singularitySetChanged() {
         updateBlockEntity(this.shouldUpdateIsOn());
-        if (this.getGeneratableFE() <= 0 && this.canEatFuel()) {
+        if (this.getGeneratableFE() <= 0 && this.canEatFuel() && !this.isFull) {
             System.out.println("Singularity Generator state changed, start charging");
             this.getMainNode().ifPresent((grid, node) -> grid.getTickManager().wakeDevice(node));
         }
