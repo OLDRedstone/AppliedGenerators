@@ -25,8 +25,8 @@ public class ContainerSingularityGenerator extends AEBaseMenu implements IProgre
 
     public ContainerSingularityGenerator(int id, Inventory playerInventory, SingularityGeneratorBlockEntity host) {
         super(TYPE, id, playerInventory, host);
-        this.addSlot(new AppEngSlot(new ConfigMenuInventory(host.getGenericInv()), 0), SlotSemantics.MACHINE_INPUT);
-        this.addSlot(new AppEngSlot(new ConfigMenuInventory(host.getGenericInv()), 1), SlotSemantics.MACHINE_OUTPUT);
+        this.addSlot(new AppEngSlot(new ConfigMenuInventory(host.getGenericInv().getInv(0)), 0), SlotSemantics.MACHINE_INPUT);
+        this.addSlot(new AppEngSlot(new ConfigMenuInventory(host.getGenericInv().getInv(1)), 0), SlotSemantics.MACHINE_OUTPUT);
         this.createPlayerInventorySlots(playerInventory);
         this.host = host;
     }

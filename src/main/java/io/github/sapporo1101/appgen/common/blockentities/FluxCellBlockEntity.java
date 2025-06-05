@@ -4,7 +4,7 @@ import appeng.api.stacks.AEKeyType;
 import appeng.blockentity.AEBaseBlockEntity;
 import appeng.helpers.externalstorage.GenericStackInv;
 import com.glodblock.github.glodium.util.GlodUtil;
-import io.github.sapporo1101.appgen.api.caps.IGenericInvHost;
+import io.github.sapporo1101.appgen.api.caps.IGenericInternalInvHost;
 import io.github.sapporo1101.appgen.common.AGSingletons;
 import io.github.sapporo1101.appgen.xmod.ExternalTypes;
 import net.minecraft.core.BlockPos;
@@ -21,7 +21,7 @@ import java.util.List;
 import static io.github.sapporo1101.appgen.common.blocks.fluxcells.FluxCell.FE_STORAGE;
 import static io.github.sapporo1101.appgen.common.blocks.fluxcells.FluxCell.MAX_FULLNESS;
 
-public class FluxCellBlockEntity extends AEBaseBlockEntity implements IGenericInvHost, BlockEntityTicker<FluxCellBlockEntity> {
+public class FluxCellBlockEntity extends AEBaseBlockEntity implements IGenericInternalInvHost, BlockEntityTicker<FluxCellBlockEntity> {
     private final GenericStackInv feInv;
 
     public FluxCellBlockEntity(BlockPos pos, BlockState blockState) {

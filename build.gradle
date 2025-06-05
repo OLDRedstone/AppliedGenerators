@@ -13,6 +13,7 @@ repositories {
     maven {
         url "https://cursemaven.com"
     }
+    mavenCentral()
 }
 
 base {
@@ -120,8 +121,8 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
-    implementation "curse.maven:applied-energistics-2-223794:6488853"
-    implementation "curse.maven:guideme-1173950:6488254"
+    implementation "org.appliedenergistics:appliedenergistics2:19.2.11"
+    implementation "org.appliedenergistics:guideme:21.1.9"
     implementation "curse.maven:glodium-957920:5821676"
     implementation "curse.maven:applied-flux-965012:6537909"
 }

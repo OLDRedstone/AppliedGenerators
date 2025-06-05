@@ -17,8 +17,9 @@ import appeng.util.Platform;
 import com.glodblock.github.appflux.common.me.key.FluxKey;
 import com.glodblock.github.appflux.common.me.key.type.EnergyType;
 import com.glodblock.github.glodium.util.GlodUtil;
-import io.github.sapporo1101.appgen.api.caps.IGenericInvHost;
+import io.github.sapporo1101.appgen.api.caps.IGenericInternalInvHost;
 import io.github.sapporo1101.appgen.common.AGSingletons;
+import io.github.sapporo1101.appgen.util.CombinedStackInv;
 import io.github.sapporo1101.appgen.util.CustomIOFilter;
 import io.github.sapporo1101.appgen.util.CustomStackInv;
 import io.github.sapporo1101.appgen.xmod.ExternalTypes;
@@ -32,34 +33,28 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-public class SingularityGeneratorBlockEntity extends AENetworkedBlockEntity implements IGridTickable, IGenericInvHost {
+public class SingularityGeneratorBlockEntity extends AENetworkedBlockEntity implements IGridTickable, IGenericInternalInvHost {
     public static final @NotNull AEKey FE_KEY = FluxKey.of(EnergyType.FE);
     public static final AEKey SINGULARITY_KEY = AEItemKey.of(AEItems.SINGULARITY);
     public static final int FE_CAPACITY = 1048576;
     public static final int GENERATE_PER_TICK = 5000;
     public static final int FE_PER_SINGULARITY = 100000;
 
-    private final GenericStackInv inv;
+    private final CombinedStackInv inv;
     private int generatableFE;
     public boolean isOn;
     public boolean isFull;
 
     public SingularityGeneratorBlockEntity(BlockPos pos, BlockState blockState) {
         super(GlodUtil.getTileType(SingularityGeneratorBlockEntity.class, SingularityGeneratorBlockEntity::new, AGSingletons.SINGULARITY_GENERATOR), pos, blockState);
-        this.inv = new CustomStackInv(
-                Map.of(0, Set.of(SINGULARITY_KEY), 1, Set.of(FE_KEY)),
-                Map.of(0, CustomIOFilter.INSERT_ONLY, 1, CustomIOFilter.EXTRACT_ONLY),
-                this::setChanged, GenericStackInv.Mode.STORAGE, 2
-        );
-        this.inv.setCapacity(AEKeyType.fluids(), 0);
-        if (ExternalTypes.GAS != null) this.inv.setCapacity(ExternalTypes.GAS, 0);
-        if (ExternalTypes.MANA != null) this.inv.setCapacity(ExternalTypes.MANA, 0);
-        if (ExternalTypes.FLUX != null) this.inv.setCapacity(ExternalTypes.FLUX, FE_CAPACITY);
-        if (ExternalTypes.SOURCE != null) this.inv.setCapacity(ExternalTypes.SOURCE, 0);
+        GenericStackInv singularityInv = new CustomStackInv(Set.of(SINGULARITY_KEY), CustomIOFilter.INSERT_ONLY, this::singularitySetChanged, GenericStackInv.Mode.STORAGE, 1);
+        singularityInv.setCapacity(AEKeyType.items(), 64);
+        GenericStackInv feInv = new CustomStackInv(Set.of(FE_KEY), CustomIOFilter.EXTRACT_ONLY, this::feSetChanged, GenericStackInv.Mode.STORAGE, 1);
+        feInv.setCapacity(ExternalTypes.FLUX, FE_CAPACITY);
+        this.inv = new CombinedStackInv(singularityInv, feInv);
         this.generatableFE = 0;
         this.getMainNode().setIdlePowerUsage(0F).setFlags().addService(IGridTickable.class, this);
     }
@@ -70,24 +65,34 @@ public class SingularityGeneratorBlockEntity extends AENetworkedBlockEntity impl
 
     public void saveAdditional(CompoundTag data, HolderLookup.Provider registries) {
         super.saveAdditional(data, registries);
-        this.inv.writeToChildTag(data, "inv", registries);
+        this.inv.getInv(0).writeToChildTag(data, "singularityInv", registries);
+        this.inv.getInv(1).writeToChildTag(data, "feInv", registries);
         data.putDouble("generatableFE", this.getGeneratableFE());
     }
 
     public void loadTag(CompoundTag data, HolderLookup.Provider registries) {
         super.loadTag(data, registries);
-        this.inv.readFromChildTag(data, "inv", registries);
+        this.inv.getInv(0).readFromChildTag(data, "singularityInv", registries);
+        this.inv.getInv(1).readFromChildTag(data, "feInv", registries);
         this.setGeneratableFE(data.getInt("generatableFE"));
     }
 
-    @Override
-    public void setChanged() {
-        this.updateBlockEntity(this.shouldUpdateIsOn() || this.shouldUpdateIsFull());
-        if (this.getGeneratableFE() <= 0 && this.canEatFuel() || !this.isFull && this.getGeneratableFE() > 0) {
+    public void singularitySetChanged() {
+        updateBlockEntity(this.shouldUpdateIsOn());
+        if (this.getGeneratableFE() <= 0 && this.canEatFuel()) {
             System.out.println("Singularity Generator state changed, start charging");
             this.getMainNode().ifPresent((grid, node) -> grid.getTickManager().wakeDevice(node));
         }
-        super.setChanged();
+        this.setChanged();
+    }
+
+    public void feSetChanged() {
+        this.updateBlockEntity(this.shouldUpdateIsFull());
+        if (!this.isFull && this.getGeneratableFE() > 0) {
+            System.out.println("Singularity Generator is full, stopping generation");
+            this.getMainNode().ifPresent((grid, node) -> grid.getTickManager().wakeDevice(node));
+        }
+        this.setChanged();
     }
 
     public boolean canEatFuel() {
@@ -177,7 +182,7 @@ public class SingularityGeneratorBlockEntity extends AENetworkedBlockEntity impl
     }
 
     public boolean shouldUpdateIsFull() {
-        long feAmount = this.getGenericInv().getAmount(1);
+        long feAmount = this.inv.getAmount(1);
         return !this.isFull && feAmount >= FE_CAPACITY || this.isFull && feAmount < FE_CAPACITY;
     }
 
@@ -198,7 +203,7 @@ public class SingularityGeneratorBlockEntity extends AENetworkedBlockEntity impl
     }
 
     @Override
-    public GenericStackInv getGenericInv() {
+    public CombinedStackInv getGenericInv() {
         return this.inv;
     }
 }
