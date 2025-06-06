@@ -18,7 +18,7 @@ import appeng.items.tools.powered.powersink.PoweredItemCapabilities;
 import com.glodblock.github.glodium.registry.RegistryHandler;
 import com.glodblock.github.glodium.util.GlodUtil;
 import io.github.sapporo1101.appgen.AppliedGenerators;
-import io.github.sapporo1101.appgen.api.caps.IGenericInternalInvHost;
+import io.github.sapporo1101.appgen.api.IGenericInternalInvHost;
 import io.github.sapporo1101.appgen.container.ContainerFluxCell;
 import io.github.sapporo1101.appgen.container.ContainerSingularityGenerator;
 import net.minecraft.core.Registry;

@@ -4,7 +4,7 @@ import appeng.api.stacks.AEKeyType;
 import appeng.blockentity.AEBaseBlockEntity;
 import appeng.helpers.externalstorage.GenericStackInv;
 import com.glodblock.github.glodium.util.GlodUtil;
-import io.github.sapporo1101.appgen.api.caps.IGenericInternalInvHost;
+import io.github.sapporo1101.appgen.api.IGenericInternalInvHost;
 import io.github.sapporo1101.appgen.common.AGSingletons;
 import io.github.sapporo1101.appgen.xmod.ExternalTypes;
 import net.minecraft.core.BlockPos;

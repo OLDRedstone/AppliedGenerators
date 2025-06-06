@@ -1,4 +1,4 @@
-package io.github.sapporo1101.appgen.api.caps;
+package io.github.sapporo1101.appgen.api;
 
 import appeng.api.behaviors.GenericInternalInventory;
 import net.minecraft.core.Direction;

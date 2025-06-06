@@ -24,7 +24,7 @@ import appeng.util.Platform;
 import com.glodblock.github.appflux.common.me.key.FluxKey;
 import com.glodblock.github.appflux.common.me.key.type.EnergyType;
 import com.glodblock.github.glodium.util.GlodUtil;
-import io.github.sapporo1101.appgen.api.caps.IGenericInternalInvHost;
+import io.github.sapporo1101.appgen.api.IGenericInternalInvHost;
 import io.github.sapporo1101.appgen.common.AGSingletons;
 import io.github.sapporo1101.appgen.util.CustomIOFilter;
 import io.github.sapporo1101.appgen.util.CustomStackInv;
