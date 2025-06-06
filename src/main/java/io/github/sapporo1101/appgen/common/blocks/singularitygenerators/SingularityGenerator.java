@@ -22,23 +22,20 @@ import org.jetbrains.annotations.NotNull;
 
 public class SingularityGenerator extends BlockBaseGui<SingularityGeneratorBlockEntity> {
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
-    public static final BooleanProperty FULL = BooleanProperty.create("full");
 
     public SingularityGenerator() {
         super(metalProps().strength(4.2F));
-        this.registerDefaultState(this.defaultBlockState().setValue(ACTIVE, false).setValue(FULL, false));
+        this.registerDefaultState(this.defaultBlockState().setValue(ACTIVE, false));
     }
 
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
         builder.add(ACTIVE);
-        builder.add(FULL);
     }
 
     protected BlockState updateBlockStateFromBlockEntity(BlockState currentState, SingularityGeneratorBlockEntity be) {
         be.isOn = be.getGeneratableFE() > 0 || be.canEatFuel();
-        be.isFull = be.getGenericInv().getAmount(1) >= SingularityGeneratorBlockEntity.FE_CAPACITY;
-        return currentState.setValue(ACTIVE, be.isOn).setValue(FULL, be.isFull);
+        return currentState.setValue(ACTIVE, be.isOn);
     }
 
     public IOrientationStrategy getOrientationStrategy() {
@@ -53,7 +50,7 @@ public class SingularityGenerator extends BlockBaseGui<SingularityGeneratorBlock
     public void animateTick(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull RandomSource r) {
         if (AEConfig.instance().isEnableEffects()) {
             SingularityGeneratorBlockEntity tc = this.getBlockEntity(level, pos);
-            if (tc != null && tc.isOn && !tc.isFull) {
+            if (tc != null && tc.isOn) {
                 double f1 = (float) pos.getX() + 0.5F;
                 double f2 = (float) pos.getY() + 0.5F;
                 double f3 = (float) pos.getZ() + 0.5F;

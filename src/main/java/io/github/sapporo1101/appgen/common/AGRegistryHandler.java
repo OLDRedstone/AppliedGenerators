@@ -4,6 +4,7 @@ import appeng.api.AECapabilities;
 import appeng.api.implementations.blockentities.ICraftingMachine;
 import appeng.api.implementations.items.IAEItemPowerStorage;
 import appeng.api.networking.IInWorldGridNodeHost;
+import appeng.api.upgrades.Upgrades;
 import appeng.block.AEBaseBlockItem;
 import appeng.block.AEBaseEntityBlock;
 import appeng.blockentity.AEBaseBlockEntity;
@@ -11,6 +12,7 @@ import appeng.blockentity.AEBaseInvBlockEntity;
 import appeng.blockentity.ClientTickingBlockEntity;
 import appeng.blockentity.ServerTickingBlockEntity;
 import appeng.blockentity.powersink.AEBasePoweredBlockEntity;
+import appeng.core.definitions.AEItems;
 import appeng.items.AEBaseItem;
 import appeng.items.tools.powered.powersink.PoweredItemCapabilities;
 import com.glodblock.github.glodium.registry.RegistryHandler;
@@ -118,5 +120,11 @@ public class AGRegistryHandler extends RegistryHandler {
                 );
             }
         }
+        this.registerAEUpgrade();
+    }
+
+    public void registerAEUpgrade() {
+        Upgrades.add(AEItems.SPEED_CARD, AGSingletons.SINGULARITY_GENERATOR, 3);
+        Upgrades.add(AEItems.ENERGY_CARD, AGSingletons.SINGULARITY_GENERATOR, 3);
     }
 }

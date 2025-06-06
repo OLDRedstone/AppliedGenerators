@@ -4,7 +4,6 @@ import appeng.init.InitCapabilityProviders;
 import io.github.sapporo1101.appgen.client.ClientRegistryHandler;
 import io.github.sapporo1101.appgen.common.AGRegistryHandler;
 import io.github.sapporo1101.appgen.common.AGSingletons;
-import io.github.sapporo1101.appgen.util.LazyInits;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -54,7 +53,6 @@ public class AppliedGenerators {
 
     public void commonSetup(FMLCommonSetupEvent event) {
         AGRegistryHandler.INSTANCE.onInit();
-        LazyInits.initCommon();
     }
 
     @SubscribeEvent

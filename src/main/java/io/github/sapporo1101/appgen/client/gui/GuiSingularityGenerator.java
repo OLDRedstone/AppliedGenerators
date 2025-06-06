@@ -1,13 +1,13 @@
 package io.github.sapporo1101.appgen.client.gui;
 
-import appeng.client.gui.AEBaseScreen;
+import appeng.client.gui.implementations.UpgradeableScreen;
 import appeng.client.gui.style.ScreenStyle;
 import appeng.client.gui.widgets.ProgressBar;
 import io.github.sapporo1101.appgen.container.ContainerSingularityGenerator;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 
-public class GuiSingularityGenerator extends AEBaseScreen<ContainerSingularityGenerator> {
+public class GuiSingularityGenerator extends UpgradeableScreen<ContainerSingularityGenerator> {
     private final ProgressBar pb;
 
     public GuiSingularityGenerator(ContainerSingularityGenerator menu, Inventory playerInventory, Component title, ScreenStyle style) {
@@ -19,6 +19,6 @@ public class GuiSingularityGenerator extends AEBaseScreen<ContainerSingularityGe
     @Override
     protected void updateBeforeRender() {
         super.updateBeforeRender();
-        this.pb.setFullMsg(Component.translatable("gui.appgen.singularity_generator.progress", this.menu.generatableFE));
+        this.pb.setFullMsg(Component.translatable("gui.appgen.singularity_generator.progress", this.menu.generatableFE, this.menu.getHost().getFEPerSingularity()));
     }
 }
