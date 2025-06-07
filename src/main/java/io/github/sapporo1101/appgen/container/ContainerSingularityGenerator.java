@@ -6,7 +6,6 @@ import appeng.menu.implementations.MenuTypeBuilder;
 import appeng.menu.implementations.UpgradeableMenu;
 import appeng.menu.interfaces.IProgressProvider;
 import appeng.menu.slot.AppEngSlot;
-import appeng.util.ConfigMenuInventory;
 import io.github.sapporo1101.appgen.AppliedGenerators;
 import io.github.sapporo1101.appgen.common.blockentities.SingularityGeneratorBlockEntity;
 import net.minecraft.world.entity.player.Inventory;
@@ -23,7 +22,7 @@ public class ContainerSingularityGenerator extends UpgradeableMenu<SingularityGe
 
     public ContainerSingularityGenerator(int id, Inventory playerInventory, SingularityGeneratorBlockEntity host) {
         super(TYPE, id, playerInventory, host);
-        this.addSlot(new AppEngSlot(new ConfigMenuInventory(host.getGenericInv()), 0), SlotSemantics.MACHINE_INPUT);
+        this.addSlot(new AppEngSlot(host.getInternalInventory(), 0), SlotSemantics.MACHINE_INPUT);
     }
 
     @Override

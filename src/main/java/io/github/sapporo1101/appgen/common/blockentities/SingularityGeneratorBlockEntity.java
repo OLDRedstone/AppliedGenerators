@@ -1,100 +1,133 @@
 package io.github.sapporo1101.appgen.common.blockentities;
 
 import appeng.api.config.Actionable;
+import appeng.api.inventories.ISegmentedInventory;
+import appeng.api.inventories.InternalInventory;
+import appeng.api.networking.GridFlags;
 import appeng.api.networking.IGrid;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.storage.IStorageService;
 import appeng.api.networking.ticking.IGridTickable;
 import appeng.api.networking.ticking.TickRateModulation;
 import appeng.api.networking.ticking.TickingRequest;
-import appeng.api.stacks.AEItemKey;
 import appeng.api.stacks.AEKey;
-import appeng.api.stacks.AEKeyType;
-import appeng.api.stacks.GenericStack;
 import appeng.api.upgrades.IUpgradeInventory;
 import appeng.api.upgrades.IUpgradeableObject;
 import appeng.api.upgrades.UpgradeInventories;
 import appeng.api.util.AECableType;
-import appeng.blockentity.grid.AENetworkedBlockEntity;
+import appeng.blockentity.grid.AENetworkedInvBlockEntity;
 import appeng.core.definitions.AEItems;
 import appeng.core.settings.TickRates;
-import appeng.helpers.externalstorage.GenericStackInv;
+import appeng.items.materials.MaterialItem;
 import appeng.me.helpers.MachineSource;
 import appeng.util.Platform;
+import appeng.util.inv.AppEngInternalInventory;
+import appeng.util.inv.FilteredInternalInventory;
+import appeng.util.inv.filter.AEItemDefinitionFilter;
+import appeng.util.inv.filter.IAEItemFilter;
 import com.glodblock.github.appflux.common.me.key.FluxKey;
 import com.glodblock.github.appflux.common.me.key.type.EnergyType;
 import com.glodblock.github.glodium.util.GlodUtil;
-import io.github.sapporo1101.appgen.api.IGenericInternalInvHost;
 import io.github.sapporo1101.appgen.common.AGSingletons;
-import io.github.sapporo1101.appgen.util.CustomIOFilter;
-import io.github.sapporo1101.appgen.util.CustomStackInv;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Set;
 
-public class SingularityGeneratorBlockEntity extends AENetworkedBlockEntity implements IGridTickable, IGenericInternalInvHost, IUpgradeableObject {
+public class SingularityGeneratorBlockEntity extends AENetworkedInvBlockEntity implements IGridTickable, IUpgradeableObject {
     public static final @NotNull AEKey FE_KEY = FluxKey.of(EnergyType.FE);
-    public static final AEKey SINGULARITY_KEY = AEItemKey.of(AEItems.SINGULARITY);
+    public static final MaterialItem SINGULARITY = AEItems.SINGULARITY.asItem();
 
-    private final GenericStackInv inv;
+    private final AppEngInternalInventory inv = new AppEngInternalInventory(this, 1, 64, new AEItemDefinitionFilter(AEItems.SINGULARITY));
+    private final InternalInventory invExt = new FilteredInternalInventory(this.inv, new SingularitySlotFilter());
     private final IUpgradeInventory upgrades;
-    private int generatableFE;
     private final MachineSource source;
+
+    private int generatableFE;
     public boolean isOn;
 
     public SingularityGeneratorBlockEntity(BlockPos pos, BlockState blockState) {
         super(GlodUtil.getTileType(SingularityGeneratorBlockEntity.class, SingularityGeneratorBlockEntity::new, AGSingletons.SINGULARITY_GENERATOR), pos, blockState);
-        this.inv = new CustomStackInv(Set.of(SINGULARITY_KEY), CustomIOFilter.INSERT_ONLY, this::singularitySetChanged, GenericStackInv.Mode.STORAGE, 1);
-        this.inv.setCapacity(AEKeyType.items(), 64);
+        this.getMainNode().setIdlePowerUsage(0F).setFlags(GridFlags.REQUIRE_CHANNEL).addService(IGridTickable.class, this);
         this.upgrades = UpgradeInventories.forMachine(AGSingletons.SINGULARITY_GENERATOR, 5, this::upgradeSetChanged);
         this.source = new MachineSource(this);
+
         this.generatableFE = 0;
-        this.getMainNode().setIdlePowerUsage(0F).setFlags().addService(IGridTickable.class, this);
     }
 
     public AECableType getCableConnectionType(Direction dir) {
-        return AECableType.COVERED;
+        return AECableType.SMART;
     }
 
     public void saveAdditional(CompoundTag data, HolderLookup.Provider registries) {
         super.saveAdditional(data, registries);
-        this.inv.writeToChildTag(data, "inv", registries);
         this.upgrades.writeToNBT(data, "upgrades", registries);
         data.putDouble("generatableFE", this.getGeneratableFE());
     }
 
     public void loadTag(CompoundTag data, HolderLookup.Provider registries) {
         super.loadTag(data, registries);
-        this.inv.readFromChildTag(data, "inv", registries);
         this.upgrades.readFromNBT(data, "upgrades", registries);
         this.setGeneratableFE(data.getInt("generatableFE"));
     }
 
-    public void singularitySetChanged() {
+    @Nullable
+    @Override
+    public InternalInventory getSubInventory(ResourceLocation id) {
+        if (id.equals(ISegmentedInventory.STORAGE)) {
+            return this.getInternalInventory();
+        } else if (id.equals(ISegmentedInventory.UPGRADES)) {
+            return this.upgrades;
+        }
+
+        return super.getSubInventory(id);
+    }
+
+    @Override
+    public InternalInventory getInternalInventory() {
+        return this.inv;
+    }
+
+    @Override
+    protected InternalInventory getExposedInventoryForSide(Direction facing) {
+        return this.invExt;
+    }
+
+    public void onChangeInventory(AppEngInternalInventory inv, int slot) {
         updateBlockEntity(this.shouldUpdateIsOn());
         if (this.getGeneratableFE() <= 0 && this.canEatFuel()) {
             System.out.println("Singularity Generator state changed, start charging");
             this.getMainNode().ifPresent((grid, node) -> grid.getTickManager().wakeDevice(node));
         }
-        this.setChanged();
     }
 
     private void upgradeSetChanged() {
         this.saveChanges();
     }
 
+    private void onConfigChanged() {
+        this.getMainNode().ifPresent((grid, node) -> {
+            if (this.getGeneratableFE() > 0 || this.canEatFuel()) {
+                grid.getTickManager().wakeDevice(node);
+            } else {
+                grid.getTickManager().sleepDevice(node);
+            }
+        });
+        this.saveChanges();
+    }
+
     public boolean canEatFuel() {
-        GenericStack is = this.inv.getStack(0);
-        if (is != null && is.what() != null && is.what().equals(SINGULARITY_KEY)) {
-            return is.amount() > 0;
+        ItemStack stack = this.inv.getStackInSlot(0);
+        if (!stack.isEmpty() && stack.is(SINGULARITY)) {
+            return stack.getCount() > 0;
         }
         return false;
     }
@@ -102,10 +135,8 @@ public class SingularityGeneratorBlockEntity extends AENetworkedBlockEntity impl
     public void addAdditionalDrops(Level level, BlockPos pos, List<ItemStack> drops) {
         super.addAdditionalDrops(level, pos, drops);
         for (int index = 0; index < this.inv.size(); index++) {
-            var stack = this.inv.getStack(index);
-            if (stack != null) {
-                stack.what().addDrops(stack.amount(), drops, level, pos);
-            }
+            ItemStack stack = this.inv.getStackInSlot(index);
+            if (!stack.isEmpty()) drops.add(stack);
         }
         for (ItemStack upgrade : this.upgrades) drops.add(upgrade);
     }
@@ -141,23 +172,24 @@ public class SingularityGeneratorBlockEntity extends AENetworkedBlockEntity impl
             }
         } else {
             int newFE = Math.min(ticksSinceLastCall * this.getGeneratePerTick(), this.getGeneratableFE());
-            return this.sendFEToNetwork(newFE) ? TickRateModulation.FASTER : TickRateModulation.SLOWER;
+            final boolean sent = this.sendFEToNetwork(newFE);
+            return sent ? TickRateModulation.FASTER : TickRateModulation.SLOWER;
         }
     }
 
     private void charge() {
         System.out.println("Singularity Generator charging: " + this.getGeneratableFE() + " FE remaining, " + this.isOn);
-        GenericStack stack = this.inv.getStack(0);
+        ItemStack stack = this.inv.getStackInSlot(0);
         System.out.println("Singularity Generator fuel item: " + stack);
-        if (stack != null && stack.what().equals(SINGULARITY_KEY)) {
+        if (!stack.isEmpty() && stack.is(SINGULARITY)) {
             System.out.println("Singularity Generator charging singularity fuel");
-            if (stack.amount() > 0) {
+            if (stack.getCount() > 0) {
                 this.setGeneratableFE(this.getGeneratableFE() + this.getFEPerSingularity());
-                if (stack.amount() <= 1) {
-                    this.inv.setStack(0, GenericStack.fromItemStack(ItemStack.EMPTY));
+                if (stack.getCount() <= 1) {
+                    this.inv.setItemDirect(0, ItemStack.EMPTY);
                 } else {
-                    GenericStack newStack = new GenericStack(stack.what(), stack.amount() - 1);
-                    this.inv.setStack(0, newStack);
+                    stack.shrink(1);
+                    this.inv.setItemDirect(0, stack);
                 }
 
                 this.saveChanges();
@@ -191,11 +223,6 @@ public class SingularityGeneratorBlockEntity extends AENetworkedBlockEntity impl
         this.generatableFE = generatableFE;
     }
 
-    @Override
-    public GenericStackInv getGenericInv() {
-        return this.inv;
-    }
-
     public int getGeneratePerTick() {
         int baseGeneratePerTick = 50;
         if (this.upgrades == null) {
@@ -225,6 +252,19 @@ public class SingularityGeneratorBlockEntity extends AENetworkedBlockEntity impl
             this.setGeneratableFE(Math.max(0, this.getGeneratableFE() - (int) inserted));
 
             return inserted > 0;
+        }
+    }
+
+    private static class SingularitySlotFilter implements IAEItemFilter {
+
+        @Override
+        public boolean allowExtract(InternalInventory inv, int slot, int amount) {
+            return !inv.getStackInSlot(slot).is(SINGULARITY);
+        }
+
+        @Override
+        public boolean allowInsert(InternalInventory inv, int slot, ItemStack stack) {
+            return stack.is(SINGULARITY);
         }
     }
 }
