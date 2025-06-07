@@ -1,6 +1,5 @@
 package io.github.sapporo1101.appgen.container;
 
-import appeng.api.config.Settings;
 import appeng.api.config.YesNo;
 import appeng.api.util.IConfigManager;
 import appeng.menu.SlotSemantics;
@@ -17,6 +16,7 @@ import io.github.sapporo1101.appgen.common.blockentities.SingularityGeneratorBlo
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
+import net.pedroksl.advanced_ae.api.AAESettings;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ public class ContainerSingularityGenerator extends UpgradeableMenu<SingularityGe
     public int generatableFE = 0;
 
     @GuiSync(8)
-    public YesNo autoExport = YesNo.NO;
+    public YesNo meExport = YesNo.YES;
 
     @GuiSync(9)
     public DirectionSet outputSides = new DirectionSet(new ArrayList<>());
@@ -56,7 +56,7 @@ public class ContainerSingularityGenerator extends UpgradeableMenu<SingularityGe
 
     @Override
     protected void loadSettingsFromHost(IConfigManager cm) {
-        this.autoExport = cm.getSetting(Settings.AUTO_EXPORT);
+        this.meExport = this.getHost().getConfigManager().getSetting(AAESettings.ME_EXPORT);
         this.outputSides.clear();
         this.outputSides.addAll(this.getHost().getOutputSides());
     }
@@ -79,8 +79,8 @@ public class ContainerSingularityGenerator extends UpgradeableMenu<SingularityGe
         return this.getHost().getFEPerSingularity();
     }
 
-    public YesNo getAutoExport() {
-        return autoExport;
+    public YesNo getMeExport() {
+        return this.meExport;
     }
 
     public List<Direction> getOutputSides() {

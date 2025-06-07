@@ -1,7 +1,6 @@
 package io.github.sapporo1101.appgen.common.blockentities;
 
 import appeng.api.config.Actionable;
-import appeng.api.config.Settings;
 import appeng.api.config.YesNo;
 import appeng.api.inventories.ISegmentedInventory;
 import appeng.api.inventories.InternalInventory;
@@ -49,6 +48,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
+import net.pedroksl.advanced_ae.api.AAESettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -74,7 +74,7 @@ public class SingularityGeneratorBlockEntity extends AENetworkedInvBlockEntity i
         super(GlodUtil.getTileType(SingularityGeneratorBlockEntity.class, SingularityGeneratorBlockEntity::new, AGSingletons.SINGULARITY_GENERATOR), pos, blockState);
         this.getMainNode().setIdlePowerUsage(0F).setFlags(GridFlags.REQUIRE_CHANNEL).addService(IGridTickable.class, this);
         this.upgrades = UpgradeInventories.forMachine(AGSingletons.SINGULARITY_GENERATOR, 5, this::upgradeSetChanged);
-        this.configManager = IConfigManager.builder(this::onConfigChanged).registerSetting(Settings.AUTO_EXPORT, YesNo.NO).build();
+        this.configManager = IConfigManager.builder(this::onConfigChanged).registerSetting(AAESettings.ME_EXPORT, YesNo.YES).build();
         this.source = new MachineSource(this);
 
         this.generatableFE = 0;
@@ -231,7 +231,7 @@ public class SingularityGeneratorBlockEntity extends AENetworkedInvBlockEntity i
             }
         } else {
             int newFE = Math.min(ticksSinceLastCall * this.getGeneratePerTick(), this.getGeneratableFE());
-            final boolean sent = this.configManager.getSetting(Settings.AUTO_EXPORT) == YesNo.YES ? this.sendFEToAdjacentBlock(newFE) : this.sendFEToNetwork(newFE);
+            final boolean sent = this.configManager.getSetting(AAESettings.ME_EXPORT) == YesNo.YES ? this.sendFEToNetwork(newFE) : this.sendFEToAdjacentBlock(newFE);
             return sent ? TickRateModulation.FASTER : TickRateModulation.SLOWER;
         }
     }
