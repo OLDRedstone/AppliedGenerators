@@ -1,6 +1,8 @@
 package io.github.sapporo1101.appgen.common.blockentities;
 
 import appeng.api.config.Actionable;
+import appeng.api.config.Settings;
+import appeng.api.config.YesNo;
 import appeng.api.inventories.ISegmentedInventory;
 import appeng.api.inventories.InternalInventory;
 import appeng.api.networking.GridFlags;
@@ -15,41 +17,55 @@ import appeng.api.upgrades.IUpgradeInventory;
 import appeng.api.upgrades.IUpgradeableObject;
 import appeng.api.upgrades.UpgradeInventories;
 import appeng.api.util.AECableType;
+import appeng.api.util.IConfigManager;
+import appeng.api.util.IConfigurableObject;
 import appeng.blockentity.grid.AENetworkedInvBlockEntity;
 import appeng.core.definitions.AEItems;
 import appeng.core.settings.TickRates;
 import appeng.items.materials.MaterialItem;
 import appeng.me.helpers.MachineSource;
 import appeng.util.Platform;
+import appeng.util.SettingsFrom;
 import appeng.util.inv.AppEngInternalInventory;
 import appeng.util.inv.FilteredInternalInventory;
 import appeng.util.inv.filter.AEItemDefinitionFilter;
 import appeng.util.inv.filter.IAEItemFilter;
 import com.glodblock.github.appflux.common.me.key.FluxKey;
 import com.glodblock.github.appflux.common.me.key.type.EnergyType;
+import com.glodblock.github.extendedae.common.EAESingletons;
 import com.glodblock.github.glodium.util.GlodUtil;
 import io.github.sapporo1101.appgen.common.AGSingletons;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
-public class SingularityGeneratorBlockEntity extends AENetworkedInvBlockEntity implements IGridTickable, IUpgradeableObject {
+public class SingularityGeneratorBlockEntity extends AENetworkedInvBlockEntity implements IGridTickable, IUpgradeableObject, IConfigurableObject {
     public static final @NotNull AEKey FE_KEY = FluxKey.of(EnergyType.FE);
     public static final MaterialItem SINGULARITY = AEItems.SINGULARITY.asItem();
 
     private final AppEngInternalInventory inv = new AppEngInternalInventory(this, 1, 64, new AEItemDefinitionFilter(AEItems.SINGULARITY));
     private final InternalInventory invExt = new FilteredInternalInventory(this.inv, new SingularitySlotFilter());
     private final IUpgradeInventory upgrades;
+    private final IConfigManager configManager;
     private final MachineSource source;
+    private final Set<Direction> outputSides = EnumSet.noneOf(Direction.class);
 
     private int generatableFE;
     public boolean isOn;
@@ -58,6 +74,7 @@ public class SingularityGeneratorBlockEntity extends AENetworkedInvBlockEntity i
         super(GlodUtil.getTileType(SingularityGeneratorBlockEntity.class, SingularityGeneratorBlockEntity::new, AGSingletons.SINGULARITY_GENERATOR), pos, blockState);
         this.getMainNode().setIdlePowerUsage(0F).setFlags(GridFlags.REQUIRE_CHANNEL).addService(IGridTickable.class, this);
         this.upgrades = UpgradeInventories.forMachine(AGSingletons.SINGULARITY_GENERATOR, 5, this::upgradeSetChanged);
+        this.configManager = IConfigManager.builder(this::onConfigChanged).registerSetting(Settings.AUTO_EXPORT, YesNo.NO).build();
         this.source = new MachineSource(this);
 
         this.generatableFE = 0;
@@ -67,16 +84,58 @@ public class SingularityGeneratorBlockEntity extends AENetworkedInvBlockEntity i
         return AECableType.SMART;
     }
 
+    @Override
+    public void importSettings(SettingsFrom mode, DataComponentMap input, @Nullable Player player) {
+        super.importSettings(mode, input, player);
+        var nbt = input.get(EAESingletons.EXTRA_SETTING);
+        if (nbt != null) {
+            this.outputSides.clear();
+            for (var side : nbt.getList("output_side", CompoundTag.TAG_STRING)) {
+                this.outputSides.add(Direction.byName(side.getAsString()));
+            }
+        }
+    }
+
+    @Override
+    public void exportSettings(SettingsFrom mode, DataComponentMap.Builder output, @Nullable Player player) {
+        super.exportSettings(mode, output, player);
+        if (mode == SettingsFrom.MEMORY_CARD) {
+            var nbt = new CompoundTag();
+            var sides = new ListTag();
+            for (var side : this.outputSides) {
+                sides.add(StringTag.valueOf(side.getName()));
+            }
+            nbt.put("output_side", sides);
+            output.set(EAESingletons.EXTRA_SETTING, nbt);
+        }
+    }
+
     public void saveAdditional(CompoundTag data, HolderLookup.Provider registries) {
         super.saveAdditional(data, registries);
         this.upgrades.writeToNBT(data, "upgrades", registries);
+        this.configManager.writeToNBT(data, registries);
         data.putDouble("generatableFE", this.getGeneratableFE());
+        var sides = new ListTag();
+        for (var side : this.outputSides) {
+            sides.add(StringTag.valueOf(side.getName()));
+        }
+        data.put("output_side", sides);
     }
 
     public void loadTag(CompoundTag data, HolderLookup.Provider registries) {
         super.loadTag(data, registries);
         this.upgrades.readFromNBT(data, "upgrades", registries);
         this.setGeneratableFE(data.getInt("generatableFE"));
+        this.configManager.readFromNBT(data, registries);
+        this.outputSides.clear();
+        if (data.contains("output_side")) {
+            var list = data.getList("output_side", CompoundTag.TAG_STRING);
+            for (var name : list) {
+                this.outputSides.add(Direction.byName(name.getAsString()));
+            }
+        } else {
+            this.outputSides.addAll(List.of(Direction.values()));
+        }
     }
 
     @Nullable
@@ -172,7 +231,7 @@ public class SingularityGeneratorBlockEntity extends AENetworkedInvBlockEntity i
             }
         } else {
             int newFE = Math.min(ticksSinceLastCall * this.getGeneratePerTick(), this.getGeneratableFE());
-            final boolean sent = this.sendFEToNetwork(newFE);
+            final boolean sent = this.configManager.getSetting(Settings.AUTO_EXPORT) == YesNo.YES ? this.sendFEToAdjacentBlock(newFE) : this.sendFEToNetwork(newFE);
             return sent ? TickRateModulation.FASTER : TickRateModulation.SLOWER;
         }
     }
@@ -253,6 +312,38 @@ public class SingularityGeneratorBlockEntity extends AENetworkedInvBlockEntity i
 
             return inserted > 0;
         }
+    }
+
+    private boolean sendFEToAdjacentBlock(int newFE) {
+        if (this.level == null) return false;
+
+        boolean sent = false;
+        for (Direction dir : this.outputSides) {
+            if (newFE <= 0) break;
+            BlockPos targetPos = this.getBlockPos().relative(dir);
+            IEnergyStorage storage = this.level.getCapability(Capabilities.EnergyStorage.BLOCK, targetPos, dir.getOpposite());
+            if (storage != null && storage.canReceive()) {
+                System.out.println("Singularity Generator found energy storage at " + targetPos + " for dir " + dir);
+                int canInsert = storage.receiveEnergy(newFE, true);
+                if (canInsert <= 0) continue;
+                int inserted = storage.receiveEnergy(newFE, false);
+                if (inserted > 0) sent = true;
+                this.setGeneratableFE(Math.max(0, this.getGeneratableFE() - inserted));
+                newFE -= inserted;
+            } else {
+                System.out.println("Singularity Generator no energy storage found at " + targetPos + " for dir " + dir);
+            }
+        }
+        return sent;
+    }
+
+    public Set<Direction> getOutputSides() {
+        return this.outputSides;
+    }
+
+    @Override
+    public IConfigManager getConfigManager() {
+        return this.configManager;
     }
 
     private static class SingularitySlotFilter implements IAEItemFilter {
