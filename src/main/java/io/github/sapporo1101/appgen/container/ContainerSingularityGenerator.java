@@ -25,7 +25,7 @@ import java.util.List;
 public class ContainerSingularityGenerator extends UpgradeableMenu<SingularityGeneratorBlockEntity> implements IProgressProvider, IActionHolder {
 
     @GuiSync(3)
-    public int generatableFE = 0;
+    public long generatableFE = 0;
 
     @GuiSync(8)
     public YesNo meExport = YesNo.YES;
@@ -71,12 +71,13 @@ public class ContainerSingularityGenerator extends UpgradeableMenu<SingularityGe
 
     @Override
     public int getCurrentProgress() {
-        return this.generatableFE;
+        System.out.println("progress: " + this.generatableFE + " / " + this.getHost().getFEPerSingularity() + ": " + (int) Math.ceil((double) this.generatableFE / this.getHost().getFEPerSingularity() * this.getMaxProgress()));
+        return (int) Math.ceil((double) this.generatableFE / this.getHost().getFEPerSingularity() * this.getMaxProgress());
     }
 
     @Override
     public int getMaxProgress() {
-        return this.getHost().getFEPerSingularity();
+        return 10;
     }
 
     public YesNo getMeExport() {

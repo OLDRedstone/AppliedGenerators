@@ -37,7 +37,7 @@ public class GuiSingularityGenerator extends UpgradeableScreen<ContainerSingular
         if (this.getMenu().getHost() != null) {
             switchToScreen(new OutputSideConfig<>(
                     this,
-                    new ItemStack(AGSingletons.SINGULARITY_GENERATOR),
+                    new ItemStack(AGSingletons.SINGULARITY_GENERATOR_1K),
                     this.getMenu().getHost(),
                     this.getMenu().getOutputSides(),
                     (side, value) -> EAENetworkHandler.INSTANCE.sendToServer(new CEAEGenericPacket("set_side", side.getName(), value)))

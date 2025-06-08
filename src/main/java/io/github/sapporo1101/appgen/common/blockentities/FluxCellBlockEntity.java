@@ -170,7 +170,7 @@ public class FluxCellBlockEntity extends AEBaseBlockEntity implements IGenericIn
                 int canInsert = storage.receiveEnergy(Integer.MAX_VALUE, true);
                 if (canInsert <= 0) continue;
                 int extracted = Math.toIntExact(this.feInv.extract(FluxKey.of(EnergyType.FE), canInsert, Actionable.MODULATE, null));
-                int inserted = storage.receiveEnergy(extracted, false);
+                storage.receiveEnergy(extracted, false);
             } else {
                 System.out.println("Flux Cell no energy storage found at " + targetPos + " for dir " + dir);
             }

@@ -20,10 +20,10 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import org.jetbrains.annotations.NotNull;
 
-public class SingularityGenerator extends BlockBaseGui<SingularityGeneratorBlockEntity> {
+public class SingularityGeneratorBlock<T extends SingularityGeneratorBlockEntity> extends BlockBaseGui<T> {
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
 
-    public SingularityGenerator() {
+    public SingularityGeneratorBlock() {
         super(metalProps().strength(4.2F));
         this.registerDefaultState(this.defaultBlockState().setValue(ACTIVE, false));
     }
@@ -75,5 +75,8 @@ public class SingularityGenerator extends BlockBaseGui<SingularityGeneratorBlock
             }
 
         }
+    }
+
+    public static class SG1k extends SingularityGeneratorBlock<SingularityGeneratorBlockEntity.SG1k> {
     }
 }

@@ -75,7 +75,7 @@ public class AGRegistryHandler extends RegistryHandler {
 
     private void onRegisterContainer() {
         Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("flux_cell"), ContainerFluxCell.TYPE);
-        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("singularity_generator"), ContainerSingularityGenerator.TYPE);
+        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("singularity_generator_1k"), ContainerSingularityGenerator.TYPE);
     }
 
     private <T extends AEBaseBlockEntity> void bindTileEntity(Class<T> clazz, AEBaseEntityBlock<T> block, BlockEntityType.BlockEntitySupplier<? extends T> supplier) {
@@ -124,7 +124,7 @@ public class AGRegistryHandler extends RegistryHandler {
     }
 
     public void registerAEUpgrade() {
-        Upgrades.add(AEItems.SPEED_CARD, AGSingletons.SINGULARITY_GENERATOR, 3);
-        Upgrades.add(AEItems.ENERGY_CARD, AGSingletons.SINGULARITY_GENERATOR, 3);
+        Upgrades.add(AEItems.SPEED_CARD, AGSingletons.SINGULARITY_GENERATOR_1K, 3);
+        Upgrades.add(AEItems.ENERGY_CARD, AGSingletons.SINGULARITY_GENERATOR_1K, 3);
     }
 }

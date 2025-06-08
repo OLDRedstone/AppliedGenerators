@@ -45,6 +45,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
@@ -56,7 +57,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
-public class SingularityGeneratorBlockEntity extends AENetworkedInvBlockEntity implements IGridTickable, IUpgradeableObject, IConfigurableObject {
+public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBlockEntity implements IGridTickable, IUpgradeableObject, IConfigurableObject {
     public static final @NotNull AEKey FE_KEY = FluxKey.of(EnergyType.FE);
     public static final MaterialItem SINGULARITY = AEItems.SINGULARITY.asItem();
 
@@ -67,17 +68,21 @@ public class SingularityGeneratorBlockEntity extends AENetworkedInvBlockEntity i
     private final MachineSource source = new MachineSource(this);
     private final Set<Direction> outputSides = EnumSet.noneOf(Direction.class);
 
-    private int generatableFE;
+    private long generatableFE;
     public boolean isOn;
 
-    public SingularityGeneratorBlockEntity(BlockPos pos, BlockState blockState) {
-        super(GlodUtil.getTileType(SingularityGeneratorBlockEntity.class, SingularityGeneratorBlockEntity::new, AGSingletons.SINGULARITY_GENERATOR), pos, blockState);
+    public SingularityGeneratorBlockEntity(BlockEntityType<?> blockEntityType, BlockPos pos, BlockState blockState) {
+        super(blockEntityType, pos, blockState);
         this.getMainNode().setIdlePowerUsage(0F).setFlags(GridFlags.REQUIRE_CHANNEL).addService(IGridTickable.class, this);
-        this.upgrades = UpgradeInventories.forMachine(AGSingletons.SINGULARITY_GENERATOR, 5, this::upgradeSetChanged);
+        this.upgrades = UpgradeInventories.forMachine(AGSingletons.SINGULARITY_GENERATOR_1K, 5, this::upgradeSetChanged);
         this.configManager = IConfigManager.builder(this::onConfigChanged).registerSetting(AAESettings.ME_EXPORT, YesNo.YES).build();
 
         this.generatableFE = 0;
     }
+
+    abstract int getBaseGeneratePerTick();
+
+    abstract long getBaseFEPerSingularity();
 
     public AECableType getCableConnectionType(Direction dir) {
         return AECableType.SMART;
@@ -113,7 +118,7 @@ public class SingularityGeneratorBlockEntity extends AENetworkedInvBlockEntity i
         super.saveAdditional(data, registries);
         this.upgrades.writeToNBT(data, "upgrades", registries);
         this.configManager.writeToNBT(data, registries);
-        data.putDouble("generatableFE", this.getGeneratableFE());
+        data.putLong("generatableFE", this.getGeneratableFE());
         var sides = new ListTag();
         for (var side : this.outputSides) {
             sides.add(StringTag.valueOf(side.getName()));
@@ -124,7 +129,7 @@ public class SingularityGeneratorBlockEntity extends AENetworkedInvBlockEntity i
     public void loadTag(CompoundTag data, HolderLookup.Provider registries) {
         super.loadTag(data, registries);
         this.upgrades.readFromNBT(data, "upgrades", registries);
-        this.setGeneratableFE(data.getInt("generatableFE"));
+        this.setGeneratableFE(data.getLong("generatableFE"));
         this.configManager.readFromNBT(data, registries);
         this.outputSides.clear();
         if (data.contains("output_side")) {
@@ -229,7 +234,7 @@ public class SingularityGeneratorBlockEntity extends AENetworkedInvBlockEntity i
                 return TickRateModulation.SLEEP;
             }
         } else {
-            int newFE = Math.min(ticksSinceLastCall * this.getGeneratePerTick(), this.getGeneratableFE());
+            int newFE = Math.toIntExact(Math.min((long) ticksSinceLastCall * this.getGeneratePerTick(), this.getGeneratableFE()));
             final boolean sent = this.configManager.getSetting(AAESettings.ME_EXPORT) == YesNo.YES ? this.sendFEToNetwork(newFE) : this.sendFEToAdjacentBlock(newFE);
             return sent ? TickRateModulation.FASTER : TickRateModulation.SLOWER;
         }
@@ -273,30 +278,28 @@ public class SingularityGeneratorBlockEntity extends AENetworkedInvBlockEntity i
         }
     }
 
-    public int getGeneratableFE() {
+    public long getGeneratableFE() {
         return this.generatableFE;
     }
 
-    private void setGeneratableFE(int generatableFE) {
+    private void setGeneratableFE(long generatableFE) {
         this.generatableFE = generatableFE;
     }
 
     public int getGeneratePerTick() {
-        int baseGeneratePerTick = 50;
         if (this.upgrades == null) {
-            return baseGeneratePerTick;
+            return this.getBaseGeneratePerTick();
         }
         double upgradeMultiplier = 1 + this.upgrades.getInstalledUpgrades(AEItems.SPEED_CARD) * 0.5;
-        return (int) (baseGeneratePerTick * upgradeMultiplier);
+        return (int) (this.getBaseGeneratePerTick() * upgradeMultiplier);
     }
 
-    public int getFEPerSingularity() {
-        final int baseFEPerSingularity = 100000;
+    public long getFEPerSingularity() {
         if (this.upgrades == null) {
-            return baseFEPerSingularity;
+            return this.getBaseFEPerSingularity();
         }
         double upgradeMultiplier = 1 + this.upgrades.getInstalledUpgrades(AEItems.ENERGY_CARD) * 0.5;
-        return (int) (baseFEPerSingularity * upgradeMultiplier);
+        return (long) (getBaseFEPerSingularity() * upgradeMultiplier);
     }
 
     public boolean sendFEToNetwork(int amount) {
@@ -355,6 +358,23 @@ public class SingularityGeneratorBlockEntity extends AENetworkedInvBlockEntity i
         @Override
         public boolean allowInsert(InternalInventory inv, int slot, ItemStack stack) {
             return stack.is(SINGULARITY);
+        }
+    }
+
+    public static class SG1k extends SingularityGeneratorBlockEntity {
+
+        public SG1k(BlockPos pos, BlockState blockState) {
+            super(GlodUtil.getTileType(SG1k.class, SG1k::new, AGSingletons.SINGULARITY_GENERATOR_1K), pos, blockState);
+        }
+
+        @Override
+        int getBaseGeneratePerTick() {
+            return 5000;
+        }
+
+        @Override
+        long getBaseFEPerSingularity() {
+            return 10000000;
         }
     }
 }
