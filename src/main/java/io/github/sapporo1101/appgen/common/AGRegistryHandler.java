@@ -35,8 +35,6 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.Collection;
-
 public class AGRegistryHandler extends RegistryHandler {
 
     public static final AGRegistryHandler INSTANCE = new AGRegistryHandler();
@@ -56,10 +54,6 @@ public class AGRegistryHandler extends RegistryHandler {
         bindTileEntity(clazz, block, supplier);
         block(name, block, b -> new AEBaseBlockItem(b, new Item.Properties()));
         tile(name, block.getBlockEntityType());
-    }
-
-    public Collection<Block> getBlocks() {
-        return this.blocks.stream().map(Pair::getRight).toList();
     }
 
     @Override
