@@ -87,9 +87,8 @@ public class ContainerSingularityGenerator extends UpgradeableMenu<SingularityGe
         return outputSides.sides();
     }
 
-    @NotNull
     @Override
-    public ActionMap getActionMap() {
+    public @NotNull ActionMap getActionMap() {
         return this.actions;
     }
 }

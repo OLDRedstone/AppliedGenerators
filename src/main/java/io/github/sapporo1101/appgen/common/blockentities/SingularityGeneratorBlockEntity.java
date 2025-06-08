@@ -64,7 +64,7 @@ public class SingularityGeneratorBlockEntity extends AENetworkedInvBlockEntity i
     private final InternalInventory invExt = new FilteredInternalInventory(this.inv, new SingularitySlotFilter());
     private final IUpgradeInventory upgrades;
     private final IConfigManager configManager;
-    private final MachineSource source;
+    private final MachineSource source = new MachineSource(this);
     private final Set<Direction> outputSides = EnumSet.noneOf(Direction.class);
 
     private int generatableFE;
@@ -75,7 +75,6 @@ public class SingularityGeneratorBlockEntity extends AENetworkedInvBlockEntity i
         this.getMainNode().setIdlePowerUsage(0F).setFlags(GridFlags.REQUIRE_CHANNEL).addService(IGridTickable.class, this);
         this.upgrades = UpgradeInventories.forMachine(AGSingletons.SINGULARITY_GENERATOR, 5, this::upgradeSetChanged);
         this.configManager = IConfigManager.builder(this::onConfigChanged).registerSetting(AAESettings.ME_EXPORT, YesNo.YES).build();
-        this.source = new MachineSource(this);
 
         this.generatableFE = 0;
     }
@@ -314,22 +313,22 @@ public class SingularityGeneratorBlockEntity extends AENetworkedInvBlockEntity i
         }
     }
 
-    private boolean sendFEToAdjacentBlock(int newFE) {
+    private boolean sendFEToAdjacentBlock(int amount) {
         if (this.level == null) return false;
 
         boolean sent = false;
         for (Direction dir : this.outputSides) {
-            if (newFE <= 0) break;
+            if (amount <= 0) break;
             BlockPos targetPos = this.getBlockPos().relative(dir);
             IEnergyStorage storage = this.level.getCapability(Capabilities.EnergyStorage.BLOCK, targetPos, dir.getOpposite());
             if (storage != null && storage.canReceive()) {
                 System.out.println("Singularity Generator found energy storage at " + targetPos + " for dir " + dir);
-                int canInsert = storage.receiveEnergy(newFE, true);
+                int canInsert = storage.receiveEnergy(amount, true);
                 if (canInsert <= 0) continue;
-                int inserted = storage.receiveEnergy(newFE, false);
+                int inserted = storage.receiveEnergy(amount, false);
                 if (inserted > 0) sent = true;
                 this.setGeneratableFE(Math.max(0, this.getGeneratableFE() - inserted));
-                newFE -= inserted;
+                amount -= inserted;
             } else {
                 System.out.println("Singularity Generator no energy storage found at " + targetPos + " for dir " + dir);
             }
