@@ -27,6 +27,9 @@ public class ContainerSingularityGenerator extends UpgradeableMenu<SingularityGe
     @GuiSync(3)
     public long generatableFE = 0;
 
+    @GuiSync(4)
+    public double lastGeneratePerTick = 0;
+
     @GuiSync(8)
     public YesNo meExport = YesNo.YES;
 
@@ -65,6 +68,7 @@ public class ContainerSingularityGenerator extends UpgradeableMenu<SingularityGe
     public void broadcastChanges() {
         if (isServerSide()) {
             this.generatableFE = this.getHost().getGeneratableFE();
+            this.lastGeneratePerTick = this.getHost().getLastGeneratePerTick();
         }
         super.broadcastChanges();
     }

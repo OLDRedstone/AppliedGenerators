@@ -69,6 +69,7 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
     private final Set<Direction> outputSides = EnumSet.noneOf(Direction.class);
 
     private long generatableFE;
+    private double lastGeneratePerTick = 0;
     public boolean isOn;
 
     public SingularityGeneratorBlockEntity(BlockEntityType<?> blockEntityType, BlockPos pos, BlockState blockState) {
@@ -165,7 +166,7 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
     }
 
     public void onChangeInventory(AppEngInternalInventory inv, int slot) {
-        updateBlockEntity(this.shouldUpdateIsOn());
+        this.updateBlockEntity(this.shouldUpdateIsOn());
         if (this.getGeneratableFE() <= 0 && this.canEatFuel()) {
             System.out.println("Singularity Generator state changed, start charging");
             this.getMainNode().ifPresent((grid, node) -> grid.getTickManager().wakeDevice(node));
@@ -235,8 +236,9 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
             }
         } else {
             int newFE = Math.toIntExact(Math.min((long) ticksSinceLastCall * this.getGeneratePerTick(), this.getGeneratableFE()));
-            final boolean sent = this.configManager.getSetting(AAESettings.ME_EXPORT) == YesNo.YES ? this.sendFEToNetwork(newFE) : this.sendFEToAdjacentBlock(newFE);
-            return sent ? TickRateModulation.FASTER : TickRateModulation.SLOWER;
+            final int sent = this.configManager.getSetting(AAESettings.ME_EXPORT) == YesNo.YES ? this.sendFEToNetwork(newFE) : this.sendFEToAdjacentBlock(newFE);
+            this.lastGeneratePerTick = (double) sent / ticksSinceLastCall;
+            return sent > 0 ? TickRateModulation.FASTER : TickRateModulation.SLOWER;
         }
     }
 
@@ -302,41 +304,42 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
         return (long) (getBaseFEPerSingularity() * upgradeMultiplier);
     }
 
-    public boolean sendFEToNetwork(int amount) {
-        if (this.getGridNode() == null) {
-            return false;
-        } else {
-            IGrid grid = this.getGridNode().getGrid();
-            IStorageService storage = grid.getStorageService();
+    public int sendFEToNetwork(int amount) {
+        if (this.getGridNode() == null) return 0;
 
-            long inserted = storage.getInventory().insert(FE_KEY, amount, Actionable.MODULATE, this.source);
-            this.setGeneratableFE(Math.max(0, this.getGeneratableFE() - (int) inserted));
+        IGrid grid = this.getGridNode().getGrid();
+        IStorageService storage = grid.getStorageService();
 
-            return inserted > 0;
-        }
+        int inserted = Math.toIntExact(storage.getInventory().insert(FE_KEY, amount, Actionable.MODULATE, this.source));
+        this.setGeneratableFE(Math.max(0, this.getGeneratableFE() - inserted));
+
+        return inserted;
     }
 
-    private boolean sendFEToAdjacentBlock(int amount) {
-        if (this.level == null) return false;
+    private int sendFEToAdjacentBlock(int amount) {
+        if (this.level == null) return 0;
 
-        boolean sent = false;
+        int remaining = amount;
         for (Direction dir : this.outputSides) {
-            if (amount <= 0) break;
+            if (remaining <= 0) break;
             BlockPos targetPos = this.getBlockPos().relative(dir);
             IEnergyStorage storage = this.level.getCapability(Capabilities.EnergyStorage.BLOCK, targetPos, dir.getOpposite());
             if (storage != null && storage.canReceive()) {
                 System.out.println("Singularity Generator found energy storage at " + targetPos + " for dir " + dir);
-                int canInsert = storage.receiveEnergy(amount, true);
+                int canInsert = storage.receiveEnergy(remaining, true);
                 if (canInsert <= 0) continue;
-                int inserted = storage.receiveEnergy(amount, false);
-                if (inserted > 0) sent = true;
+                int inserted = storage.receiveEnergy(remaining, false);
                 this.setGeneratableFE(Math.max(0, this.getGeneratableFE() - inserted));
-                amount -= inserted;
+                remaining -= inserted;
             } else {
                 System.out.println("Singularity Generator no energy storage found at " + targetPos + " for dir " + dir);
             }
         }
-        return sent;
+        return amount - remaining;
+    }
+
+    public double getLastGeneratePerTick() {
+        return lastGeneratePerTick;
     }
 
     public Set<Direction> getOutputSides() {

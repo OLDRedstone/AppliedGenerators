@@ -17,10 +17,14 @@ import net.minecraft.world.item.ItemStack;
 import net.pedroksl.advanced_ae.api.AAESettings;
 import net.pedroksl.advanced_ae.client.gui.widgets.AAEServerSettingToggleButton;
 
+import java.text.DecimalFormat;
+
 public class GuiSingularityGenerator extends UpgradeableScreen<ContainerSingularityGenerator> {
     private final ProgressBar pb;
     private final AAEServerSettingToggleButton<YesNo> meExportBtn;
     private final ActionEPPButton outputSideBtn;
+
+    private final DecimalFormat formatter = new DecimalFormat("#,###");
 
     public GuiSingularityGenerator(ContainerSingularityGenerator menu, Inventory playerInventory, Component title, ScreenStyle style) {
         super(menu, playerInventory, title, style);
@@ -48,7 +52,12 @@ public class GuiSingularityGenerator extends UpgradeableScreen<ContainerSingular
     @Override
     protected void updateBeforeRender() {
         super.updateBeforeRender();
-        this.pb.setFullMsg(Component.translatable("gui.appgen.singularity_generator.progress", this.menu.generatableFE, this.menu.getHost().getFEPerSingularity()));
+        this.pb.setFullMsg(Component.translatable(
+                "gui.appgen.singularity_generator.progress",
+                this.formatter.format(this.menu.generatableFE),
+                this.formatter.format(this.menu.getHost().getFEPerSingularity()),
+                this.formatter.format(Math.round(this.menu.lastGeneratePerTick))
+        ));
         this.meExportBtn.set(this.getMenu().getMeExport());
         this.outputSideBtn.setVisibility(this.meExportBtn.getCurrentValue() == YesNo.NO);
     }

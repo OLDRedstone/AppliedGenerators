@@ -4,5 +4,5 @@
     "block.appgen.singularity_generator_1k": "1k Singularity Generator",
     "gui.appgen.flux_cell": "Flux Cell",
     "gui.appgen.singularity_generator": "Singularity Generator",
-    "gui.appgen.singularity_generator.progress": "%s FE / %s FE remaining"
+    "gui.appgen.singularity_generator.progress": "Remaining: %s FE / %s FE\nGenerating: %s FE/t"
 }
