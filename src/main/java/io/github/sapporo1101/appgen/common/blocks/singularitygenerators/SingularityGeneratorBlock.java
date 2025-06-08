@@ -2,23 +2,16 @@ package io.github.sapporo1101.appgen.common.blocks.singularitygenerators;
 
 import appeng.api.orientation.IOrientationStrategy;
 import appeng.api.orientation.OrientationStrategies;
-import appeng.core.AEConfig;
 import appeng.menu.MenuOpener;
 import appeng.menu.locator.MenuLocators;
 import io.github.sapporo1101.appgen.common.blockentities.SingularityGeneratorBlockEntity;
 import io.github.sapporo1101.appgen.common.blocks.BlockBaseGui;
 import io.github.sapporo1101.appgen.container.ContainerSingularityGenerator;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import org.jetbrains.annotations.NotNull;
 
 public class SingularityGeneratorBlock<T extends SingularityGeneratorBlockEntity> extends BlockBaseGui<T> {
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
@@ -48,5 +41,32 @@ public class SingularityGeneratorBlock<T extends SingularityGeneratorBlockEntity
     }
 
     public static class SG1k extends SingularityGeneratorBlock<SingularityGeneratorBlockEntity.SG1k> {
+    }
+
+    public static class SG4k extends SingularityGeneratorBlock<SingularityGeneratorBlockEntity.SG4k> {
+    }
+
+    public static class SG16k extends SingularityGeneratorBlock<SingularityGeneratorBlockEntity.SG16k> {
+    }
+
+    public static class SG64k extends SingularityGeneratorBlock<SingularityGeneratorBlockEntity.SG64k> {
+    }
+
+    public static class SG256k extends SingularityGeneratorBlock<SingularityGeneratorBlockEntity.SG256k> {
+    }
+
+    public static class SG1m extends SingularityGeneratorBlock<SingularityGeneratorBlockEntity.SG1m> {
+    }
+
+    public static class SG4m extends SingularityGeneratorBlock<SingularityGeneratorBlockEntity.SG4m> {
+    }
+
+    public static class SG16m extends SingularityGeneratorBlock<SingularityGeneratorBlockEntity.SG16m> {
+    }
+
+    public static class SG64m extends SingularityGeneratorBlock<SingularityGeneratorBlockEntity.SG64m> {
+    }
+
+    public static class SG256m extends SingularityGeneratorBlock<SingularityGeneratorBlockEntity.SG256m> {
     }
 }

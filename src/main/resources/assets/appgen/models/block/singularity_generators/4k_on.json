@@ -1,0 +1,7 @@
+{
+    "parent": "appgen:block/singularity_generators/template",
+    "textures": {
+        "overlay": "appgen:block/generators/4k_front_overlay",
+        "overlay_on": "appgen:block/generators/4k_front_overlay_on"
+    }
+}

@@ -1,18 +1,18 @@
 {
     "credit": "Made with Blockbench",
     "parent": "block/block",
+    "render_type": "cutout",
     "textures": {
-        "top": "appgen:block/utils/top_opened",
+        "top": "appgen:block/generators/top_singularity",
         "bottom": "ae2:block/generics/bottom",
-        "fe": "appgen:block/utils/fe",
-        "front": "appgen:block/singularity_generators/front",
+        "front": "appgen:block/generators/front",
         "side": "ae2:block/generics/side",
         "back": "ae2:block/generics/back",
+        "quantum_light": "ae2:block/quantum_ring_light",
         "overlay": "#overlay",
         "overlay_on": "#overlay_on",
-        "particle": "ae2:block/generics/front"
+        "particle": "appgen:block/generators/front"
     },
-    "render_type": "cutout",
     "elements": [
         {
             "name": "overlay_on",
@@ -35,6 +35,11 @@
                     "uv": [0, 0, 16, 16],
                     "texture": "#overlay",
                     "cullface": "north"
+                },
+                "up": {
+                    "uv": [0, 0, 16, 16],
+                    "texture": "#quantum_light",
+                    "cullface": "up"
                 }
             }
         },
@@ -72,94 +77,6 @@
                     "uv": [0, 0, 16, 16],
                     "texture": "#bottom",
                     "cullface": "down"
-                }
-            }
-        },
-        {
-            "name": "fe",
-            "from": [3, 14, 3],
-            "to": [13, 15, 13],
-            "rotation": {
-                "angle": 0,
-                "axis": "y",
-                "origin": [3, -1, 3]
-            },
-            "faces": {
-                "up": {
-                    "uv": [3, 3, 13, 13],
-                    "texture": "#fe",
-                    "cullface": "up"
-                }
-            }
-        },
-        {
-            "name": "west",
-            "from": [2, 15, 3],
-            "to": [3, 16, 13],
-            "rotation": {
-                "angle": 0,
-                "axis": "y",
-                "origin": [1, 14, 3]
-            },
-            "faces": {
-                "east": {
-                    "uv": [2, 3, 3, 13],
-                    "rotation": 90,
-                    "texture": "#top",
-                    "cullface": "up"
-                }
-            }
-        },
-        {
-            "name": "south",
-            "from": [3, 15, 13],
-            "to": [13, 16, 14],
-            "rotation": {
-                "angle": 0,
-                "axis": "y",
-                "origin": [3, 14, 15]
-            },
-            "faces": {
-                "north": {
-                    "uv": [3, 13, 13, 14],
-                    "rotation": 180,
-                    "texture": "#top",
-                    "cullface": "up"
-                }
-            }
-        },
-        {
-            "name": "north",
-            "from": [3, 15, 2],
-            "to": [13, 16, 3],
-            "rotation": {
-                "angle": 0,
-                "axis": "y",
-                "origin": [13, 14, 1]
-            },
-            "faces": {
-                "south": {
-                    "uv": [3, 2, 13, 3],
-                    "texture": "#top",
-                    "cullface": "up"
-                }
-            }
-        },
-        {
-            "name": "east",
-            "from": [13, 15, 3],
-            "to": [14, 16, 13],
-            "rotation": {
-                "angle": 0,
-                "axis": "y",
-                "origin": [12, 14, 3]
-            },
-            "faces": {
-                "west": {
-                    "uv": [14, 13, 13, 3],
-                    "rotation": 90,
-                    "texture": "#top",
-                    "cullface": "up"
                 }
             }
         }

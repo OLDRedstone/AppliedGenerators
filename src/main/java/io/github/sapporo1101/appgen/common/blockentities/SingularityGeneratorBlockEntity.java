@@ -380,4 +380,157 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
             return 10000000;
         }
     }
+
+    public static class SG4k extends SingularityGeneratorBlockEntity {
+
+        public SG4k(BlockPos pos, BlockState blockState) {
+            super(GlodUtil.getTileType(SG4k.class, SG4k::new, AGSingletons.SINGULARITY_GENERATOR_4K), pos, blockState);
+        }
+
+        @Override
+        int getBaseGeneratePerTick() {
+            return 10000;
+        }
+
+        @Override
+        long getBaseFEPerSingularity() {
+            return 20000000;
+        }
+    }
+
+    public static class SG16k extends SingularityGeneratorBlockEntity {
+
+        public SG16k(BlockPos pos, BlockState blockState) {
+            super(GlodUtil.getTileType(SG16k.class, SG16k::new, AGSingletons.SINGULARITY_GENERATOR_16K), pos, blockState);
+        }
+
+        @Override
+        int getBaseGeneratePerTick() {
+            return 20000;
+        }
+
+        @Override
+        long getBaseFEPerSingularity() {
+            return 40000000;
+        }
+    }
+
+    public static class SG64k extends SingularityGeneratorBlockEntity {
+
+        public SG64k(BlockPos pos, BlockState blockState) {
+            super(GlodUtil.getTileType(SG64k.class, SG64k::new, AGSingletons.SINGULARITY_GENERATOR_64K), pos, blockState);
+        }
+
+        @Override
+        int getBaseGeneratePerTick() {
+            return 40000;
+        }
+
+        @Override
+        long getBaseFEPerSingularity() {
+            return 80000000;
+        }
+    }
+
+    public static class SG256k extends SingularityGeneratorBlockEntity {
+
+        public SG256k(BlockPos pos, BlockState blockState) {
+            super(GlodUtil.getTileType(SG256k.class, SG256k::new, AGSingletons.SINGULARITY_GENERATOR_256K), pos, blockState);
+        }
+
+        @Override
+        int getBaseGeneratePerTick() {
+            return 80000;
+        }
+
+        @Override
+        long getBaseFEPerSingularity() {
+            return 160000000;
+        }
+    }
+
+    public static class SG1m extends SingularityGeneratorBlockEntity {
+
+        public SG1m(BlockPos pos, BlockState blockState) {
+            super(GlodUtil.getTileType(SG1m.class, SG1m::new, AGSingletons.SINGULARITY_GENERATOR_1M), pos, blockState);
+        }
+
+        @Override
+        int getBaseGeneratePerTick() {
+            return 160000;
+        }
+
+        @Override
+        long getBaseFEPerSingularity() {
+            return 320000000;
+        }
+    }
+
+    public static class SG4m extends SingularityGeneratorBlockEntity {
+
+        public SG4m(BlockPos pos, BlockState blockState) {
+            super(GlodUtil.getTileType(SG4m.class, SG4m::new, AGSingletons.SINGULARITY_GENERATOR_4M), pos, blockState);
+        }
+
+        @Override
+        int getBaseGeneratePerTick() {
+            return 320000;
+        }
+
+        @Override
+        long getBaseFEPerSingularity() {
+            return 640000000;
+        }
+    }
+
+    public static class SG16m extends SingularityGeneratorBlockEntity {
+
+        public SG16m(BlockPos pos, BlockState blockState) {
+            super(GlodUtil.getTileType(SG16m.class, SG16m::new, AGSingletons.SINGULARITY_GENERATOR_16M), pos, blockState);
+        }
+
+        @Override
+        int getBaseGeneratePerTick() {
+            return 640000;
+        }
+
+        @Override
+        long getBaseFEPerSingularity() {
+            return 1280000000;
+        }
+    }
+
+    public static class SG64m extends SingularityGeneratorBlockEntity {
+
+        public SG64m(BlockPos pos, BlockState blockState) {
+            super(GlodUtil.getTileType(SG64m.class, SG64m::new, AGSingletons.SINGULARITY_GENERATOR_64M), pos, blockState);
+        }
+
+        @Override
+        int getBaseGeneratePerTick() {
+            return 1280000;
+        }
+
+        @Override
+        long getBaseFEPerSingularity() {
+            return 2560000000L;
+        }
+    }
+
+    public static class SG256m extends SingularityGeneratorBlockEntity {
+
+        public SG256m(BlockPos pos, BlockState blockState) {
+            super(GlodUtil.getTileType(SG256m.class, SG256m::new, AGSingletons.SINGULARITY_GENERATOR_256M), pos, blockState);
+        }
+
+        @Override
+        int getBaseGeneratePerTick() {
+            return 2560000;
+        }
+
+        @Override
+        long getBaseFEPerSingularity() {
+            return 5120000000L;
+        }
+    }
 }
