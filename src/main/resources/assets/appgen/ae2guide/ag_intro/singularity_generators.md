@@ -1,27 +1,52 @@
 ---
 navigation:
-    parent: ag_intro/ag-index.md
-    title: Singularity Generators
-    icon: appgen:singularity_generator_1k
+  parent: ag_intro/ag-index.md
+  title: Singularity Generators
+  icon: appgen:singularity_generator_1k
 categories:
-    - devices
+  - generators
 item_ids:
-    - appgen:singularity_generator_1k
+  - appgen:singularity_generator_1k
+  - appgen:singularity_generator_4k
+  - appgen:singularity_generator_16k
+  - appgen:singularity_generator_64k
+  - appgen:singularity_generator_256k
+  - appgen:singularity_generator_1m
+  - appgen:singularity_generator_4m
+  - appgen:singularity_generator_16m
+  - appgen:singularity_generator_64m
+  - appgen:singularity_generator_256m
 ---
 
 # Singularity Generators
 
-<Row gap="20">
-<BlockImage id="appgen:singularity_generator_1k" scale="8"></BlockImage>
-</Row>
+<Column>
+  <Row>
+    <ItemImage id="appgen:singularity_generator_1k" scale="4" />
+    <ItemImage id="appgen:singularity_generator_4k" scale="4" />
+    <ItemImage id="appgen:singularity_generator_16k" scale="4" />
+    <ItemImage id="appgen:singularity_generator_64k" scale="4" />
+    <ItemImage id="appgen:singularity_generator_256k" scale="4" />
+  </Row>
+  <Row>
+    <ItemImage id="appgen:singularity_generator_1m" scale="4" />
+    <ItemImage id="appgen:singularity_generator_4m" scale="4" />
+    <ItemImage id="appgen:singularity_generator_16m" scale="4" />
+    <ItemImage id="appgen:singularity_generator_64m" scale="4" />
+    <ItemImage id="appgen:singularity_generator_256m" scale="4" />
+  </Row>
+</Column>
 
 The Singularity Generators are powerful devices that can generate Forge Energy by
-consuming <ItemLink id="ae2:singularity" />s.
+consuming a <ItemLink id="ae2:singularity" />.
 
 ## FE Generation
 
+When <ItemLink id="ae2:singularity" /> is consumed by the Singularity Generator, the following amount of FE is generated
+at the following rates.
+
 | Singularity Generator                               | FE Generation Per Singularity (Default) | FE Generation Per Tick (Default) |
-| --------------------------------------------------- | --------------------------------------: | -------------------------------: |
+|-----------------------------------------------------|----------------------------------------:|---------------------------------:|
 | <ItemLink id="appgen:singularity_generator_1k" />   |                              10,000,000 |                            5,000 |
 | <ItemLink id="appgen:singularity_generator_4k" />   |                              20,000,000 |                           10,000 |
 | <ItemLink id="appgen:singularity_generator_16k" />  |                              40,000,000 |                           20,000 |
@@ -37,8 +62,8 @@ consuming <ItemLink id="ae2:singularity" />s.
 
 The Singularity Generators send FE to one of the following destinations:
 
--   The ME System which the Singularity Generator belongs to. (Default)
--   The energy storages adjacent to the Singularity Generator.
+- The ME System which the Singularity Generator belongs to. (Default)
+- The energy storages adjacent to the Singularity Generator.
 
 ## Upgrades
 
