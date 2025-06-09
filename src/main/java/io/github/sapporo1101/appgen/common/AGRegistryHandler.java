@@ -19,8 +19,8 @@ import com.glodblock.github.glodium.registry.RegistryHandler;
 import com.glodblock.github.glodium.util.GlodUtil;
 import io.github.sapporo1101.appgen.AppliedGenerators;
 import io.github.sapporo1101.appgen.api.IGenericInternalInvHost;
-import io.github.sapporo1101.appgen.container.ContainerFluxCell;
-import io.github.sapporo1101.appgen.container.ContainerSingularityGenerator;
+import io.github.sapporo1101.appgen.menu.FluxCellMenu;
+import io.github.sapporo1101.appgen.menu.SingularityGeneratorMenu;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -68,17 +68,17 @@ public class AGRegistryHandler extends RegistryHandler {
     }
 
     private void onRegisterContainer() {
-        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("flux_cell"), ContainerFluxCell.TYPE);
-        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("singularity_generator_1k"), ContainerSingularityGenerator.TYPE);
-        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("singularity_generator_4k"), ContainerSingularityGenerator.TYPE);
-        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("singularity_generator_16k"), ContainerSingularityGenerator.TYPE);
-        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("singularity_generator_64k"), ContainerSingularityGenerator.TYPE);
-        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("singularity_generator_256k"), ContainerSingularityGenerator.TYPE);
-        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("singularity_generator_1m"), ContainerSingularityGenerator.TYPE);
-        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("singularity_generator_4m"), ContainerSingularityGenerator.TYPE);
-        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("singularity_generator_16m"), ContainerSingularityGenerator.TYPE);
-        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("singularity_generator_64m"), ContainerSingularityGenerator.TYPE);
-        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("singularity_generator_256m"), ContainerSingularityGenerator.TYPE);
+        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("flux_cell"), FluxCellMenu.TYPE);
+        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("singularity_generator_1k"), SingularityGeneratorMenu.TYPE);
+        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("singularity_generator_4k"), SingularityGeneratorMenu.TYPE);
+        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("singularity_generator_16k"), SingularityGeneratorMenu.TYPE);
+        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("singularity_generator_64k"), SingularityGeneratorMenu.TYPE);
+        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("singularity_generator_256k"), SingularityGeneratorMenu.TYPE);
+        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("singularity_generator_1m"), SingularityGeneratorMenu.TYPE);
+        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("singularity_generator_4m"), SingularityGeneratorMenu.TYPE);
+        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("singularity_generator_16m"), SingularityGeneratorMenu.TYPE);
+        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("singularity_generator_64m"), SingularityGeneratorMenu.TYPE);
+        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("singularity_generator_256m"), SingularityGeneratorMenu.TYPE);
     }
 
     private <T extends AEBaseBlockEntity> void bindTileEntity(Class<T> clazz, AEBaseEntityBlock<T> block, BlockEntityType.BlockEntitySupplier<? extends T> supplier) {

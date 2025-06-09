@@ -8,14 +8,14 @@ import com.glodblock.github.extendedae.client.gui.subgui.OutputSideConfig;
 import com.glodblock.github.extendedae.network.EAENetworkHandler;
 import com.glodblock.github.extendedae.network.packet.CEAEGenericPacket;
 import io.github.sapporo1101.appgen.common.AGSingletons;
-import io.github.sapporo1101.appgen.container.ContainerFluxCell;
+import io.github.sapporo1101.appgen.menu.FluxCellMenu;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
-public class GuiFluxCell extends AEBaseScreen<ContainerFluxCell> {
+public class FluxCellScreen extends AEBaseScreen<FluxCellMenu> {
 
-    public GuiFluxCell(ContainerFluxCell menu, Inventory playerInventory, Component title, ScreenStyle style) {
+    public FluxCellScreen(FluxCellMenu menu, Inventory playerInventory, Component title, ScreenStyle style) {
         super(menu, playerInventory, title, style);
         ActionEPPButton outputSideBtn = new ActionEPPButton(b -> this.openOutputConfig(), EPPIcon.OUTPUT_SIDES);
         outputSideBtn.setMessage(Component.translatable("gui.extendedae.set_output_sides.open"));

@@ -10,7 +10,7 @@ import com.glodblock.github.extendedae.client.gui.subgui.OutputSideConfig;
 import com.glodblock.github.extendedae.network.EAENetworkHandler;
 import com.glodblock.github.extendedae.network.packet.CEAEGenericPacket;
 import io.github.sapporo1101.appgen.common.AGSingletons;
-import io.github.sapporo1101.appgen.container.ContainerSingularityGenerator;
+import io.github.sapporo1101.appgen.menu.SingularityGeneratorMenu;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -19,14 +19,14 @@ import net.pedroksl.advanced_ae.client.gui.widgets.AAEServerSettingToggleButton;
 
 import java.text.DecimalFormat;
 
-public class GuiSingularityGenerator extends UpgradeableScreen<ContainerSingularityGenerator> {
+public class SingularityGeneratorScreen extends UpgradeableScreen<SingularityGeneratorMenu> {
     private final ProgressBar pb;
     private final AAEServerSettingToggleButton<YesNo> meExportBtn;
     private final ActionEPPButton outputSideBtn;
 
     private final DecimalFormat formatter = new DecimalFormat("#,###");
 
-    public GuiSingularityGenerator(ContainerSingularityGenerator menu, Inventory playerInventory, Component title, ScreenStyle style) {
+    public SingularityGeneratorScreen(SingularityGeneratorMenu menu, Inventory playerInventory, Component title, ScreenStyle style) {
         super(menu, playerInventory, title, style);
         this.pb = new ProgressBar(this.menu, style.getImage("progressBar"), ProgressBar.Direction.VERTICAL);
         widgets.add("progressBar", pb);

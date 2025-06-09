@@ -33,8 +33,8 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
-import static io.github.sapporo1101.appgen.common.blocks.fluxcells.FluxCell.FE_STORAGE;
-import static io.github.sapporo1101.appgen.common.blocks.fluxcells.FluxCell.MAX_FULLNESS;
+import static io.github.sapporo1101.appgen.common.blocks.FluxCellBlock.FE_STORAGE;
+import static io.github.sapporo1101.appgen.common.blocks.FluxCellBlock.MAX_FULLNESS;
 
 public class FluxCellBlockEntity extends AEBaseBlockEntity implements IGenericInternalInvHost, BlockEntityTicker<FluxCellBlockEntity> {
     private final GenericStackInv feInv;

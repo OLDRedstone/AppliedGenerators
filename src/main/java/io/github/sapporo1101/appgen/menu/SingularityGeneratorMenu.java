@@ -1,4 +1,4 @@
-package io.github.sapporo1101.appgen.container;
+package io.github.sapporo1101.appgen.menu;
 
 import appeng.api.config.YesNo;
 import appeng.api.util.IConfigManager;
@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContainerSingularityGenerator extends UpgradeableMenu<SingularityGeneratorBlockEntity> implements IProgressProvider, IActionHolder {
+public class SingularityGeneratorMenu extends UpgradeableMenu<SingularityGeneratorBlockEntity> implements IProgressProvider, IActionHolder {
 
     @GuiSync(3)
     public long generatableFE = 0;
@@ -38,11 +38,11 @@ public class ContainerSingularityGenerator extends UpgradeableMenu<SingularityGe
 
     private final ActionMap actions = ActionMap.create();
 
-    public static final MenuType<ContainerSingularityGenerator> TYPE = MenuTypeBuilder
-            .create(ContainerSingularityGenerator::new, SingularityGeneratorBlockEntity.class)
+    public static final MenuType<SingularityGeneratorMenu> TYPE = MenuTypeBuilder
+            .create(SingularityGeneratorMenu::new, SingularityGeneratorBlockEntity.class)
             .buildUnregistered(AppliedGenerators.id("singularity_generator"));
 
-    public ContainerSingularityGenerator(int id, Inventory playerInventory, SingularityGeneratorBlockEntity host) {
+    public SingularityGeneratorMenu(int id, Inventory playerInventory, SingularityGeneratorBlockEntity host) {
         super(TYPE, id, playerInventory, host);
         this.addSlot(new AppEngSlot(host.getInternalInventory(), 0), SlotSemantics.MACHINE_INPUT);
         this.actions.put("set_side", o -> this.setOutputSide(o.get(0), o.get(1)));

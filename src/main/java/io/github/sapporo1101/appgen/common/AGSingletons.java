@@ -2,11 +2,11 @@ package io.github.sapporo1101.appgen.common;
 
 import io.github.sapporo1101.appgen.common.blockentities.FluxCellBlockEntity;
 import io.github.sapporo1101.appgen.common.blockentities.SingularityGeneratorBlockEntity;
-import io.github.sapporo1101.appgen.common.blocks.fluxcells.FluxCell;
-import io.github.sapporo1101.appgen.common.blocks.singularitygenerators.SingularityGeneratorBlock;
+import io.github.sapporo1101.appgen.common.blocks.FluxCellBlock;
+import io.github.sapporo1101.appgen.common.blocks.SingularityGeneratorBlock;
 
 public class AGSingletons {
-    public static FluxCell FLUX_CELL;
+    public static FluxCellBlock FLUX_CELL;
     public static SingularityGeneratorBlock.SG1k SINGULARITY_GENERATOR_1K;
     public static SingularityGeneratorBlock.SG4k SINGULARITY_GENERATOR_4K;
     public static SingularityGeneratorBlock.SG16k SINGULARITY_GENERATOR_16K;
@@ -19,7 +19,7 @@ public class AGSingletons {
     public static SingularityGeneratorBlock.SG256m SINGULARITY_GENERATOR_256M;
 
     public static void init(AGRegistryHandler regHandler) {
-        FLUX_CELL = new FluxCell();
+        FLUX_CELL = new FluxCellBlock();
         SINGULARITY_GENERATOR_1K = new SingularityGeneratorBlock.SG1k();
         SINGULARITY_GENERATOR_4K = new SingularityGeneratorBlock.SG4k();
         SINGULARITY_GENERATOR_16K = new SingularityGeneratorBlock.SG16k();

@@ -1,12 +1,11 @@
-package io.github.sapporo1101.appgen.common.blocks.singularitygenerators;
+package io.github.sapporo1101.appgen.common.blocks;
 
 import appeng.api.orientation.IOrientationStrategy;
 import appeng.api.orientation.OrientationStrategies;
 import appeng.menu.MenuOpener;
 import appeng.menu.locator.MenuLocators;
 import io.github.sapporo1101.appgen.common.blockentities.SingularityGeneratorBlockEntity;
-import io.github.sapporo1101.appgen.common.blocks.BlockBaseGui;
-import io.github.sapporo1101.appgen.container.ContainerSingularityGenerator;
+import io.github.sapporo1101.appgen.menu.SingularityGeneratorMenu;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -37,7 +36,7 @@ public class SingularityGeneratorBlock<T extends SingularityGeneratorBlockEntity
 
     @Override
     public void openGui(SingularityGeneratorBlockEntity tile, Player p) {
-        MenuOpener.open(ContainerSingularityGenerator.TYPE, p, MenuLocators.forBlockEntity(tile));
+        MenuOpener.open(SingularityGeneratorMenu.TYPE, p, MenuLocators.forBlockEntity(tile));
     }
 
     public static class SG1k extends SingularityGeneratorBlock<SingularityGeneratorBlockEntity.SG1k> {

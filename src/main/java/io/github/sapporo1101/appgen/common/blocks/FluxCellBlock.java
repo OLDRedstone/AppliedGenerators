@@ -1,10 +1,9 @@
-package io.github.sapporo1101.appgen.common.blocks.fluxcells;
+package io.github.sapporo1101.appgen.common.blocks;
 
 import appeng.menu.MenuOpener;
 import appeng.menu.locator.MenuLocators;
 import io.github.sapporo1101.appgen.common.blockentities.FluxCellBlockEntity;
-import io.github.sapporo1101.appgen.common.blocks.BlockBaseGui;
-import io.github.sapporo1101.appgen.container.ContainerFluxCell;
+import io.github.sapporo1101.appgen.menu.FluxCellMenu;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -16,11 +15,11 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import org.jetbrains.annotations.Nullable;
 
-public class FluxCell extends BlockBaseGui<FluxCellBlockEntity> {
+public class FluxCellBlock extends BlockBaseGui<FluxCellBlockEntity> {
     public static final int MAX_FULLNESS = 4;
     public static final IntegerProperty FE_STORAGE = IntegerProperty.create("fullness", 0, MAX_FULLNESS);
 
-    public FluxCell() {
+    public FluxCellBlock() {
         super(glassProps());
         this.registerDefaultState(this.defaultBlockState().setValue(FE_STORAGE, 0));
     }
@@ -38,6 +37,6 @@ public class FluxCell extends BlockBaseGui<FluxCellBlockEntity> {
 
     @Override
     public void openGui(FluxCellBlockEntity tile, Player p) {
-        MenuOpener.open(ContainerFluxCell.TYPE, p, MenuLocators.forBlockEntity(tile));
+        MenuOpener.open(FluxCellMenu.TYPE, p, MenuLocators.forBlockEntity(tile));
     }
 }

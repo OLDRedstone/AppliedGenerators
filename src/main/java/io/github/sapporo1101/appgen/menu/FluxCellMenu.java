@@ -1,4 +1,4 @@
-package io.github.sapporo1101.appgen.container;
+package io.github.sapporo1101.appgen.menu;
 
 import appeng.menu.AEBaseMenu;
 import appeng.menu.SlotSemantics;
@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContainerFluxCell extends AEBaseMenu implements IActionHolder {
+public class FluxCellMenu extends AEBaseMenu implements IActionHolder {
 
     @GuiSync(9)
     public DirectionSet outputSides = new DirectionSet(new ArrayList<>());
@@ -27,11 +27,11 @@ public class ContainerFluxCell extends AEBaseMenu implements IActionHolder {
     private final FluxCellBlockEntity host;
     private final ActionMap actions = ActionMap.create();
 
-    public static final MenuType<ContainerFluxCell> TYPE = MenuTypeBuilder
-            .create(ContainerFluxCell::new, FluxCellBlockEntity.class)
+    public static final MenuType<FluxCellMenu> TYPE = MenuTypeBuilder
+            .create(FluxCellMenu::new, FluxCellBlockEntity.class)
             .buildUnregistered(AppliedGenerators.id("flux_cell"));
 
-    public ContainerFluxCell(int id, Inventory playerInventory, FluxCellBlockEntity host) {
+    public FluxCellMenu(int id, Inventory playerInventory, FluxCellBlockEntity host) {
         super(TYPE, id, playerInventory, host);
         this.host = host;
         for (int index = 0; index < host.getGenericInv().size(); index++) {
