@@ -373,12 +373,12 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
 
         @Override
         int getBaseGeneratePerTick() {
-            return 5000;
+            return 2_000;
         }
 
         @Override
         long getBaseFEPerSingularity() {
-            return 10000000;
+            return 1_000_000;
         }
     }
 
@@ -390,12 +390,12 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
 
         @Override
         int getBaseGeneratePerTick() {
-            return 10000;
+            return 4_000;
         }
 
         @Override
         long getBaseFEPerSingularity() {
-            return 20000000;
+            return 2_000_000;
         }
     }
 
@@ -407,12 +407,12 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
 
         @Override
         int getBaseGeneratePerTick() {
-            return 20000;
+            return 8_000;
         }
 
         @Override
         long getBaseFEPerSingularity() {
-            return 40000000;
+            return 4_000_000;
         }
     }
 
@@ -424,12 +424,12 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
 
         @Override
         int getBaseGeneratePerTick() {
-            return 40000;
+            return 16_000;
         }
 
         @Override
         long getBaseFEPerSingularity() {
-            return 80000000;
+            return 8_000_000;
         }
     }
 
@@ -441,12 +441,12 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
 
         @Override
         int getBaseGeneratePerTick() {
-            return 80000;
+            return 32_000;
         }
 
         @Override
         long getBaseFEPerSingularity() {
-            return 160000000;
+            return 16_000_000;
         }
     }
 
@@ -458,12 +458,12 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
 
         @Override
         int getBaseGeneratePerTick() {
-            return 160000;
+            return 64_000;
         }
 
         @Override
         long getBaseFEPerSingularity() {
-            return 320000000;
+            return 32_000_000;
         }
     }
 
@@ -475,12 +475,12 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
 
         @Override
         int getBaseGeneratePerTick() {
-            return 320000;
+            return 128_000;
         }
 
         @Override
         long getBaseFEPerSingularity() {
-            return 640000000;
+            return 64_000_000;
         }
     }
 
@@ -492,12 +492,12 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
 
         @Override
         int getBaseGeneratePerTick() {
-            return 640000;
+            return 256_000;
         }
 
         @Override
         long getBaseFEPerSingularity() {
-            return 1280000000;
+            return 128_000_000;
         }
     }
 
@@ -509,12 +509,12 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
 
         @Override
         int getBaseGeneratePerTick() {
-            return 1280000;
+            return 512_000;
         }
 
         @Override
         long getBaseFEPerSingularity() {
-            return 2560000000L;
+            return 256_000_000;
         }
     }
 
@@ -526,12 +526,12 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
 
         @Override
         int getBaseGeneratePerTick() {
-            return 2560000;
+            return 1_024_000;
         }
 
         @Override
         long getBaseFEPerSingularity() {
-            return 5120000000L;
+            return 512_000_000;
         }
     }
 }

@@ -47,16 +47,16 @@ at the following rates.
 
 | Singularity Generator                               | FE Generation Per Singularity (Default) | FE Generation Per Tick (Default) |
 |-----------------------------------------------------|----------------------------------------:|---------------------------------:|
-| <ItemLink id="appgen:singularity_generator_1k" />   |                              10,000,000 |                            5,000 |
-| <ItemLink id="appgen:singularity_generator_4k" />   |                              20,000,000 |                           10,000 |
-| <ItemLink id="appgen:singularity_generator_16k" />  |                              40,000,000 |                           20,000 |
-| <ItemLink id="appgen:singularity_generator_64k" />  |                              80,000,000 |                           40,000 |
-| <ItemLink id="appgen:singularity_generator_256k" /> |                             160,000,000 |                           80,000 |
-| <ItemLink id="appgen:singularity_generator_1m" />   |                             320,000,000 |                          160,000 |
-| <ItemLink id="appgen:singularity_generator_4m" />   |                             640,000,000 |                          320,000 |
-| <ItemLink id="appgen:singularity_generator_16m" />  |                           1,280,000,000 |                          640,000 |
-| <ItemLink id="appgen:singularity_generator_64m" />  |                           2,560,000,000 |                        1,280,000 |
-| <ItemLink id="appgen:singularity_generator_256m" /> |                           5,120,000,000 |                        2,560,000 |
+| <ItemLink id="appgen:singularity_generator_1k" />   |                               1,000,000 |                            2,000 |
+| <ItemLink id="appgen:singularity_generator_4k" />   |                               2,000,000 |                            4,000 |
+| <ItemLink id="appgen:singularity_generator_16k" />  |                               4,000,000 |                            8,000 |
+| <ItemLink id="appgen:singularity_generator_64k" />  |                               8,000,000 |                           16,000 |
+| <ItemLink id="appgen:singularity_generator_256k" /> |                              16,000,000 |                           32,000 |
+| <ItemLink id="appgen:singularity_generator_1m" />   |                              32,000,000 |                           64,000 |
+| <ItemLink id="appgen:singularity_generator_4m" />   |                              64,000,000 |                          128,000 |
+| <ItemLink id="appgen:singularity_generator_16m" />  |                             128,000,000 |                          256,000 |
+| <ItemLink id="appgen:singularity_generator_64m" />  |                             256,000,000 |                          512,000 |
+| <ItemLink id="appgen:singularity_generator_256m" /> |                             512,000,000 |                        1,024,000 |
 
 ## Settings
 
@@ -69,5 +69,5 @@ The Singularity Generators send FE to one of the following destinations:
 
 The Singularity Generators support the following [upgrades](ae2:items-blocks-machines/upgrade_cards.md):
 
--   <ItemLink id="ae2:energy_card" /> increases the efficiency of the Singularity Generator by +50%, for a max of +150%, or 250% of the base efficiency.
 -   <ItemLink id="ae2:speed_card" /> increases the generation speed of the Singularity Generator by +50%, for a max of +150%, or 250% of the base generation speed.
+-   <ItemLink id="ae2:energy_card" /> increases the efficiency of the Singularity Generator by +50%, for a max of +150%, or 250% of the base efficiency.
