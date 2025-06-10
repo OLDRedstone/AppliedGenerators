@@ -5,7 +5,7 @@
     "textures": {
         "top": "appgen:block/generators/top_opened",
         "bottom": "ae2:block/generics/bottom",
-        "fe": "appgen:block/utils/fe",
+        "fe": "appflux:energy/fe",
         "front": "appgen:block/generators/front",
         "side": "ae2:block/generics/side",
         "back": "ae2:block/generics/back",
