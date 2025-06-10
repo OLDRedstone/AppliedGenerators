@@ -1,0 +1,25 @@
+{
+    "values": [
+        "appgen:singularity_generator_1k",
+        "appgen:singularity_generator_4k",
+        "appgen:singularity_generator_16k",
+        "appgen:singularity_generator_64k",
+        "appgen:singularity_generator_256k",
+        "appgen:singularity_generator_1m",
+        "appgen:singularity_generator_4m",
+        "appgen:singularity_generator_16m",
+        "appgen:singularity_generator_64m",
+        "appgen:singularity_generator_256m",
+        "appgen:flux_generator_1k",
+        "appgen:flux_generator_4k",
+        "appgen:flux_generator_16k",
+        "appgen:flux_generator_64k",
+        "appgen:flux_generator_256k",
+        "appgen:flux_generator_1m",
+        "appgen:flux_generator_4m",
+        "appgen:flux_generator_16m",
+        "appgen:flux_generator_64m",
+        "appgen:flux_generator_256m",
+        "appgen:flux_cell"
+    ]
+}
