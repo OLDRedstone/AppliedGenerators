@@ -23,10 +23,6 @@ public abstract class BlockBaseGui<T extends AEBaseBlockEntity> extends AEBaseEn
         super(props);
     }
 
-    public BlockBaseGui() {
-        super(metalProps());
-    }
-
     @Override
     public @NotNull InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player p, BlockHitResult hit) {
         var be = this.getBlockEntity(level, pos);

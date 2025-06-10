@@ -1,0 +1,7 @@
+{
+    "parent": "appgen:block/flux_generators/template",
+    "textures": {
+        "overlay": "appgen:block/generators/256k_front_overlay",
+        "overlay_on": "appgen:block/utils/transparent"
+    }
+}

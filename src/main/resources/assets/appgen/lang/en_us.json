@@ -11,7 +11,20 @@
     "block.appgen.singularity_generator_16m": "16m Singularity Generator",
     "block.appgen.singularity_generator_64m": "64m Singularity Generator",
     "block.appgen.singularity_generator_256m": "256m Singularity Generator",
+    "block.appgen.flux_generator_1k": "1k Flux Generator",
+    "block.appgen.flux_generator_4k": "4k Flux Generator",
+    "block.appgen.flux_generator_16k": "16k Flux Generator",
+    "block.appgen.flux_generator_64k": "64k Flux Generator",
+    "block.appgen.flux_generator_256k": "256k Flux Generator",
+    "block.appgen.flux_generator_1m": "1m Flux Generator",
+    "block.appgen.flux_generator_4m": "4m Flux Generator",
+    "block.appgen.flux_generator_16m": "16m Flux Generator",
+    "block.appgen.flux_generator_64m": "64m Flux Generator",
+    "block.appgen.flux_generator_256m": "256m Flux Generator",
     "gui.appgen.flux_cell": "Flux Cell",
     "gui.appgen.singularity_generator": "Singularity Generator",
-    "gui.appgen.singularity_generator.progress": "Remaining: %s FE / %s FE\nGenerating: %s FE/t"
+    "gui.appgen.singularity_generator.progress": "Remaining: %s FE / %s FE\nGenerating: %s FE/t",
+    "gui.appgen.flux_generator": "Flux Generator",
+    "gui.appgen.flux_generator.active_info": "Active: %s",
+    "gui.appgen.flux_generator.generating_info": "Generating: %s FE/t"
 }
