@@ -34,6 +34,7 @@ import com.glodblock.github.appflux.common.me.key.type.EnergyType;
 import com.glodblock.github.extendedae.common.EAESingletons;
 import com.glodblock.github.glodium.util.GlodUtil;
 import io.github.sapporo1101.appgen.common.AGSingletons;
+import io.github.sapporo1101.appgen.common.blocks.SingularityGeneratorBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -72,10 +73,10 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
     private double lastGeneratePerTick = 0;
     public boolean isOn;
 
-    public SingularityGeneratorBlockEntity(BlockEntityType<?> blockEntityType, BlockPos pos, BlockState blockState) {
+    public SingularityGeneratorBlockEntity(BlockEntityType<?> blockEntityType, BlockPos pos, BlockState blockState, SingularityGeneratorBlock<?> block) {
         super(blockEntityType, pos, blockState);
         this.getMainNode().setIdlePowerUsage(0F).setFlags(GridFlags.REQUIRE_CHANNEL).addService(IGridTickable.class, this);
-        this.upgrades = UpgradeInventories.forMachine(AGSingletons.SINGULARITY_GENERATOR_1K, 5, this::upgradeSetChanged);
+        this.upgrades = UpgradeInventories.forMachine(block, 5, this::upgradeSetChanged);
         this.configManager = IConfigManager.builder(this::onConfigChanged).registerSetting(AAESettings.ME_EXPORT, YesNo.YES).build();
 
         this.generatableFE = 0;
@@ -367,7 +368,7 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
     public static class SG1k extends SingularityGeneratorBlockEntity {
 
         public SG1k(BlockPos pos, BlockState blockState) {
-            super(GlodUtil.getTileType(SG1k.class, SG1k::new, AGSingletons.SINGULARITY_GENERATOR_1K), pos, blockState);
+            super(GlodUtil.getTileType(SG1k.class, SG1k::new, AGSingletons.SINGULARITY_GENERATOR_1K), pos, blockState, AGSingletons.SINGULARITY_GENERATOR_1K);
         }
 
         @Override
@@ -384,7 +385,7 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
     public static class SG4k extends SingularityGeneratorBlockEntity {
 
         public SG4k(BlockPos pos, BlockState blockState) {
-            super(GlodUtil.getTileType(SG4k.class, SG4k::new, AGSingletons.SINGULARITY_GENERATOR_4K), pos, blockState);
+            super(GlodUtil.getTileType(SG4k.class, SG4k::new, AGSingletons.SINGULARITY_GENERATOR_4K), pos, blockState, AGSingletons.SINGULARITY_GENERATOR_4K);
         }
 
         @Override
@@ -401,7 +402,7 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
     public static class SG16k extends SingularityGeneratorBlockEntity {
 
         public SG16k(BlockPos pos, BlockState blockState) {
-            super(GlodUtil.getTileType(SG16k.class, SG16k::new, AGSingletons.SINGULARITY_GENERATOR_16K), pos, blockState);
+            super(GlodUtil.getTileType(SG16k.class, SG16k::new, AGSingletons.SINGULARITY_GENERATOR_16K), pos, blockState, AGSingletons.SINGULARITY_GENERATOR_16K);
         }
 
         @Override
@@ -418,7 +419,7 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
     public static class SG64k extends SingularityGeneratorBlockEntity {
 
         public SG64k(BlockPos pos, BlockState blockState) {
-            super(GlodUtil.getTileType(SG64k.class, SG64k::new, AGSingletons.SINGULARITY_GENERATOR_64K), pos, blockState);
+            super(GlodUtil.getTileType(SG64k.class, SG64k::new, AGSingletons.SINGULARITY_GENERATOR_64K), pos, blockState, AGSingletons.SINGULARITY_GENERATOR_64K);
         }
 
         @Override
@@ -435,7 +436,7 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
     public static class SG256k extends SingularityGeneratorBlockEntity {
 
         public SG256k(BlockPos pos, BlockState blockState) {
-            super(GlodUtil.getTileType(SG256k.class, SG256k::new, AGSingletons.SINGULARITY_GENERATOR_256K), pos, blockState);
+            super(GlodUtil.getTileType(SG256k.class, SG256k::new, AGSingletons.SINGULARITY_GENERATOR_256K), pos, blockState, AGSingletons.SINGULARITY_GENERATOR_256K);
         }
 
         @Override
@@ -452,7 +453,7 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
     public static class SG1m extends SingularityGeneratorBlockEntity {
 
         public SG1m(BlockPos pos, BlockState blockState) {
-            super(GlodUtil.getTileType(SG1m.class, SG1m::new, AGSingletons.SINGULARITY_GENERATOR_1M), pos, blockState);
+            super(GlodUtil.getTileType(SG1m.class, SG1m::new, AGSingletons.SINGULARITY_GENERATOR_1M), pos, blockState, AGSingletons.SINGULARITY_GENERATOR_1M);
         }
 
         @Override
@@ -469,7 +470,7 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
     public static class SG4m extends SingularityGeneratorBlockEntity {
 
         public SG4m(BlockPos pos, BlockState blockState) {
-            super(GlodUtil.getTileType(SG4m.class, SG4m::new, AGSingletons.SINGULARITY_GENERATOR_4M), pos, blockState);
+            super(GlodUtil.getTileType(SG4m.class, SG4m::new, AGSingletons.SINGULARITY_GENERATOR_4M), pos, blockState, AGSingletons.SINGULARITY_GENERATOR_4M);
         }
 
         @Override
@@ -486,7 +487,7 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
     public static class SG16m extends SingularityGeneratorBlockEntity {
 
         public SG16m(BlockPos pos, BlockState blockState) {
-            super(GlodUtil.getTileType(SG16m.class, SG16m::new, AGSingletons.SINGULARITY_GENERATOR_16M), pos, blockState);
+            super(GlodUtil.getTileType(SG16m.class, SG16m::new, AGSingletons.SINGULARITY_GENERATOR_16M), pos, blockState, AGSingletons.SINGULARITY_GENERATOR_16M);
         }
 
         @Override
@@ -503,7 +504,7 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
     public static class SG64m extends SingularityGeneratorBlockEntity {
 
         public SG64m(BlockPos pos, BlockState blockState) {
-            super(GlodUtil.getTileType(SG64m.class, SG64m::new, AGSingletons.SINGULARITY_GENERATOR_64M), pos, blockState);
+            super(GlodUtil.getTileType(SG64m.class, SG64m::new, AGSingletons.SINGULARITY_GENERATOR_64M), pos, blockState, AGSingletons.SINGULARITY_GENERATOR_64M);
         }
 
         @Override
@@ -520,7 +521,7 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
     public static class SG256m extends SingularityGeneratorBlockEntity {
 
         public SG256m(BlockPos pos, BlockState blockState) {
-            super(GlodUtil.getTileType(SG256m.class, SG256m::new, AGSingletons.SINGULARITY_GENERATOR_256M), pos, blockState);
+            super(GlodUtil.getTileType(SG256m.class, SG256m::new, AGSingletons.SINGULARITY_GENERATOR_256M), pos, blockState, AGSingletons.SINGULARITY_GENERATOR_256M);
         }
 
         @Override

@@ -2,12 +2,12 @@
     "$schema": "schema_appgen.json",
     "includes": ["common/common.json", "common/player_inventory.json", "common/toolbox.json"],
     "background": {
-        "texture": "guis/circuit_cutter.png",
-        "srcRect": [0, 0, 176, 172]
+        "texture": "guis/singularity_generator.png",
+        "srcRect": [0, 0, 176, 168]
     },
     "slots": {
         "MACHINE_INPUT": {
-            "left": 46,
+            "left": 80,
             "top": 37
         }
     },
@@ -24,13 +24,13 @@
     },
     "images": {
         "progressBar": {
-            "texture": "guis/circuit_cutter.png",
+            "texture": "guis/singularity_generator.png",
             "srcRect": [176, 0, 6, 18]
         }
     },
     "widgets": {
         "progressBar": {
-            "left": 131,
+            "left": 99,
             "top": 36
         }
     }
