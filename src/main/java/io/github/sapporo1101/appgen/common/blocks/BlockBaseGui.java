@@ -15,8 +15,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
-
 public abstract class BlockBaseGui<T extends AEBaseBlockEntity> extends AEBaseEntityBlock<T> {
 
     public BlockBaseGui(Properties props) {
@@ -47,10 +45,6 @@ public abstract class BlockBaseGui<T extends AEBaseBlockEntity> extends AEBaseEn
         } else {
             var be = this.getBlockEntity(level, pos);
             if (be != null) {
-                var ir = check(be, heldItem, level, pos, hit, p);
-                if (ir != null) {
-                    return ir;
-                }
                 if (!level.isClientSide()) {
                     this.openGui(be, p);
                 }
@@ -62,10 +56,4 @@ public abstract class BlockBaseGui<T extends AEBaseBlockEntity> extends AEBaseEn
     }
 
     public abstract void openGui(T tile, Player p);
-
-    @Nullable
-    public ItemInteractionResult check(T tile, ItemStack stack, Level world, BlockPos pos, BlockHitResult hit, Player p) {
-        return null;
-    }
-
 }
