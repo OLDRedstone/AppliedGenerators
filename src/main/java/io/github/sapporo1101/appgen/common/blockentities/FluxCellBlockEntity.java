@@ -9,7 +9,6 @@ import com.glodblock.github.appflux.common.me.key.FluxKey;
 import com.glodblock.github.appflux.common.me.key.type.EnergyType;
 import com.glodblock.github.extendedae.common.EAESingletons;
 import com.glodblock.github.glodium.util.GlodUtil;
-import io.github.sapporo1101.appgen.api.IGenericInternalInvHost;
 import io.github.sapporo1101.appgen.common.AGSingletons;
 import io.github.sapporo1101.appgen.xmod.ExternalTypes;
 import net.minecraft.core.BlockPos;
@@ -36,7 +35,7 @@ import java.util.Set;
 import static io.github.sapporo1101.appgen.common.blocks.FluxCellBlock.FE_STORAGE;
 import static io.github.sapporo1101.appgen.common.blocks.FluxCellBlock.MAX_FULLNESS;
 
-public class FluxCellBlockEntity extends AEBaseBlockEntity implements IGenericInternalInvHost, BlockEntityTicker<FluxCellBlockEntity> {
+public class FluxCellBlockEntity extends AEBaseBlockEntity implements BlockEntityTicker<FluxCellBlockEntity> {
     private final GenericStackInv feInv;
     private final Set<Direction> outputSides = EnumSet.noneOf(Direction.class);
 
@@ -147,7 +146,6 @@ public class FluxCellBlockEntity extends AEBaseBlockEntity implements IGenericIn
         return this.outputSides;
     }
 
-    @Override
     public GenericStackInv getGenericInv() {
         return this.feInv;
     }
@@ -168,12 +166,77 @@ public class FluxCellBlockEntity extends AEBaseBlockEntity implements IGenericIn
             if (storage != null && storage.canReceive()) {
                 System.out.println("Flux Cell found energy storage at " + targetPos + " for dir " + dir);
                 int canInsert = storage.receiveEnergy(Integer.MAX_VALUE, true);
+                System.out.println("Flux Cell can insert " + canInsert + " FE to " + targetPos + " for dir " + dir);
                 if (canInsert <= 0) continue;
                 int extracted = Math.toIntExact(this.feInv.extract(FluxKey.of(EnergyType.FE), canInsert, Actionable.MODULATE, null));
                 storage.receiveEnergy(extracted, false);
+                System.out.println("Flux Cell sent " + extracted + " FE to " + targetPos + " for dir " + dir);
             } else {
                 System.out.println("Flux Cell no energy storage found at " + targetPos + " for dir " + dir);
             }
+        }
+    }
+
+    public IEnergyStorage getEnergyStorage(Direction dir) {
+        return new FluxCellEnergyStorage(this.feInv, this.outputSides, dir);
+    }
+
+    static class FluxCellEnergyStorage implements IEnergyStorage {
+        private final GenericStackInv inv;
+        private final Set<Direction> outputSides;
+        private final Direction dir;
+
+        public FluxCellEnergyStorage(GenericStackInv inv, Set<Direction> outputSides, Direction dir) {
+            this.inv = inv;
+            this.outputSides = outputSides;
+            this.dir = dir;
+        }
+
+        @Override
+        public int receiveEnergy(int toReceive, boolean simulate) {
+            if (simulate) {
+                // Simulate the insertion of energy
+                return Math.toIntExact(this.inv.insert(FluxKey.of(EnergyType.FE), toReceive, Actionable.SIMULATE, null));
+            } else {
+                // Actually insert energy
+                return Math.toIntExact(this.inv.insert(FluxKey.of(EnergyType.FE), toReceive, Actionable.MODULATE, null));
+            }
+        }
+
+        @Override
+        public int extractEnergy(int toExtract, boolean simulate) {
+            if (simulate) {
+                // Simulate the extraction of energy
+                return Math.toIntExact(this.inv.extract(FluxKey.of(EnergyType.FE), toExtract, Actionable.SIMULATE, null));
+            } else {
+                // Actually extract energy
+                return Math.toIntExact(this.inv.extract(FluxKey.of(EnergyType.FE), toExtract, Actionable.MODULATE, null));
+            }
+        }
+
+        @Override
+        public int getEnergyStored() {
+            int total = 0;
+            for (int i = 0; i < this.inv.size(); i++) {
+                total += (int) this.inv.getAmount(i);
+            }
+            return total;
+        }
+
+        @Override
+        public int getMaxEnergyStored() {
+            return Math.toIntExact(this.inv.getCapacity(ExternalTypes.FLUX) * this.inv.size());
+        }
+
+        @Override
+        public boolean canExtract() {
+            return true;
+        }
+
+        @Override
+        public boolean canReceive() {
+            System.out.println("Flux Cell canReceive called for dir " + this.dir);
+            return !this.outputSides.contains(this.dir);
         }
     }
 }

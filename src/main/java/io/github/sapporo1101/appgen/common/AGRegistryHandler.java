@@ -18,7 +18,7 @@ import appeng.items.tools.powered.powersink.PoweredItemCapabilities;
 import com.glodblock.github.glodium.registry.RegistryHandler;
 import com.glodblock.github.glodium.util.GlodUtil;
 import io.github.sapporo1101.appgen.AppliedGenerators;
-import io.github.sapporo1101.appgen.api.IGenericInternalInvHost;
+import io.github.sapporo1101.appgen.common.blockentities.FluxCellBlockEntity;
 import io.github.sapporo1101.appgen.menu.FluxCellMenu;
 import io.github.sapporo1101.appgen.menu.FluxGeneratorMenu;
 import io.github.sapporo1101.appgen.menu.SingularityGeneratorMenu;
@@ -40,7 +40,6 @@ public class AGRegistryHandler extends RegistryHandler {
 
     public static final AGRegistryHandler INSTANCE = new AGRegistryHandler();
 
-    @SuppressWarnings("UnstableApiUsage")
     public AGRegistryHandler() {
         super(AppliedGenerators.MODID);
         this.cap(AEBaseInvBlockEntity.class, Capabilities.ItemHandler.BLOCK, AEBaseInvBlockEntity::getExposedItemHandler);
@@ -48,7 +47,7 @@ public class AGRegistryHandler extends RegistryHandler {
         this.cap(IInWorldGridNodeHost.class, AECapabilities.IN_WORLD_GRID_NODE_HOST, (object, context) -> object);
         this.cap(IAEItemPowerStorage.class, Capabilities.EnergyStorage.ITEM, (object, context) -> new PoweredItemCapabilities(object, (IAEItemPowerStorage) object.getItem()));
         this.cap(ICraftingMachine.class, AECapabilities.CRAFTING_MACHINE, (object, context) -> object);
-        this.cap(IGenericInternalInvHost.class, AECapabilities.GENERIC_INTERNAL_INV, IGenericInternalInvHost::getGenericInv);
+        this.cap(FluxCellBlockEntity.class, Capabilities.EnergyStorage.BLOCK, FluxCellBlockEntity::getEnergyStorage);
     }
 
     public <T extends AEBaseBlockEntity> void block(String name, AEBaseEntityBlock<T> block, Class<T> clazz, BlockEntityType.BlockEntitySupplier<? extends T> supplier) {
