@@ -11,6 +11,7 @@ group = mod_group_id
 repositories {
     mavenLocal()
     maven { url "https://cursemaven.com" }
+    maven { url 'https://modmaven.dev/' }
     mavenCentral()
 }
 
@@ -126,6 +127,7 @@ dependencies {
     implementation "curse.maven:ex-pattern-provider-892005:6593839"
     implementation "curse.maven:geckolib-388172:6304958"
     implementation "curse.maven:advancedae-1084104:6225993"
+    implementation "mekanism:Mekanism:1.21.1-10.7.14.79"
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
