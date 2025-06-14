@@ -169,7 +169,6 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
     public void onChangeInventory(AppEngInternalInventory inv, int slot) {
         this.updateBlockEntity(this.shouldUpdateIsOn());
         if (this.getGeneratableFE() <= 0 && this.canEatFuel()) {
-            System.out.println("Singularity Generator state changed, start charging");
             this.getMainNode().ifPresent((grid, node) -> grid.getTickManager().wakeDevice(node));
         }
     }
@@ -218,7 +217,6 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
     }
 
     public TickingRequest getTickingRequest(IGridNode node) {
-        System.out.println("Singularity Generator Ticking Request: " + this.getGeneratableFE() + " FE remaining, " + this.isOn);
         if (this.getGeneratableFE() <= 0) {
             this.charge();
         }
@@ -227,7 +225,6 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
     }
 
     public TickRateModulation tickingRequest(IGridNode node, int ticksSinceLastCall) {
-        System.out.println("Singularity Generator Ticking: " + this.getGeneratableFE() + " FE remaining, " + this.isOn);
         if (this.getGeneratableFE() <= 0) {
             this.charge();
             if (this.getGeneratableFE() > 0) {
@@ -244,11 +241,8 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
     }
 
     private void charge() {
-        System.out.println("Singularity Generator charging: " + this.getGeneratableFE() + " FE remaining, " + this.isOn);
         ItemStack stack = this.inv.getStackInSlot(0);
-        System.out.println("Singularity Generator fuel item: " + stack);
         if (!stack.isEmpty() && stack.is(SINGULARITY)) {
-            System.out.println("Singularity Generator charging singularity fuel");
             if (stack.getCount() > 0) {
                 this.setGeneratableFE(this.getGeneratableFE() + this.getFEPerSingularity());
                 if (stack.getCount() <= 1) {
@@ -326,14 +320,11 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
             BlockPos targetPos = this.getBlockPos().relative(dir);
             IEnergyStorage storage = this.level.getCapability(Capabilities.EnergyStorage.BLOCK, targetPos, dir.getOpposite());
             if (storage != null && storage.canReceive()) {
-                System.out.println("Singularity Generator found energy storage at " + targetPos + " for dir " + dir);
                 int canInsert = storage.receiveEnergy(remaining, true);
                 if (canInsert <= 0) continue;
                 int inserted = storage.receiveEnergy(remaining, false);
                 this.setGeneratableFE(Math.max(0, this.getGeneratableFE() - inserted));
                 remaining -= inserted;
-            } else {
-                System.out.println("Singularity Generator no energy storage found at " + targetPos + " for dir " + dir);
             }
         }
         return amount - remaining;

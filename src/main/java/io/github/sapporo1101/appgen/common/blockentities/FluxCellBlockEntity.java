@@ -164,15 +164,10 @@ public class FluxCellBlockEntity extends AEBaseBlockEntity implements BlockEntit
             BlockPos targetPos = this.getBlockPos().relative(dir);
             IEnergyStorage storage = this.level.getCapability(Capabilities.EnergyStorage.BLOCK, targetPos, dir.getOpposite());
             if (storage != null && storage.canReceive()) {
-                System.out.println("Flux Cell found energy storage at " + targetPos + " for dir " + dir);
                 int canInsert = storage.receiveEnergy(Integer.MAX_VALUE, true);
-                System.out.println("Flux Cell can insert " + canInsert + " FE to " + targetPos + " for dir " + dir);
                 if (canInsert <= 0) continue;
                 int extracted = Math.toIntExact(this.feInv.extract(FluxKey.of(EnergyType.FE), canInsert, Actionable.MODULATE, null));
                 storage.receiveEnergy(extracted, false);
-                System.out.println("Flux Cell sent " + extracted + " FE to " + targetPos + " for dir " + dir);
-            } else {
-                System.out.println("Flux Cell no energy storage found at " + targetPos + " for dir " + dir);
             }
         }
     }
@@ -235,7 +230,6 @@ public class FluxCellBlockEntity extends AEBaseBlockEntity implements BlockEntit
 
         @Override
         public boolean canReceive() {
-            System.out.println("Flux Cell canReceive called for dir " + this.dir);
             return !this.outputSides.contains(this.dir);
         }
     }

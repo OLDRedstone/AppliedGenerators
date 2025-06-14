@@ -28,6 +28,7 @@ public class GenesisSynthesizerMenu extends UpgradeableMenu<GenesisSynthesizerBl
 
     public static final SlotSemantic AG_TANK_INPUT = SlotSemantics.register("AG_TANK_INPUT", false);
     public static final SlotSemantic AG_TANK_OUTPUT = SlotSemantics.register("AG_TANK_OUTPUT", false);
+
     @GuiSync(3)
     public int processingTime = -1;
 

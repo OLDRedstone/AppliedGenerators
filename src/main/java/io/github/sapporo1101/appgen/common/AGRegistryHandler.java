@@ -24,6 +24,8 @@ import io.github.sapporo1101.appgen.menu.FluxCellMenu;
 import io.github.sapporo1101.appgen.menu.FluxGeneratorMenu;
 import io.github.sapporo1101.appgen.menu.GenesisSynthesizerMenu;
 import io.github.sapporo1101.appgen.menu.SingularityGeneratorMenu;
+import io.github.sapporo1101.appgen.recipe.GenesisSynthesizerRecipe;
+import io.github.sapporo1101.appgen.recipe.GenesisSynthesizerRecipeSerializer;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -64,11 +66,17 @@ public class AGRegistryHandler extends RegistryHandler {
     public void runRegister() {
         super.runRegister();
         this.onRegisterContainer();
+        this.onRegisterRecipe();
     }
 
     @SubscribeEvent
     public void onRegisterCapabilities(RegisterCapabilitiesEvent event) {
         super.onRegisterCapabilities(event);
+    }
+
+    private void onRegisterRecipe() {
+        Registry.register(BuiltInRegistries.RECIPE_TYPE, GenesisSynthesizerRecipe.ID, GenesisSynthesizerRecipe.TYPE);
+        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, GenesisSynthesizerRecipe.ID, GenesisSynthesizerRecipeSerializer.INSTANCE);
     }
 
     private void onRegisterContainer() {

@@ -150,7 +150,6 @@ public abstract class FluxGeneratorBlockEntity extends AENetworkedBlockEntity im
     }
 
     private void onConfigChanged() {
-        System.out.println("Flux Generator Config Changed: redstone: " + this.lastRedstoneState + ", isOn: " + this.isOn + ", shouldUpdate: " + shouldUpdateIsOn() + ", pulse: " + this.pulse);
         this.pulse = 0;
         this.updateBlockEntity(shouldUpdateIsOn());
         this.saveChanges();
@@ -159,7 +158,6 @@ public abstract class FluxGeneratorBlockEntity extends AENetworkedBlockEntity im
     private void onRedstoneChanged(boolean redstoneState) {
         if (redstoneState && this.isPulseMode()) this.pulse++;
         this.updateBlockEntity(shouldUpdateIsOn());
-        System.out.println("Flux Generator Redstone Changed: redstone: " + this.lastRedstoneState + ", isOn: " + this.isOn + ", shouldUpdate: " + shouldUpdateIsOn() + ", pulse: " + this.pulse);
         this.saveChanges();
     }
 
@@ -179,7 +177,6 @@ public abstract class FluxGeneratorBlockEntity extends AENetworkedBlockEntity im
     }
 
     public TickingRequest getTickingRequest(IGridNode node) {
-        System.out.println("Flux Generator Ticking Request: redstone: " + this.lastRedstoneState + ", isOn: " + this.isOn);
         this.updateBlockEntity(this.shouldUpdateIsOn());
 
         return new TickingRequest(TickRates.VibrationChamber, !this.isOn);
@@ -195,13 +192,11 @@ public abstract class FluxGeneratorBlockEntity extends AENetworkedBlockEntity im
             this.lastGeneratePerTick = (double) sent / ticks;
             if (this.pulse <= 0) {
                 this.updateBlockEntity(this.shouldUpdateIsOn());
-                System.out.println("Flux Generator Pulse Mode finished at " + this.getBlockPos() + ", isOn: " + this.isOn + ", pulse: " + this.pulse);
                 return TickRateModulation.SLEEP;
             } else {
                 return sent > 0 ? TickRateModulation.FASTER : TickRateModulation.SLOWER;
             }
         } else {
-            System.out.println("Flux Generator Ticking: " + ticksSinceLastCall + " ticks, redstone: " + this.lastRedstoneState + ", isOn: " + this.isOn);
             int newFE = ticksSinceLastCall * this.getGeneratePerTick();
             final int sent = this.configManager.getSetting(AAESettings.ME_EXPORT) == YesNo.YES ? this.sendFEToNetwork(newFE) : this.sendFEToAdjacentBlock(newFE);
             this.lastGeneratePerTick = (double) sent / ticksSinceLastCall;
@@ -219,14 +214,11 @@ public abstract class FluxGeneratorBlockEntity extends AENetworkedBlockEntity im
         if (this.hasLevel()) {
             Platform.notifyBlocksOfNeighbors(this.level, this.worldPosition);
         }
-        System.out.println("Flux Generator update at " + this.getBlockPos() + ", isOn: " + this.isOn + ", shouldUpdate: " + condition);
         this.getMainNode().ifPresent((grid, node) -> {
             if (this.isOn) {
                 grid.getTickManager().wakeDevice(node);
-                System.out.println("Flux Generator waking at " + this.getBlockPos());
             } else {
                 grid.getTickManager().sleepDevice(node);
-                System.out.println("Flux Generator sleeping at " + this.getBlockPos());
                 this.lastGeneratePerTick = 0;
             }
         });
@@ -243,7 +235,6 @@ public abstract class FluxGeneratorBlockEntity extends AENetworkedBlockEntity im
     public int sendFEToNetwork(int amount) {
         if (this.getGridNode() == null) return 0;
 
-        System.out.println("Flux Generator sending " + amount + " FE to network at " + this.getBlockPos());
         IGrid grid = this.getGridNode().getGrid();
         IStorageService storage = grid.getStorageService();
 
@@ -259,13 +250,10 @@ public abstract class FluxGeneratorBlockEntity extends AENetworkedBlockEntity im
             BlockPos targetPos = this.getBlockPos().relative(dir);
             IEnergyStorage storage = this.level.getCapability(Capabilities.EnergyStorage.BLOCK, targetPos, dir.getOpposite());
             if (storage != null && storage.canReceive()) {
-                System.out.println("Flux Generator found energy storage at " + targetPos + " for dir " + dir);
                 int canInsert = storage.receiveEnergy(remaining, true);
                 if (canInsert <= 0) continue;
                 int inserted = storage.receiveEnergy(remaining, false);
                 remaining -= inserted;
-            } else {
-                System.out.println("Flux Generator no energy storage found at " + targetPos + " for dir " + dir);
             }
         }
         return amount - remaining;
@@ -275,7 +263,6 @@ public abstract class FluxGeneratorBlockEntity extends AENetworkedBlockEntity im
         if (level == null) return;
 
         final YesNo currentState = this.level.getBestNeighborSignal(this.worldPosition) != 0 ? YesNo.YES : YesNo.NO;
-        System.out.println("Flux Generator Redstone State Update at " + this.getBlockPos() + ": " + lastRedstoneState + " -> " + currentState);
         if (this.lastRedstoneState != currentState) {
             this.lastRedstoneState = currentState;
             this.onRedstoneChanged(currentState == YesNo.YES);
