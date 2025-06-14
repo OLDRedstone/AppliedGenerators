@@ -2,13 +2,16 @@ package io.github.sapporo1101.appgen.common;
 
 import io.github.sapporo1101.appgen.common.blockentities.FluxCellBlockEntity;
 import io.github.sapporo1101.appgen.common.blockentities.FluxGeneratorBlockEntity;
+import io.github.sapporo1101.appgen.common.blockentities.GenesisSynthesizerBlockEntity;
 import io.github.sapporo1101.appgen.common.blockentities.SingularityGeneratorBlockEntity;
 import io.github.sapporo1101.appgen.common.blocks.FluxCellBlock;
 import io.github.sapporo1101.appgen.common.blocks.FluxGeneratorBlock;
+import io.github.sapporo1101.appgen.common.blocks.GenesisSynthesizerBlock;
 import io.github.sapporo1101.appgen.common.blocks.SingularityGeneratorBlock;
 
 public class AGSingletons {
     public static FluxCellBlock FLUX_CELL;
+    public static GenesisSynthesizerBlock GENESIS_SYNTHESIZER;
     public static SingularityGeneratorBlock.SG1k SINGULARITY_GENERATOR_1K;
     public static SingularityGeneratorBlock.SG4k SINGULARITY_GENERATOR_4K;
     public static SingularityGeneratorBlock.SG16k SINGULARITY_GENERATOR_16K;
@@ -32,6 +35,7 @@ public class AGSingletons {
 
     public static void init(AGRegistryHandler regHandler) {
         FLUX_CELL = new FluxCellBlock();
+        GENESIS_SYNTHESIZER = new GenesisSynthesizerBlock();
         SINGULARITY_GENERATOR_1K = new SingularityGeneratorBlock.SG1k();
         SINGULARITY_GENERATOR_4K = new SingularityGeneratorBlock.SG4k();
         SINGULARITY_GENERATOR_16K = new SingularityGeneratorBlock.SG16k();
@@ -54,6 +58,7 @@ public class AGSingletons {
         FLUX_GENERATOR_256M = new FluxGeneratorBlock.FG256m();
 
         regHandler.block("flux_cell", FLUX_CELL, FluxCellBlockEntity.class, FluxCellBlockEntity::new);
+        regHandler.block("genesis_synthesizer", GENESIS_SYNTHESIZER, GenesisSynthesizerBlockEntity.class, GenesisSynthesizerBlockEntity::new);
         regHandler.block("singularity_generator_1k", SINGULARITY_GENERATOR_1K, SingularityGeneratorBlockEntity.SG1k.class, SingularityGeneratorBlockEntity.SG1k::new);
         regHandler.block("singularity_generator_4k", SINGULARITY_GENERATOR_4K, SingularityGeneratorBlockEntity.SG4k.class, SingularityGeneratorBlockEntity.SG4k::new);
         regHandler.block("singularity_generator_16k", SINGULARITY_GENERATOR_16K, SingularityGeneratorBlockEntity.SG16k.class, SingularityGeneratorBlockEntity.SG16k::new);

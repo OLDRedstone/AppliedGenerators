@@ -19,8 +19,10 @@ import com.glodblock.github.glodium.registry.RegistryHandler;
 import com.glodblock.github.glodium.util.GlodUtil;
 import io.github.sapporo1101.appgen.AppliedGenerators;
 import io.github.sapporo1101.appgen.common.blockentities.FluxCellBlockEntity;
+import io.github.sapporo1101.appgen.common.blockentities.GenesisSynthesizerBlockEntity;
 import io.github.sapporo1101.appgen.menu.FluxCellMenu;
 import io.github.sapporo1101.appgen.menu.FluxGeneratorMenu;
+import io.github.sapporo1101.appgen.menu.GenesisSynthesizerMenu;
 import io.github.sapporo1101.appgen.menu.SingularityGeneratorMenu;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -40,6 +42,7 @@ public class AGRegistryHandler extends RegistryHandler {
 
     public static final AGRegistryHandler INSTANCE = new AGRegistryHandler();
 
+    @SuppressWarnings("UnstableApiUsage")
     public AGRegistryHandler() {
         super(AppliedGenerators.MODID);
         this.cap(AEBaseInvBlockEntity.class, Capabilities.ItemHandler.BLOCK, AEBaseInvBlockEntity::getExposedItemHandler);
@@ -48,6 +51,7 @@ public class AGRegistryHandler extends RegistryHandler {
         this.cap(IAEItemPowerStorage.class, Capabilities.EnergyStorage.ITEM, (object, context) -> new PoweredItemCapabilities(object, (IAEItemPowerStorage) object.getItem()));
         this.cap(ICraftingMachine.class, AECapabilities.CRAFTING_MACHINE, (object, context) -> object);
         this.cap(FluxCellBlockEntity.class, Capabilities.EnergyStorage.BLOCK, FluxCellBlockEntity::getEnergyStorage);
+        this.cap(GenesisSynthesizerBlockEntity.class, AECapabilities.GENERIC_INTERNAL_INV, (object, context) -> object.getTank());
     }
 
     public <T extends AEBaseBlockEntity> void block(String name, AEBaseEntityBlock<T> block, Class<T> clazz, BlockEntityType.BlockEntitySupplier<? extends T> supplier) {
@@ -69,6 +73,7 @@ public class AGRegistryHandler extends RegistryHandler {
 
     private void onRegisterContainer() {
         Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("flux_cell"), FluxCellMenu.TYPE);
+        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("genesis_synthesizer"), GenesisSynthesizerMenu.TYPE);
         Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("singularity_generator_1k"), SingularityGeneratorMenu.TYPE);
         Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("singularity_generator_4k"), SingularityGeneratorMenu.TYPE);
         Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("singularity_generator_16k"), SingularityGeneratorMenu.TYPE);

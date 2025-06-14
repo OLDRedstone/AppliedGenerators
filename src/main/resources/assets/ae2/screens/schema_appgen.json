@@ -378,7 +378,9 @@
                     "SMITHING_TABLE_ADDITION",
                     "SMITHING_TABLE_RESULT",
                     "STONECUTTING_INPUT",
-                    "MISSING_INGREDIENT"
+                    "MISSING_INGREDIENT",
+                    "AG_TANK_INPUT",
+                    "AG_TANK_OUTPUT"
                 ]
             }
         },
