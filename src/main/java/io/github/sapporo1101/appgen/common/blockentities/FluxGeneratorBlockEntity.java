@@ -13,6 +13,8 @@ import appeng.api.networking.storage.IStorageService;
 import appeng.api.networking.ticking.IGridTickable;
 import appeng.api.networking.ticking.TickRateModulation;
 import appeng.api.networking.ticking.TickingRequest;
+import appeng.api.orientation.BlockOrientation;
+import appeng.api.orientation.RelativeSide;
 import appeng.api.stacks.AEKey;
 import appeng.api.upgrades.IUpgradeInventory;
 import appeng.api.upgrades.IUpgradeableObject;
@@ -72,6 +74,11 @@ public abstract class FluxGeneratorBlockEntity extends AENetworkedBlockEntity im
         this.getMainNode().setIdlePowerUsage(0F).setFlags(GridFlags.REQUIRE_CHANNEL).addService(IGridTickable.class, this);
         this.upgrades = UpgradeInventories.forMachine(block, 4, this::onUpgradeChanged);
         this.configManager = IConfigManager.builder(this::onConfigChanged).registerSetting(AAESettings.ME_EXPORT, YesNo.YES).registerSetting(Settings.REDSTONE_CONTROLLED, RedstoneMode.IGNORE).build();
+    }
+
+    @Override
+    public Set<Direction> getGridConnectableSides(BlockOrientation orientation) {
+        return EnumSet.complementOf(EnumSet.of(orientation.getSide(RelativeSide.TOP)));
     }
 
     abstract int getBaseGeneratePerTick();
