@@ -11,10 +11,7 @@ import appeng.api.networking.ticking.TickRateModulation;
 import appeng.api.networking.ticking.TickingRequest;
 import appeng.api.orientation.BlockOrientation;
 import appeng.api.orientation.RelativeSide;
-import appeng.api.stacks.AEFluidKey;
-import appeng.api.stacks.AEKey;
-import appeng.api.stacks.AEKeyType;
-import appeng.api.stacks.GenericStack;
+import appeng.api.stacks.*;
 import appeng.api.upgrades.IUpgradeInventory;
 import appeng.api.upgrades.IUpgradeableObject;
 import appeng.api.upgrades.UpgradeInventories;
@@ -68,6 +65,7 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
 
     public static final long POWER_MAXIMUM_AMOUNT = 10_000_000;
     public static final int MAX_PROGRESS = 200;
+    public static final int MAX_SINGULARITY_TANK = 1000;
 
     private final AppEngInternalInventory inputInv = new AppEngInternalInventory(this, 9, 64, new RestrictSingularityFilter());
     private final AppEngInternalInventory singularityInv = new AppEngInternalInventory(this, 1, 64, new AEItemDefinitionFilter(AEItems.SINGULARITY));
@@ -80,6 +78,7 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
     private final CustomTankInv tankInv = new CustomTankInv(this::onChangeTank, GenericStackInv.Mode.STORAGE, 2);
     private final IUpgradeInventory upgrades = UpgradeInventories.forMachine(AGSingletons.GENESIS_SYNTHESIZER, 4, this::saveChanges);
     private final ConfigManager configManager = new ConfigManager(this::onConfigChanged);
+    private final GenericStackInv singularityTank = new GenericSingularityTank(null);
     private boolean isWorking = false;
     private boolean hasInventoryChanged = false;
     private GenesisSynthesizerRecipe cachedTask = null;
@@ -158,23 +157,10 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
     }
 
     @Override
-    public void addAdditionalDrops(Level level, BlockPos pos, List<ItemStack> drops) {
-        super.addAdditionalDrops(level, pos, drops);
-        for (int index = 0; index < this.tankInv.size(); index++) {
-            var stack = this.tankInv.getStack(index);
-            if (stack != null) {
-                stack.what().addDrops(stack.amount(), drops, level, pos);
-            }
-        }
-        for (var upgrade : upgrades) {
-            drops.add(upgrade);
-        }
-    }
-
-    @Override
     public void saveAdditional(CompoundTag data, HolderLookup.Provider registries) {
         super.saveAdditional(data, registries);
         this.tankInv.writeToChildTag(data, "tank", registries);
+        this.singularityTank.writeToChildTag(data, "singularity_tank", registries);
         this.upgrades.writeToNBT(data, "upgrades", registries);
         this.configManager.writeToNBT(data, registries);
         var sides = new ListTag();
@@ -188,6 +174,7 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
     public void loadTag(CompoundTag data, HolderLookup.Provider registries) {
         super.loadTag(data, registries);
         this.tankInv.readFromChildTag(data, "tank", registries);
+        this.singularityTank.readFromChildTag(data, "singularity_tank", registries);
         this.upgrades.readFromNBT(data, "upgrades", registries);
         this.configManager.readFromNBT(data, registries);
         this.outputSides.clear();
@@ -198,6 +185,20 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
             }
         } else {
             this.outputSides.addAll(List.of(Direction.values()));
+        }
+    }
+
+    @Override
+    public void addAdditionalDrops(Level level, BlockPos pos, List<ItemStack> drops) {
+        super.addAdditionalDrops(level, pos, drops);
+        for (int index = 0; index < this.tankInv.size(); index++) {
+            var stack = this.tankInv.getStack(index);
+            if (stack != null) {
+                stack.what().addDrops(stack.amount(), drops, level, pos);
+            }
+        }
+        for (var upgrade : upgrades) {
+            drops.add(upgrade);
         }
     }
 
@@ -225,6 +226,7 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
     private void onChangeInventory() {
         System.out.println("GenesisSynthesizerBlockEntity onChangeInventory called, hasAutoExportWork: " + this.hasAutoExportWork() + ", hasCraftWork: " + this.hasCraftWork());
         this.hasInventoryChanged = true;
+        this.chargeSingularityTank();
         getMainNode().ifPresent((grid, node) -> grid.getTickManager().wakeDevice(node));
     }
 
@@ -338,7 +340,7 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
             if (this.level != null) {
                 GenesisSynthesizerRecipe recipe = this.findRecipe(this.level);
                 System.out.println("GenesisSynthesizer found recipe: " + (recipe != null ? recipe : "null"));
-                if (recipe != null) {
+                if (recipe == null) {
                     this.setProgress(0);
                     this.setWorking(false);
                     this.cachedTask = null;
@@ -434,6 +436,7 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
                             }
                         }
 
+                        consume:
                         for (var input : out.getValidInputs()) {
                             for (int x = 0; x < this.combinedInputInv.size(); x++) {
                                 var stack = this.combinedInputInv.getStackInSlot(x);
@@ -443,8 +446,14 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
                                 }
 
                                 if (input.isEmpty()) {
-                                    break;
+                                    continue consume;
                                 }
+                            }
+                            GenericStack singularityStack = this.singularityTank.getStack(0);
+                            ItemStack singularityItemStack = singularityStack != null ? ((AEItemKey) singularityStack.what()).toStack((int) singularityStack.amount()) : ItemStack.EMPTY;
+                            if (input.checkType(singularityItemStack)) {
+                                input.consume(singularityItemStack);
+                                this.singularityTank.setStack(0, GenericStack.fromItemStack(singularityItemStack));
                             }
 
                             if (fluidStack != null && !input.isEmpty() && input.checkType(fluidStack)) {
@@ -567,9 +576,12 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
     private GenesisSynthesizerRecipe findRecipe(Level level) {
         System.out.println("Finding recipe in GenesisSynthesizerBlockEntity");
         List<ItemStack> inputs = new ArrayList<>();
-        for (var x = 0; x < this.combinedInputInv.size(); x++) {
-            inputs.add(this.combinedInputInv.getStackInSlot(x));
+        for (var x = 0; x < this.inputInv.size(); x++) {
+            inputs.add(this.inputInv.getStackInSlot(x));
         }
+        GenericStack singularityStack = this.singularityTank.getStack(0);
+        ItemStack singularityItemStack = singularityStack != null ? ((AEItemKey) singularityStack.what()).toStack((int) singularityStack.amount()) : ItemStack.EMPTY;
+        inputs.add(singularityItemStack);
 
         return GenesisSynthesizerRecipes.findRecipe(level, inputs, this.tankInv.getStack(0));
     }
@@ -583,14 +595,52 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
                     this.level.setBlock(this.worldPosition, newState, 2);
                 }
             }
-
         }
+    }
+
+    private void chargeSingularityTank() {
+        if (!this.singularityInv.getStackInSlot(0).isEmpty()) {
+            ItemStack singularityInvStack = this.singularityInv.getStackInSlot(0);
+            if (singularityInvStack != null && AEItems.SINGULARITY.is(singularityInvStack)) {
+                if (this.getSingularityCount() < MAX_SINGULARITY_TANK) {
+                    ItemStack extracted = this.singularityInv.extractItem(0, MAX_SINGULARITY_TANK - this.getSingularityCount(), false);
+                    System.out.println("GenesisSynthesizerBlockEntity extracted singularity: " + extracted);
+                    GenericStack singularityTankStack = this.singularityTank.getStack(0);
+                    ItemStack singularityTankItemStack = singularityTankStack != null ? ((AEItemKey) singularityTankStack.what()).toStack((int) singularityTankStack.amount()) : ItemStack.EMPTY;
+                    System.out.println("GenesisSynthesizerBlockEntity singularityTankStack: " + singularityTankItemStack);
+                    extracted.setCount(extracted.getCount() + singularityTankItemStack.getCount());
+                    this.singularityTank.setStack(0, GenericStack.fromItemStack(extracted));
+                    System.out.println("GenesisSynthesizerBlockEntity charged singularity tank, set count: " + extracted.getCount() + " new count: " + this.singularityTank.getAmount(0) + " / " + this.singularityTank.getCapacity(AEKeyType.items()));
+                }
+            }
+        }
+    }
+
+    public int getSingularityCount() {
+        return Math.toIntExact(this.singularityTank.getAmount(0));
     }
 
     private static class RestrictSingularityFilter implements IAEItemFilter {
         @Override
         public boolean allowInsert(InternalInventory inv, int slot, ItemStack stack) {
             return !AEItems.SINGULARITY.is(stack);
+        }
+    }
+
+    private static class GenericSingularityTank extends GenericStackInv {
+        public GenericSingularityTank(@Nullable Runnable listener) {
+            super(Set.of(AEKeyType.items()), listener, Mode.STORAGE, 1);
+            this.setCapacity(AEKeyType.items(), GenesisSynthesizerBlockEntity.MAX_SINGULARITY_TANK);
+        }
+
+        @Override
+        public long getMaxAmount(AEKey key) {
+            return getCapacity(key.getType());
+        }
+
+        @Override
+        public boolean isAllowedIn(int slot, AEKey what) {
+            return what instanceof AEItemKey && AEItems.SINGULARITY.is(what);
         }
     }
 
