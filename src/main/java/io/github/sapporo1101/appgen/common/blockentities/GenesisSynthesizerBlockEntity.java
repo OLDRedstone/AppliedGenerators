@@ -6,7 +6,6 @@ import appeng.api.inventories.InternalInventory;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.energy.IEnergyService;
 import appeng.api.networking.energy.IEnergySource;
-import appeng.api.networking.security.IActionSource;
 import appeng.api.networking.ticking.IGridTickable;
 import appeng.api.networking.ticking.TickRateModulation;
 import appeng.api.networking.ticking.TickingRequest;
@@ -61,8 +60,6 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
-import net.pedroksl.advanced_ae.xmod.Addons;
-import net.pedroksl.advanced_ae.xmod.appflux.AppliedFluxPlugin;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -90,7 +87,6 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
 
 
     private final Set<Direction> outputSides = EnumSet.noneOf(Direction.class);
-    private boolean showWarning = false;
 
     public GenesisSynthesizerBlockEntity(BlockPos pos, BlockState blockState) {
         super(GlodUtil.getTileType(GenesisSynthesizerBlockEntity.class, GenesisSynthesizerBlockEntity::new, AGSingletons.GENESIS_SYNTHESIZER), pos, blockState);
@@ -133,6 +129,18 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
         data.writeInt(this.progress);
 //        this.renderOutput = this.ctx.currentRecipe == null ? ItemStack.EMPTY : this.ctx.currentRecipe.value().output;
 //        ItemStack.OPTIONAL_STREAM_CODEC.encode(data, this.renderOutput);
+    }
+
+    @Override
+    public void importSettings(SettingsFrom mode, DataComponentMap input, @Nullable Player player) {
+        super.importSettings(mode, input, player);
+        var nbt = input.get(EAESingletons.EXTRA_SETTING);
+        if (nbt != null) {
+            this.outputSides.clear();
+            for (var side : nbt.getList("output_side", CompoundTag.TAG_STRING)) {
+                this.outputSides.add(Direction.byName(side.getAsString()));
+            }
+        }
     }
 
     @Override
@@ -180,8 +188,8 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
     public void loadTag(CompoundTag data, HolderLookup.Provider registries) {
         super.loadTag(data, registries);
         this.tankInv.readFromChildTag(data, "tank", registries);
-        this.upgrades.writeToNBT(data, "upgrades", registries);
-        this.configManager.writeToNBT(data, registries);
+        this.upgrades.readFromNBT(data, "upgrades", registries);
+        this.configManager.readFromNBT(data, registries);
         this.outputSides.clear();
         if (data.contains("output_side")) {
             var list = data.getList("output_side", CompoundTag.TAG_STRING);
@@ -364,15 +372,6 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
                 final int powerConsumption = Mth.floor(((float) Objects.requireNonNull(getTask()).getEnergy() / requiredTicks) * powerRatio);
                 final double powerThreshold = powerConsumption - 0.01;
 
-                // Try to recharge from fe cells
-                if (Addons.APPFLUX.isLoaded()) {
-                    AppliedFluxPlugin.rechargeEnergyStorage(
-                            grid,
-                            Integer.MAX_VALUE,
-                            IActionSource.ofMachine(this),
-                            this.getEnergyStorage(Direction.UP));
-                }
-
                 double powerReq = this.extractAEPower(powerConsumption, Actionable.SIMULATE, PowerMultiplier.CONFIG);
 
                 if (powerReq <= powerThreshold) {
@@ -389,7 +388,6 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
                     src.extractAEPower(powerConsumption, Actionable.MODULATE, PowerMultiplier.CONFIG);
                     System.out.println("GenesisSynthesizer extracted power: " + powerConsumption);
                     this.addProgress(speedFactor);
-                    setShowWarning(false);
                 } else if (powerReq != 0) {
                     var progressRatio = src == this
                             ? powerReq / powerConsumption
@@ -405,8 +403,6 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
                         System.out.println("GenesisSynthesizer extracted power: " + extracted + ", actual factor: " + actualFactor);
                         this.addProgress(actualFactor);
                     }
-                    // Add warning
-                    setShowWarning(true);
                 }
             });
 
@@ -486,10 +482,6 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
                 : this.hasAutoExportWork() ? TickRateModulation.SLOWER : TickRateModulation.SLEEP;
     }
 
-    public void setShowWarning(boolean show) {
-        this.showWarning = show;
-    }
-
     private boolean hasAutoExportWork() {
         return (!this.outputInv.getStackInSlot(0).isEmpty()
                 || this.tankInv.getStack(1) != null
@@ -524,14 +516,18 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
             IItemHandler itemStorage = this.level.getCapability(Capabilities.ItemHandler.BLOCK, targetPos, dir.getOpposite());
             IFluidHandler fluidStorage = this.level.getCapability(Capabilities.FluidHandler.BLOCK, targetPos, dir.getOpposite());
 
-            var movedStacks = false;
+            boolean movedStacks = false;
             if (itemStorage != null) {
                 if (this.outputInv.getStackInSlot(0) != null && !this.outputInv.getStackInSlot(0).isEmpty()) {
-                    var extractedStack = this.outputInv.extractItem(0, 64, false);
-                    var inserted = itemStorage.insertItem(0, extractedStack, false);
-                    extractedStack.setCount(extractedStack.getCount() - inserted.getCount());
-                    this.outputInv.insertItem(0, extractedStack, false);
-                    movedStacks |= !inserted.isEmpty();
+                    ItemStack remainingStack = this.outputInv.extractItem(0, 64, false);
+                    System.out.println("GenesisSynthesizerBlockEntity extractedStack: " + remainingStack);
+                    for (int i = 0; i < itemStorage.getSlots(); i++) {
+                        if (remainingStack.getCount() <= 0) break;
+                        remainingStack = itemStorage.insertItem(i, remainingStack, false);
+                    }
+                    System.out.println("GenesisSynthesizerBlockEntity extractedStack after insert: " + remainingStack);
+                    this.outputInv.insertItem(0, remainingStack, false);
+                    movedStacks |= !remainingStack.isEmpty();
                 }
             }
 
