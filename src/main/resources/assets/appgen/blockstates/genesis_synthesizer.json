@@ -1,0 +1,10 @@
+{
+    "variants": {
+        "working=true": {
+            "model": "appgen:block/synthesizer/on"
+        },
+        "working=false": {
+            "model": "appgen:block/synthesizer/off"
+        }
+    }
+}

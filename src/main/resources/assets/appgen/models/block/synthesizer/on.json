@@ -1,0 +1,6 @@
+{
+    "parent": "appgen:block/synthesizer/template",
+    "textures": {
+        "overlay_on": "ae2:block/mysterious_cube_top"
+    }
+}

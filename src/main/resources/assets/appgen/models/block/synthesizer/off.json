@@ -1,0 +1,6 @@
+{
+    "parent": "appgen:block/synthesizer/template",
+    "textures": {
+        "overlay_on": "appgen:block/utils/transparent"
+    }
+}

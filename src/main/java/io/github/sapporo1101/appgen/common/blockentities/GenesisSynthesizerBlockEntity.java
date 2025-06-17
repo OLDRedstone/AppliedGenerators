@@ -351,7 +351,7 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
             this.hasInventoryChanged = false;
         }
 
-        if (this.hasCraftWork()) {
+        if (this.hasCraftWork() && this.getGridNode() != null && this.getGridNode().isOnline()) {
             System.out.println("GenesisSynthesizer has craft work, processing...");
             System.out.println("GenesisSynthesizer processing time: " + this.getProgress() + ", task: " + this.getTask());
             this.setWorking(true);
