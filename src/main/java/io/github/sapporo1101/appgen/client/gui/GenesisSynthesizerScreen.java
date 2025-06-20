@@ -12,6 +12,7 @@ import com.glodblock.github.extendedae.client.button.EPPIcon;
 import com.glodblock.github.extendedae.client.gui.subgui.OutputSideConfig;
 import com.glodblock.github.extendedae.network.EAENetworkHandler;
 import com.glodblock.github.extendedae.network.packet.CEAEGenericPacket;
+import io.github.sapporo1101.appgen.client.gui.widget.SubProgressBar;
 import io.github.sapporo1101.appgen.common.AGSingletons;
 import io.github.sapporo1101.appgen.menu.GenesisSynthesizerMenu;
 import net.minecraft.network.chat.Component;
@@ -23,11 +24,14 @@ public class GenesisSynthesizerScreen extends UpgradeableScreen<GenesisSynthesiz
     private final ProgressBar pb;
     private final SettingToggleButton<YesNo> autoExportBtn;
     private final ActionEPPButton outputSideBtn;
+    private final SubProgressBar singularityBar;
 
     public GenesisSynthesizerScreen(GenesisSynthesizerMenu menu, Inventory playerInventory, Component title, ScreenStyle style) {
         super(menu, playerInventory, title, style);
         this.pb = new ProgressBar(this.menu, style.getImage("progressBar"), ProgressBar.Direction.VERTICAL);
         widgets.add("progressBar", this.pb);
+        this.singularityBar = new SubProgressBar(this.menu, style.getImage("singularityBar"), ProgressBar.Direction.VERTICAL);
+        widgets.add("singularityBar", this.singularityBar);
         this.autoExportBtn = new ServerSettingToggleButton<>(Settings.AUTO_EXPORT, YesNo.NO);
         this.addToLeftToolbar(autoExportBtn);
         this.outputSideBtn = new ActionEPPButton(b -> this.openOutputConfig(), EPPIcon.OUTPUT_SIDES);
@@ -52,6 +56,7 @@ public class GenesisSynthesizerScreen extends UpgradeableScreen<GenesisSynthesiz
         super.updateBeforeRender();
         int progress = this.menu.getCurrentProgress() * 100 / this.menu.getMaxProgress();
         this.pb.setFullMsg(Component.literal(progress + "%"));
+        this.singularityBar.setFullMsg(Component.literal(this.menu.getCurrentSubProgress() + " / " + this.menu.getMaxSubProgress()));
         this.autoExportBtn.set(getMenu().getAutoExport());
         this.outputSideBtn.setVisibility(this.autoExportBtn.getCurrentValue() == YesNo.YES);
     }

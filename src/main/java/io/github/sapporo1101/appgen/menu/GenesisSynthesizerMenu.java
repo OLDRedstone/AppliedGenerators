@@ -16,6 +16,7 @@ import com.glodblock.github.glodium.network.packet.sync.ActionMap;
 import com.glodblock.github.glodium.network.packet.sync.IActionHolder;
 import io.github.sapporo1101.appgen.AppliedGenerators;
 import io.github.sapporo1101.appgen.common.blockentities.GenesisSynthesizerBlockEntity;
+import io.github.sapporo1101.appgen.menu.interfaces.ISubProgressProvider;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
@@ -24,10 +25,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GenesisSynthesizerMenu extends UpgradeableMenu<GenesisSynthesizerBlockEntity> implements IProgressProvider, IActionHolder {
+public class GenesisSynthesizerMenu extends UpgradeableMenu<GenesisSynthesizerBlockEntity> implements IProgressProvider, ISubProgressProvider, IActionHolder {
 
     public static final SlotSemantic AG_TANK_INPUT = SlotSemantics.register("AG_TANK_INPUT", false);
     public static final SlotSemantic AG_TANK_OUTPUT = SlotSemantics.register("AG_TANK_OUTPUT", false);
+
+    @GuiSync(2)
+    public int singularityCount = -1;
 
     @GuiSync(3)
     public int processingTime = -1;
@@ -77,7 +81,8 @@ public class GenesisSynthesizerMenu extends UpgradeableMenu<GenesisSynthesizerBl
     @Override
     protected void standardDetectAndSendChanges() {
         if (isServerSide()) {
-            this.processingTime = getHost().getProgress();
+            this.processingTime = this.getHost().getProgress();
+            this.singularityCount = this.getHost().getSingularityCount();
         }
         super.standardDetectAndSendChanges();
     }
@@ -104,5 +109,15 @@ public class GenesisSynthesizerMenu extends UpgradeableMenu<GenesisSynthesizerBl
     @Override
     public ActionMap getActionMap() {
         return this.actions;
+    }
+
+    @Override
+    public int getCurrentSubProgress() {
+        return this.singularityCount;
+    }
+
+    @Override
+    public int getMaxSubProgress() {
+        return GenesisSynthesizerBlockEntity.MAX_SINGULARITY_TANK;
     }
 }
