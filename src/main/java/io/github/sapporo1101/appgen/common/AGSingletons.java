@@ -1,13 +1,14 @@
 package io.github.sapporo1101.appgen.common;
 
+import com.glodblock.github.extendedae.common.items.CommonItem;
 import io.github.sapporo1101.appgen.common.blockentities.FluxCellBlockEntity;
 import io.github.sapporo1101.appgen.common.blockentities.FluxGeneratorBlockEntity;
 import io.github.sapporo1101.appgen.common.blockentities.GenesisSynthesizerBlockEntity;
 import io.github.sapporo1101.appgen.common.blockentities.SingularityGeneratorBlockEntity;
-import io.github.sapporo1101.appgen.common.blocks.FluxCellBlock;
-import io.github.sapporo1101.appgen.common.blocks.FluxGeneratorBlock;
-import io.github.sapporo1101.appgen.common.blocks.GenesisSynthesizerBlock;
-import io.github.sapporo1101.appgen.common.blocks.SingularityGeneratorBlock;
+import io.github.sapporo1101.appgen.common.blocks.*;
+import net.minecraft.world.level.block.Block;
+
+import static appeng.block.AEBaseBlock.stoneProps;
 
 public class AGSingletons {
     public static FluxCellBlock FLUX_CELL;
@@ -32,6 +33,18 @@ public class AGSingletons {
     public static FluxGeneratorBlock.FG16m FLUX_GENERATOR_16M;
     public static FluxGeneratorBlock.FG64m FLUX_GENERATOR_64M;
     public static FluxGeneratorBlock.FG256m FLUX_GENERATOR_256M;
+    public static EmberClusterBlock EMBER_BUD_SMALL;
+    public static EmberClusterBlock EMBER_BUD_MEDIUM;
+    public static EmberClusterBlock EMBER_BUD_LARGE;
+    public static EmberClusterBlock EMBER_CLUSTER;
+    public static EmberBuddingBlock EMBER_BUDDING_FLAWLESS;
+    public static EmberBuddingBlock EMBER_BUDDING_FLAWED;
+    public static EmberBuddingBlock EMBER_BUDDING_CHIPPED;
+    public static EmberBuddingBlock EMBER_BUDDING_DAMAGED;
+    public static Block EMBER_BLOCK;
+
+    public static CommonItem EMBER_CRYSTAL;
+    public static CommonItem EMBER_DUST;
 
     public static void init(AGRegistryHandler regHandler) {
         FLUX_CELL = new FluxCellBlock();
@@ -56,6 +69,18 @@ public class AGSingletons {
         FLUX_GENERATOR_16M = new FluxGeneratorBlock.FG16m();
         FLUX_GENERATOR_64M = new FluxGeneratorBlock.FG64m();
         FLUX_GENERATOR_256M = new FluxGeneratorBlock.FG256m();
+        EMBER_BUD_SMALL = new EmberClusterBlock(0, 3, 4);
+        EMBER_BUD_MEDIUM = new EmberClusterBlock(1, 4, 3);
+        EMBER_BUD_LARGE = new EmberClusterBlock(2, 5, 3);
+        EMBER_CLUSTER = new EmberClusterBlock(3, 7, 3);
+        EMBER_BUDDING_FLAWLESS = new EmberBuddingBlock();
+        EMBER_BUDDING_FLAWED = new EmberBuddingBlock();
+        EMBER_BUDDING_CHIPPED = new EmberBuddingBlock();
+        EMBER_BUDDING_DAMAGED = new EmberBuddingBlock();
+        EMBER_BLOCK = new Block(stoneProps().strength(3, 8).requiresCorrectToolForDrops());
+
+        EMBER_CRYSTAL = new CommonItem();
+        EMBER_DUST = new CommonItem();
 
         regHandler.block("flux_cell", FLUX_CELL, FluxCellBlockEntity.class, FluxCellBlockEntity::new);
         regHandler.block("genesis_synthesizer", GENESIS_SYNTHESIZER, GenesisSynthesizerBlockEntity.class, GenesisSynthesizerBlockEntity::new);
@@ -79,5 +104,17 @@ public class AGSingletons {
         regHandler.block("flux_generator_16m", FLUX_GENERATOR_16M, FluxGeneratorBlockEntity.FG16m.class, FluxGeneratorBlockEntity.FG16m::new);
         regHandler.block("flux_generator_64m", FLUX_GENERATOR_64M, FluxGeneratorBlockEntity.FG64m.class, FluxGeneratorBlockEntity.FG64m::new);
         regHandler.block("flux_generator_256m", FLUX_GENERATOR_256M, FluxGeneratorBlockEntity.FG256m.class, FluxGeneratorBlockEntity.FG256m::new);
+        regHandler.block("ember_bud_small", EMBER_BUD_SMALL);
+        regHandler.block("ember_bud_medium", EMBER_BUD_MEDIUM);
+        regHandler.block("ember_bud_large", EMBER_BUD_LARGE);
+        regHandler.block("ember_cluster", EMBER_CLUSTER);
+        regHandler.block("ember_budding_flawless", EMBER_BUDDING_FLAWLESS);
+        regHandler.block("ember_budding_flawed", EMBER_BUDDING_FLAWED);
+        regHandler.block("ember_budding_chipped", EMBER_BUDDING_CHIPPED);
+        regHandler.block("ember_budding_damaged", EMBER_BUDDING_DAMAGED);
+        regHandler.block("ember_block", EMBER_BLOCK);
+
+        regHandler.item("ember_crystal", EMBER_CRYSTAL);
+        regHandler.item("ember_dust", EMBER_DUST);
     }
 }

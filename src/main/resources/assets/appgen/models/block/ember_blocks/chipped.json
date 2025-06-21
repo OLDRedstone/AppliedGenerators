@@ -1,0 +1,6 @@
+{
+    "parent": "minecraft:block/cube_all",
+    "textures": {
+        "all": "appgen:block/ember_blocks/chipped"
+    }
+}

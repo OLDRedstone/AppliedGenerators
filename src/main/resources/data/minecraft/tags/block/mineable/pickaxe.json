@@ -20,6 +20,15 @@
         "appgen:flux_generator_16m",
         "appgen:flux_generator_64m",
         "appgen:flux_generator_256m",
-        "appgen:flux_cell"
+        "appgen:flux_cell",
+        "appgen:ember_budding_flawless",
+        "appgen:ember_budding_flawed",
+        "appgen:ember_budding_chipped",
+        "appgen:ember_budding_damaged",
+        "appgen:ember_block",
+        "appgen:ember_bud_large",
+        "appgen:ember_bud_medium",
+        "appgen:ember_bud_small",
+        "appgen:ember_cluster"
     ]
 }
