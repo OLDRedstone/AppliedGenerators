@@ -21,10 +21,22 @@
     "block.appgen.flux_generator_16m": "16m Flux Generator",
     "block.appgen.flux_generator_64m": "64m Flux Generator",
     "block.appgen.flux_generator_256m": "256m Flux Generator",
+    "block.appgen.genesis_synthesizer": "Genesis Synthesizer",
+    "block.appgen.ember_budding_flawless": "Flawless Ember Budding",
+    "block.appgen.ember_budding_flawed": "Flawed Ember Budding",
+    "block.appgen.ember_budding_chipped": "Chipped Ember Budding",
+    "block.appgen.ember_budding_damaged": "Damaged Ember Budding",
+    "block.appgen.ember_block": "Ember Block",
+    "block.appgen.ember_cluster": "Ember Cluster",
+    "block.appgen.ember_bud_large": "Large Ember Bud",
+    "block.appgen.ember_bud_medium": "Medium Ember Bud",
+    "block.appgen.ember_bud_small": "Small Ember Bud",
     "gui.appgen.flux_cell": "Flux Cell",
     "gui.appgen.singularity_generator": "Singularity Generator",
     "gui.appgen.singularity_generator.progress": "Remaining: %s FE / %s FE\nGenerating: %s FE/t",
     "gui.appgen.flux_generator": "Flux Generator",
     "gui.appgen.flux_generator.active_info": "Active: %s",
-    "gui.appgen.flux_generator.generating_info": "Generating: %s FE/t"
+    "gui.appgen.flux_generator.generating_info": "Generating: %s FE/t",
+    "gui.appgen.genesis_synthesizer": "Genesis Synthesizer",
+    "gui.appgen.genesis_synthesizer.singularity_info": "Singularity: %s / %s"
 }

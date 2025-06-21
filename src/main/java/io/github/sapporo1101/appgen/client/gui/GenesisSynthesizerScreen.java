@@ -56,7 +56,7 @@ public class GenesisSynthesizerScreen extends UpgradeableScreen<GenesisSynthesiz
         super.updateBeforeRender();
         int progress = this.menu.getCurrentProgress() * 100 / this.menu.getMaxProgress();
         this.pb.setFullMsg(Component.literal(progress + "%"));
-        this.singularityBar.setFullMsg(Component.literal(this.menu.getCurrentSubProgress() + " / " + this.menu.getMaxSubProgress()));
+        this.singularityBar.setFullMsg(Component.translatable("gui.appgen.genesis_synthesizer.singularity_info", this.menu.getCurrentSubProgress(), this.menu.getMaxSubProgress()));
         this.autoExportBtn.set(getMenu().getAutoExport());
         this.outputSideBtn.setVisibility(this.autoExportBtn.getCurrentValue() == YesNo.YES);
     }
