@@ -31,6 +31,8 @@
     "block.appgen.ember_bud_large": "Large Ember Bud",
     "block.appgen.ember_bud_medium": "Medium Ember Bud",
     "block.appgen.ember_bud_small": "Small Ember Bud",
+    "item.appgen.ember_crystal": "Ember Crystal",
+    "item.appgen.ember_dust": "Ember Dust",
     "gui.appgen.flux_cell": "Flux Cell",
     "gui.appgen.singularity_generator": "Singularity Generator",
     "gui.appgen.singularity_generator.progress": "Remaining: %s FE / %s FE\nGenerating: %s FE/t",

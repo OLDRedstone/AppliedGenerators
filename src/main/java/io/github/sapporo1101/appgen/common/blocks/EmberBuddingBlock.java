@@ -38,38 +38,23 @@ public class EmberBuddingBlock extends AEBaseBlock implements ISpecialDrop {
 
     @Override
     public void randomTick(@NotNull BlockState state, @NotNull ServerLevel level, @NotNull BlockPos pos, RandomSource randomSource) {
-        System.out.println("EmberBuddingBlock randomTick at " + pos + " in " + level);
-        if (randomSource.nextInt(GROWTH_CHANCE) != 0) {
-            return;
-        }
-        System.out.println("EmberBuddingBlock randomTick passed growth chance at " + pos + " in " + level);
+        if (randomSource.nextInt(GROWTH_CHANCE) != 0) return;
         // Try to grow cluster
         Direction direction = Util.getRandom(DIRECTIONS, randomSource);
         BlockPos targetPos = pos.relative(direction);
         BlockState targetState = level.getBlockState(targetPos);
         Block newCluster;
-        if (canClusterGrowAtState(targetState)) {
-            System.out.println("Growing small ember bud at " + targetPos);
-            newCluster = AGSingletons.EMBER_BUD_SMALL;
-        } else {
-            System.out.println("Checking if can grow ember cluster at " + targetPos + " in direction " + direction);
-            newCluster = canClusterGrow(targetState, direction);
-        }
-        if (newCluster == null) {
-            System.out.println("Cannot grow ember cluster at " + targetPos + " in direction " + direction);
-            return;
-        }
+        if (canClusterGrowAtState(targetState)) newCluster = AGSingletons.EMBER_BUD_SMALL;
+        else newCluster = canClusterGrow(targetState, direction);
+        if (newCluster == null) return;
         // Grow ember crystal
         BlockState newClusterState = newCluster.defaultBlockState()
                 .setValue(AmethystClusterBlock.FACING, direction)
                 .setValue(AmethystClusterBlock.WATERLOGGED, targetState.getFluidState().getType() == Fluids.WATER);
         level.setBlockAndUpdate(targetPos, newClusterState);
 
-        if (randomSource.nextInt(DECAY_CHANCE) != 0) {
-            return;
-        }
+        if (randomSource.nextInt(DECAY_CHANCE) != 0) return;
 
-        System.out.println("Degrading ember budding block at " + pos);
         Block newBlock = this.degradeBudding();
         level.setBlockAndUpdate(pos, newBlock.defaultBlockState());
     }
@@ -83,30 +68,18 @@ public class EmberBuddingBlock extends AEBaseBlock implements ISpecialDrop {
         var cluster = state.getBlock();
         if (cluster instanceof EmberClusterBlock && cluster != AGSingletons.EMBER_CLUSTER) {
             if (state.getValue(AmethystClusterBlock.FACING) == side) {
-                if (cluster == AGSingletons.EMBER_BUD_SMALL) {
-                    return AGSingletons.EMBER_BUD_MEDIUM;
-                }
-                if (cluster == AGSingletons.EMBER_BUD_MEDIUM) {
-                    return AGSingletons.EMBER_BUD_LARGE;
-                }
-                if (cluster == AGSingletons.EMBER_BUD_LARGE) {
-                    return AGSingletons.EMBER_CLUSTER;
-                }
+                if (cluster == AGSingletons.EMBER_BUD_SMALL) return AGSingletons.EMBER_BUD_MEDIUM;
+                if (cluster == AGSingletons.EMBER_BUD_MEDIUM) return AGSingletons.EMBER_BUD_LARGE;
+                if (cluster == AGSingletons.EMBER_BUD_LARGE) return AGSingletons.EMBER_CLUSTER;
             }
         }
         return null;
     }
 
     public Block degradeBudding() {
-        if (this == AGSingletons.EMBER_BUDDING_FLAWLESS) {
-            return AGSingletons.EMBER_BUDDING_FLAWLESS;
-        }
-        if (this == AGSingletons.EMBER_BUDDING_FLAWED) {
-            return AGSingletons.EMBER_BUDDING_CHIPPED;
-        }
-        if (this == AGSingletons.EMBER_BUDDING_CHIPPED) {
-            return AGSingletons.EMBER_BUDDING_DAMAGED;
-        }
+        if (this == AGSingletons.EMBER_BUDDING_FLAWLESS) return AGSingletons.EMBER_BUDDING_FLAWLESS;
+        if (this == AGSingletons.EMBER_BUDDING_FLAWED) return AGSingletons.EMBER_BUDDING_CHIPPED;
+        if (this == AGSingletons.EMBER_BUDDING_CHIPPED) return AGSingletons.EMBER_BUDDING_DAMAGED;
         return AGSingletons.EMBER_BLOCK;
     }
 
