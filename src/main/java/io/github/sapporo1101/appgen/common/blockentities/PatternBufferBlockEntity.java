@@ -8,6 +8,8 @@ import appeng.api.inventories.InternalInventory;
 import appeng.api.stacks.AEKey;
 import appeng.api.stacks.AEKeyType;
 import appeng.api.stacks.GenericStack;
+import appeng.api.upgrades.IUpgradeInventory;
+import appeng.api.upgrades.UpgradeInventories;
 import appeng.blockentity.AEBaseBlockEntity;
 import appeng.helpers.externalstorage.GenericStackInv;
 import appeng.util.inv.AppEngInternalInventory;
@@ -18,6 +20,8 @@ import io.github.sapporo1101.appgen.xmod.ExternalTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -31,8 +35,9 @@ public class PatternBufferBlockEntity extends AEBaseBlockEntity implements Inter
 
     private final PatternBufferInv storageInv = new PatternBufferInv(this::onStorageChanged, 36);
     private final AppEngInternalInventory patternInv = new AppEngInternalInventory(this, 1);
+    private final IUpgradeInventory upgrades = UpgradeInventories.forMachine(AGSingletons.PATTERN_BUFFER, 5, this::onUpgradeChanged);
 
-    private ArrayList<List<GenericStack>> patternInputs = new ArrayList<>();
+    private final PatternInput patternInput = new PatternInput();
 
     public PatternBufferBlockEntity(BlockPos pos, BlockState blockState) {
         super(GlodUtil.getTileType(PatternBufferBlockEntity.class, PatternBufferBlockEntity::new, AGSingletons.PATTERN_BUFFER), pos, blockState);
@@ -42,8 +47,13 @@ public class PatternBufferBlockEntity extends AEBaseBlockEntity implements Inter
         setChanged();
     }
 
+    private void onUpgradeChanged() {
+        saveChanges();
+    }
+
     @Override
     public void onChangeInventory(AppEngInternalInventory inv, int slot) {
+        System.out.println("PatternBuffer onChangeInventory called for slot: " + slot);
         this.updatePattern();
         this.updateCapacity();
         InternalInventoryHost.super.onChangeInventory(inv, slot);
@@ -59,6 +69,9 @@ public class PatternBufferBlockEntity extends AEBaseBlockEntity implements Inter
             }
         }
         drops.add(patternInv.getStackInSlot(0));
+        for (var upgrade : upgrades) {
+            drops.add(upgrade);
+        }
     }
 
     @Override
@@ -68,13 +81,15 @@ public class PatternBufferBlockEntity extends AEBaseBlockEntity implements Inter
             GenericStackInv inv = this.storageInv.getInv(i);
             inv.writeToChildTag(data, "buffer_" + i, registries);
         }
-        InternalInventory inv = this.patternInv;
-        if (inv != InternalInventory.empty()) {
+        InternalInventory pattern = this.getPatternInv();
+        if (pattern != InternalInventory.empty()) {
             final CompoundTag opt = new CompoundTag();
-            ItemStack patternStack = inv.getStackInSlot(0);
+            ItemStack patternStack = pattern.getStackInSlot(0);
             opt.put("item", patternStack.saveOptional(registries));
             data.put("inv", opt);
         }
+        this.upgrades.writeToNBT(data, "upgrades", registries);
+        this.patternInput.writeToChildTag(data, "pattern", registries);
     }
 
     @Override
@@ -84,23 +99,29 @@ public class PatternBufferBlockEntity extends AEBaseBlockEntity implements Inter
             GenericStackInv inv = this.storageInv.getInv(i);
             inv.readFromChildTag(data, "buffer_" + i, registries);
         }
-        InternalInventory inv = this.getPatternInv();
-        if (inv != InternalInventory.empty()) {
+        InternalInventory pattern = this.getPatternInv();
+        if (pattern != InternalInventory.empty()) {
             CompoundTag opt = data.getCompound("inv");
             CompoundTag item = opt.getCompound("item");
-            inv.setItemDirect(0, ItemStack.parseOptional(registries, item));
+            pattern.setItemDirect(0, ItemStack.parseOptional(registries, item));
         }
+        this.upgrades.readFromNBT(data, "upgrades", registries);
+        this.patternInput.readFromChildTag(data, "pattern", registries);
+        this.updateCapacity(); // update capacity after loading
     }
 
     @Override
     public void clearContent() {
         super.clearContent();
         this.storageInv.clear();
+        this.patternInv.clear();
+        this.upgrades.clear();
+        this.patternInput.getInputs().clear();
     }
 
     private void updatePattern() {
         System.out.println("PatternBuffer updatePattern called.");
-        this.patternInputs = new ArrayList<>();
+        this.patternInput.setInputs(new ArrayList<>());
         ItemStack patternStack = patternInv.getStackInSlot(0);
         if (patternStack != null) {
             IPatternDetails patternDetails = PatternDetailsHelper.decodePattern(patternStack, this.level);
@@ -110,15 +131,15 @@ public class PatternBufferBlockEntity extends AEBaseBlockEntity implements Inter
                 System.out.println("PatternBuffer found input: " + input);
                 List<GenericStack> inputStack = Arrays.stream(input.getPossibleInputs()).map(s -> new GenericStack(s.what(), s.amount() * input.getMultiplier())).toList();
                 System.out.println("PatternBuffer found inputStack: " + inputStack + ", amount:" + inputStack.stream().mapToLong(GenericStack::amount));
-                this.patternInputs.add(inputStack);
+                this.patternInput.getInputs().add(inputStack);
             }
         }
-        System.out.println("PatternBuffer updated: " + patternInputs.size() + " inputs found.");
+        System.out.println("PatternBuffer updated: " + this.patternInput.getInputs().size() + " inputs found.");
     }
 
     private boolean isValidKey(int slot, AEKey key) {
-        if (slot < 0 || slot >= patternInputs.size()) return false;
-        List<GenericStack> inputs = patternInputs.get(slot);
+        if (slot < 0 || slot >= this.patternInput.getInputs().size()) return false;
+        List<GenericStack> inputs = this.patternInput.getInputs().get(slot);
         for (GenericStack input : inputs) {
             if (key.matches(input)) {
                 System.out.println("valid key found: " + key);
@@ -130,6 +151,7 @@ public class PatternBufferBlockEntity extends AEBaseBlockEntity implements Inter
 
     private void updateCapacity() {
         for (int i = 0; i < storageInv.size(); i++) {
+            System.out.println("updateCapacity called for slot " + i);
             GenericStackInv inv = storageInv.getInv(i);
             inv.setCapacity(AEKeyType.items(), 0);
             inv.setCapacity(AEKeyType.fluids(), 0);
@@ -139,13 +161,15 @@ public class PatternBufferBlockEntity extends AEBaseBlockEntity implements Inter
             inv.setCapacity(ExternalTypes.SOURCE, 0);
             List<GenericStack> possibleInputs;
             try {
-                possibleInputs = patternInputs.get(i);
+                possibleInputs = this.patternInput.getInputs().get(i);
             } catch (Exception e) {
                 return;
             }
+            System.out.println("Possible inputs for slot " + i + ": " + possibleInputs);
             for (GenericStack input : possibleInputs) {
                 AEKeyType keyType = input.what().getType();
                 this.storageInv.setCapacity(i, keyType, Math.max(inv.getCapacity(keyType), input.amount()));
+                System.out.println("Setting capacity for slot " + i + ", keyType: " + keyType + ", amount: " + Math.max(inv.getCapacity(keyType), input.amount()));
             }
         }
     }
@@ -297,6 +321,68 @@ public class PatternBufferBlockEntity extends AEBaseBlockEntity implements Inter
         public boolean isAllowedIn(int slot, AEKey what) {
             System.out.println("PatternBufferSlotInv isAllowedIn called for slot: " + slot + ", key: " + what);
             return isValidKey(this.index, what);
+        }
+    }
+
+    private static class PatternInput {
+        private List<List<GenericStack>> inputs = new ArrayList<>();
+
+        public PatternInput() {
+        }
+
+        public void setInputs(List<List<GenericStack>> inputs) {
+            this.inputs = inputs.subList(0, Math.min(inputs.size(), 36));
+        }
+
+        public List<List<GenericStack>> getInputs() {
+            return inputs;
+        }
+
+        public void writeToChildTag(CompoundTag tag, String name, HolderLookup.Provider registries) {
+            if (!this.inputs.isEmpty()) {
+                for (int i = 0; i < this.inputs.size(); i++) {
+                    tag.put(name + "_" + i, this.writeToTag(registries, i));
+                }
+            } else {
+                for (int i = 0; i < 36; i++) {
+                    tag.remove(name + "_" + i);
+                }
+            }
+        }
+
+        private ListTag writeToTag(HolderLookup.Provider registries, int index) {
+            ListTag tag = new ListTag();
+
+            for (var stack : this.inputs.get(index)) {
+                tag.add(GenericStack.writeTag(registries, stack));
+            }
+
+            // Strip out trailing nulls
+            for (int i = tag.size() - 1; i >= 0; i--) {
+                if (tag.getCompound(i).isEmpty()) {
+                    tag.remove(i);
+                } else {
+                    break;
+                }
+            }
+
+            return tag;
+        }
+
+        public void readFromChildTag(CompoundTag tag, String name, HolderLookup.Provider registries) {
+            this.inputs.clear();
+            for (int i = 0; i < 36; i++) {
+                if (!tag.contains(name + "_" + i, Tag.TAG_LIST)) break;
+                readFromTag(tag.getList(name + "_" + i, Tag.TAG_COMPOUND), registries, i);
+            }
+        }
+
+        private void readFromTag(ListTag tag, HolderLookup.Provider registries, int index) {
+            this.inputs.add(new ArrayList<>());
+            for (int i = 0; i < tag.size(); ++i) {
+                var stack = GenericStack.readTag(registries, tag.getCompound(i));
+                this.inputs.get(index).add(stack);
+            }
         }
     }
 }
