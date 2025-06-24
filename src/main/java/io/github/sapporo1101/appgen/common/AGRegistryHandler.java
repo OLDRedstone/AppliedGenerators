@@ -150,6 +150,7 @@ public class AGRegistryHandler extends RegistryHandler {
     }
 
     public void registerAEUpgrade() {
+        Upgrades.add(AEItems.SPEED_CARD, AGSingletons.GENESIS_SYNTHESIZER, 4);
         Upgrades.add(AEItems.SPEED_CARD, AGSingletons.SINGULARITY_GENERATOR_1K, 3);
         Upgrades.add(AEItems.ENERGY_CARD, AGSingletons.SINGULARITY_GENERATOR_1K, 3);
         Upgrades.add(AEItems.SPEED_CARD, AGSingletons.SINGULARITY_GENERATOR_4K, 3);
