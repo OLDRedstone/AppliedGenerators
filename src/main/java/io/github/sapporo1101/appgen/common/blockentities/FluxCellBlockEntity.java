@@ -151,8 +151,14 @@ public class FluxCellBlockEntity extends AEBaseBlockEntity implements BlockEntit
     }
 
     @Override
+    public void setChanged() {
+        super.setChanged();
+        if (this.level == null) return;
+        this.level.setBlockAndUpdate(this.getBlockPos(), level.getBlockState(this.getBlockPos()).setValue(FE_STORAGE, this.getFullness()));
+    }
+
+    @Override
     public void tick(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull FluxCellBlockEntity be) {
-        level.setBlockAndUpdate(pos, level.getBlockState(pos).setValue(FE_STORAGE, be.getFullness()));
         if (!this.feInv.isEmpty() && !this.outputSides.isEmpty()) this.sendFEToAdjacentBlock();
     }
 
