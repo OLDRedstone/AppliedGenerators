@@ -15,6 +15,7 @@ import appeng.blockentity.powersink.AEBasePoweredBlockEntity;
 import appeng.core.definitions.AEItems;
 import appeng.items.AEBaseItem;
 import appeng.items.tools.powered.powersink.PoweredItemCapabilities;
+import com.glodblock.github.appflux.common.AFSingletons;
 import com.glodblock.github.glodium.registry.RegistryHandler;
 import com.glodblock.github.glodium.util.GlodUtil;
 import io.github.sapporo1101.appgen.AppliedGenerators;
@@ -53,6 +54,7 @@ public class AGRegistryHandler extends RegistryHandler {
         this.cap(FluxCellBlockEntity.class, Capabilities.EnergyStorage.BLOCK, FluxCellBlockEntity::getEnergyStorage);
         this.cap(GenesisSynthesizerBlockEntity.class, AECapabilities.GENERIC_INTERNAL_INV, (object, context) -> object.getTank());
         this.cap(PatternBufferBlockEntity.class, AECapabilities.GENERIC_INTERNAL_INV, (object, context) -> object.getStorageInv());
+//        this.cap(PatternBufferBlockEntity.class, Capabilities.EnergyStorage.BLOCK, (object, context) -> object.getStorageInv());
     }
 
     public <T extends AEBaseBlockEntity> void block(String name, AEBaseEntityBlock<T> block, Class<T> clazz, BlockEntityType.BlockEntitySupplier<? extends T> supplier) {
@@ -153,6 +155,7 @@ public class AGRegistryHandler extends RegistryHandler {
         Upgrades.add(AEItems.SPEED_CARD, AGSingletons.GENESIS_SYNTHESIZER, 4);
         Upgrades.add(AEItems.CAPACITY_CARD, AGSingletons.PATTERN_BUFFER, 4);
         Upgrades.add(AEItems.REDSTONE_CARD, AGSingletons.PATTERN_BUFFER, 1);
+        Upgrades.add(AFSingletons.INDUCTION_CARD, AGSingletons.PATTERN_BUFFER, 1);
         Upgrades.add(AEItems.SPEED_CARD, AGSingletons.SINGULARITY_GENERATOR_1K, 3);
         Upgrades.add(AEItems.ENERGY_CARD, AGSingletons.SINGULARITY_GENERATOR_1K, 3);
         Upgrades.add(AEItems.SPEED_CARD, AGSingletons.SINGULARITY_GENERATOR_4K, 3);

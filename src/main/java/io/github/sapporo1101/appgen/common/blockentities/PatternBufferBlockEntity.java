@@ -9,8 +9,10 @@ import appeng.api.stacks.AEKey;
 import appeng.api.stacks.AEKeyType;
 import appeng.api.stacks.GenericStack;
 import appeng.api.upgrades.IUpgradeInventory;
+import appeng.api.upgrades.IUpgradeableObject;
 import appeng.api.upgrades.UpgradeInventories;
 import appeng.blockentity.AEBaseBlockEntity;
+import appeng.core.definitions.AEItems;
 import appeng.helpers.externalstorage.GenericStackInv;
 import appeng.util.inv.AppEngInternalInventory;
 import appeng.util.inv.InternalInventoryHost;
@@ -31,11 +33,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class PatternBufferBlockEntity extends AEBaseBlockEntity implements InternalInventoryHost {
+public class PatternBufferBlockEntity extends AEBaseBlockEntity implements InternalInventoryHost, IUpgradeableObject {
 
     private final PatternBufferInv storageInv = new PatternBufferInv(this::onStorageChanged, 36);
     private final AppEngInternalInventory patternInv = new AppEngInternalInventory(this, 1);
-    private final IUpgradeInventory upgrades = UpgradeInventories.forMachine(AGSingletons.PATTERN_BUFFER, 5, this::onUpgradeChanged);
+    private final IUpgradeInventory upgrades = UpgradeInventories.forMachine(AGSingletons.PATTERN_BUFFER, 6, this::onUpgradeChanged);
 
     private final PatternInput patternInput = new PatternInput();
 
@@ -182,6 +184,10 @@ public class PatternBufferBlockEntity extends AEBaseBlockEntity implements Inter
         return patternInv;
     }
 
+    public IUpgradeInventory getUpgrades() {
+        return upgrades;
+    }
+
     @Override
     public void saveChangedInventory(AppEngInternalInventory inv) {
         this.saveChanges();
@@ -226,13 +232,16 @@ public class PatternBufferBlockEntity extends AEBaseBlockEntity implements Inter
 
         @Override
         public long getCapacity(AEKeyType aeKeyType) {
-            if (aeKeyType == AEKeyType.items()) return 1024;
-            if (aeKeyType == AEKeyType.fluids()) return 1024;
-            if (aeKeyType == ExternalTypes.FLUX) return 1048576;
-            if (aeKeyType == ExternalTypes.GAS) return 1024;
-            if (aeKeyType == ExternalTypes.MANA) return 1000;
-            if (aeKeyType == ExternalTypes.SOURCE) return 1000;
-            return 0;
+            long baseCapacity = 0;
+            if (aeKeyType == AEKeyType.items()) baseCapacity = 1024;
+            if (aeKeyType == AEKeyType.fluids()) baseCapacity = 1024000;
+            if (aeKeyType == ExternalTypes.FLUX) baseCapacity = 1048576;
+            if (aeKeyType == ExternalTypes.GAS) baseCapacity = 1024;
+            if (aeKeyType == ExternalTypes.MANA) baseCapacity = 1000;
+            if (aeKeyType == ExternalTypes.SOURCE) baseCapacity = 1000;
+            int upgradeMultiplier = (int) Math.pow(2, PatternBufferBlockEntity.this.upgrades.getInstalledUpgrades(AEItems.CAPACITY_CARD));
+            System.out.println("PatternBuffer baseCapacity: " + baseCapacity + ", upgradeMultiplier: " + upgradeMultiplier);
+            return baseCapacity * upgradeMultiplier;
         }
 
         public void setCapacity(int slot, AEKeyType aeKeyType, long capacity) {

@@ -1,8 +1,8 @@
 package io.github.sapporo1101.appgen.menu;
 
-import appeng.menu.AEBaseMenu;
 import appeng.menu.SlotSemantics;
 import appeng.menu.implementations.MenuTypeBuilder;
+import appeng.menu.implementations.UpgradeableMenu;
 import appeng.menu.slot.AppEngSlot;
 import appeng.menu.slot.RestrictedInputSlot;
 import appeng.util.ConfigMenuInventory;
@@ -11,7 +11,7 @@ import io.github.sapporo1101.appgen.common.blockentities.PatternBufferBlockEntit
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
 
-public class PatternBufferMenu extends AEBaseMenu {
+public class PatternBufferMenu extends UpgradeableMenu<PatternBufferBlockEntity> {
 
     public static final MenuType<PatternBufferMenu> TYPE = MenuTypeBuilder
             .create(PatternBufferMenu::new, PatternBufferBlockEntity.class)
@@ -23,6 +23,5 @@ public class PatternBufferMenu extends AEBaseMenu {
             this.addSlot(new AppEngSlot(new ConfigMenuInventory(host.getStorageInv().getInv(index)), 0), SlotSemantics.STORAGE);
         }
         this.addSlot(new RestrictedInputSlot(RestrictedInputSlot.PlacableItemType.PROVIDER_PATTERN, host.getPatternInv(), 0), SlotSemantics.ENCODED_PATTERN);
-        this.createPlayerInventorySlots(playerInventory);
     }
 }
