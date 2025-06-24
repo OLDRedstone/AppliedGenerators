@@ -1,14 +1,8 @@
 package io.github.sapporo1101.appgen.client;
 
 import appeng.init.client.InitScreens;
-import io.github.sapporo1101.appgen.client.gui.FluxCellScreen;
-import io.github.sapporo1101.appgen.client.gui.FluxGeneratorScreen;
-import io.github.sapporo1101.appgen.client.gui.GenesisSynthesizerScreen;
-import io.github.sapporo1101.appgen.client.gui.SingularityGeneratorScreen;
-import io.github.sapporo1101.appgen.menu.FluxCellMenu;
-import io.github.sapporo1101.appgen.menu.FluxGeneratorMenu;
-import io.github.sapporo1101.appgen.menu.GenesisSynthesizerMenu;
-import io.github.sapporo1101.appgen.menu.SingularityGeneratorMenu;
+import io.github.sapporo1101.appgen.client.gui.*;
+import io.github.sapporo1101.appgen.menu.*;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 
@@ -21,5 +15,6 @@ public class ClientRegistryHandler {
         InitScreens.register(event, GenesisSynthesizerMenu.TYPE, GenesisSynthesizerScreen::new, "/screens/genesis_synthesizer.json");
         InitScreens.register(event, SingularityGeneratorMenu.TYPE, SingularityGeneratorScreen::new, "/screens/singularity_generator.json");
         InitScreens.register(event, FluxGeneratorMenu.TYPE, FluxGeneratorScreen::new, "/screens/flux_generator.json");
+        InitScreens.register(event, PatternBufferMenu.TYPE, PatternBufferScreen::new, "/screens/flux_cell.json");
     }
 }

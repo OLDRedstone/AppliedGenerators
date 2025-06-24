@@ -20,10 +20,8 @@ import com.glodblock.github.glodium.util.GlodUtil;
 import io.github.sapporo1101.appgen.AppliedGenerators;
 import io.github.sapporo1101.appgen.common.blockentities.FluxCellBlockEntity;
 import io.github.sapporo1101.appgen.common.blockentities.GenesisSynthesizerBlockEntity;
-import io.github.sapporo1101.appgen.menu.FluxCellMenu;
-import io.github.sapporo1101.appgen.menu.FluxGeneratorMenu;
-import io.github.sapporo1101.appgen.menu.GenesisSynthesizerMenu;
-import io.github.sapporo1101.appgen.menu.SingularityGeneratorMenu;
+import io.github.sapporo1101.appgen.common.blockentities.PatternBufferBlockEntity;
+import io.github.sapporo1101.appgen.menu.*;
 import io.github.sapporo1101.appgen.recipe.GenesisSynthesizerRecipe;
 import io.github.sapporo1101.appgen.recipe.GenesisSynthesizerRecipeSerializer;
 import net.minecraft.core.Registry;
@@ -54,6 +52,7 @@ public class AGRegistryHandler extends RegistryHandler {
         this.cap(ICraftingMachine.class, AECapabilities.CRAFTING_MACHINE, (object, context) -> object);
         this.cap(FluxCellBlockEntity.class, Capabilities.EnergyStorage.BLOCK, FluxCellBlockEntity::getEnergyStorage);
         this.cap(GenesisSynthesizerBlockEntity.class, AECapabilities.GENERIC_INTERNAL_INV, (object, context) -> object.getTank());
+        this.cap(PatternBufferBlockEntity.class, AECapabilities.GENERIC_INTERNAL_INV, (object, context) -> object.getStorageInv());
     }
 
     public <T extends AEBaseBlockEntity> void block(String name, AEBaseEntityBlock<T> block, Class<T> clazz, BlockEntityType.BlockEntitySupplier<? extends T> supplier) {
@@ -81,6 +80,7 @@ public class AGRegistryHandler extends RegistryHandler {
 
     private void onRegisterContainer() {
         Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("flux_cell"), FluxCellMenu.TYPE);
+        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("pattern_buffer"), PatternBufferMenu.TYPE);
         Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("genesis_synthesizer"), GenesisSynthesizerMenu.TYPE);
         Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("singularity_generator_1k"), SingularityGeneratorMenu.TYPE);
         Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("singularity_generator_4k"), SingularityGeneratorMenu.TYPE);
