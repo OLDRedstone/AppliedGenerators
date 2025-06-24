@@ -1,0 +1,30 @@
+{
+    "$schema": "schema_appgen.json",
+    "includes": ["common/common.json", "common/player_inventory.json"],
+    "background": {
+        "texture": "guis/pattern_buffer.png",
+        "srcRect": [0, 0, 176, 204]
+    },
+    "slots": {
+        "STORAGE": {
+            "left": 8,
+            "top": 31,
+            "grid": "BREAK_AFTER_9COLS"
+        },
+        "ENCODED_PATTERN": {
+            "left": 152,
+            "top": 8
+        }
+    },
+    "text": {
+        "dialog_title": {
+            "text": {
+                "translate": "gui.appgen.pattern_buffer"
+            },
+            "position": {
+                "left": 8,
+                "top": 6
+            }
+        }
+    }
+}
