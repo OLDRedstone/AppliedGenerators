@@ -76,7 +76,7 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
     public SingularityGeneratorBlockEntity(BlockEntityType<?> blockEntityType, BlockPos pos, BlockState blockState, SingularityGeneratorBlock<?> block) {
         super(blockEntityType, pos, blockState);
         this.getMainNode().setIdlePowerUsage(0F).setFlags(GridFlags.REQUIRE_CHANNEL).addService(IGridTickable.class, this);
-        this.upgrades = UpgradeInventories.forMachine(block, 5, this::upgradeSetChanged);
+        this.upgrades = UpgradeInventories.forMachine(block, 4, this::upgradeSetChanged);
         this.configManager = IConfigManager.builder(this::onConfigChanged).registerSetting(AAESettings.ME_EXPORT, YesNo.YES).build();
 
         this.generatableFE = 0;

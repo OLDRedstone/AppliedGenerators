@@ -3,17 +3,17 @@
     "includes": ["common/common.json", "common/player_inventory.json", "common/toolbox.json"],
     "background": {
         "texture": "guis/pattern_buffer.png",
-        "srcRect": [0, 0, 176, 204]
+        "srcRect": [0, 0, 176, 202]
     },
     "slots": {
         "STORAGE": {
             "left": 8,
-            "top": 31,
+            "top": 29,
             "grid": "BREAK_AFTER_9COLS"
         },
         "ENCODED_PATTERN": {
             "left": 152,
-            "top": 8
+            "top": 6
         }
     },
     "text": {

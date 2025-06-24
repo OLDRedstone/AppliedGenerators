@@ -8,24 +8,24 @@
     "slots": {
         "MACHINE_INPUT": {
             "left": 10,
-            "top": 22,
+            "top": 24,
             "grid": "BREAK_AFTER_3COLS"
         },
         "STORAGE": {
             "left": 74,
-            "top": 22
+            "top": 24
         },
         "MACHINE_OUTPUT": {
             "left": 118,
-            "top": 40
+            "top": 42
         },
         "AG_TANK_INPUT": {
             "left": 65,
-            "top": 58
+            "top": 60
         },
         "AG_TANK_OUTPUT": {
             "left": 152,
-            "top": 40
+            "top": 42
         }
     },
     "text": {
@@ -52,11 +52,11 @@
     "widgets": {
         "progressBar": {
             "left": 140,
-            "top": 39
+            "top": 41
         },
         "singularityBar": {
             "left": 93,
-            "top": 21
+            "top": 23
         }
     }
 }

@@ -37,7 +37,7 @@ public class PatternBufferBlockEntity extends AEBaseBlockEntity implements Inter
 
     private final PatternBufferInv storageInv = new PatternBufferInv(this::onStorageChanged, 36);
     private final AppEngInternalInventory patternInv = new AppEngInternalInventory(this, 1);
-    private final IUpgradeInventory upgrades = UpgradeInventories.forMachine(AGSingletons.PATTERN_BUFFER, 6, this::onUpgradeChanged);
+    private final IUpgradeInventory upgrades = UpgradeInventories.forMachine(AGSingletons.PATTERN_BUFFER, 5, this::onUpgradeChanged);
 
     private final PatternInput patternInput = new PatternInput();
 

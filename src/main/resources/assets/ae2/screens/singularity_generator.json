@@ -3,12 +3,12 @@
     "includes": ["common/common.json", "common/player_inventory.json", "common/toolbox.json"],
     "background": {
         "texture": "guis/singularity_generator.png",
-        "srcRect": [0, 0, 176, 168]
+        "srcRect": [0, 0, 176, 180]
     },
     "slots": {
         "MACHINE_INPUT": {
             "left": 80,
-            "top": 37
+            "top": 42
         }
     },
     "text": {
@@ -31,7 +31,7 @@
     "widgets": {
         "progressBar": {
             "left": 99,
-            "top": 36
+            "top": 41
         }
     }
 }
