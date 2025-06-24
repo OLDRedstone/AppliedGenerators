@@ -16,7 +16,10 @@ import com.glodblock.github.glodium.util.GlodUtil;
 import io.github.sapporo1101.appgen.common.AGSingletons;
 import io.github.sapporo1101.appgen.xmod.ExternalTypes;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,7 +29,7 @@ import java.util.List;
 
 public class PatternBufferBlockEntity extends AEBaseBlockEntity implements InternalInventoryHost {
 
-    private final PatternBufferInv storageInv = new PatternBufferInv(this::onStorageChanged, 27);
+    private final PatternBufferInv storageInv = new PatternBufferInv(this::onStorageChanged, 36);
     private final AppEngInternalInventory patternInv = new AppEngInternalInventory(this, 1);
 
     private ArrayList<List<GenericStack>> patternInputs = new ArrayList<>();
@@ -44,6 +47,55 @@ public class PatternBufferBlockEntity extends AEBaseBlockEntity implements Inter
         this.updatePattern();
         this.updateCapacity();
         InternalInventoryHost.super.onChangeInventory(inv, slot);
+    }
+
+    @Override
+    public void addAdditionalDrops(Level level, BlockPos pos, List<ItemStack> drops) {
+        super.addAdditionalDrops(level, pos, drops);
+        for (int index = 0; index < this.storageInv.size(); index++) {
+            var stack = this.storageInv.getStack(index);
+            if (stack != null) {
+                stack.what().addDrops(stack.amount(), drops, level, pos);
+            }
+        }
+        drops.add(patternInv.getStackInSlot(0));
+    }
+
+    @Override
+    public void saveAdditional(CompoundTag data, HolderLookup.Provider registries) {
+        super.saveAdditional(data, registries);
+        for (int i = 0; i < this.storageInv.size(); i++) {
+            GenericStackInv inv = this.storageInv.getInv(i);
+            inv.writeToChildTag(data, "buffer_" + i, registries);
+        }
+        InternalInventory inv = this.patternInv;
+        if (inv != InternalInventory.empty()) {
+            final CompoundTag opt = new CompoundTag();
+            ItemStack patternStack = inv.getStackInSlot(0);
+            opt.put("item", patternStack.saveOptional(registries));
+            data.put("inv", opt);
+        }
+    }
+
+    @Override
+    public void loadTag(CompoundTag data, HolderLookup.Provider registries) {
+        super.loadTag(data, registries);
+        for (int i = 0; i < this.storageInv.size(); i++) {
+            GenericStackInv inv = this.storageInv.getInv(i);
+            inv.readFromChildTag(data, "buffer_" + i, registries);
+        }
+        InternalInventory inv = this.getPatternInv();
+        if (inv != InternalInventory.empty()) {
+            CompoundTag opt = data.getCompound("inv");
+            CompoundTag item = opt.getCompound("item");
+            inv.setItemDirect(0, ItemStack.parseOptional(registries, item));
+        }
+    }
+
+    @Override
+    public void clearContent() {
+        super.clearContent();
+        this.storageInv.clear();
     }
 
     private void updatePattern() {
