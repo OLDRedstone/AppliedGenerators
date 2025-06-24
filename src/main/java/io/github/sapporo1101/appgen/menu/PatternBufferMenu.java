@@ -20,7 +20,7 @@ public class PatternBufferMenu extends AEBaseMenu {
     public PatternBufferMenu(int id, Inventory playerInventory, PatternBufferBlockEntity host) {
         super(TYPE, id, playerInventory, host);
         for (int index = 0; index < host.getStorageInv().size(); index++) {
-            this.addSlot(new AppEngSlot(new ConfigMenuInventory(host.getStorageInv()), index), SlotSemantics.STORAGE);
+            this.addSlot(new AppEngSlot(new ConfigMenuInventory(host.getStorageInv().getInv(index)), 0), SlotSemantics.STORAGE);
         }
         this.addSlot(new RestrictedInputSlot(RestrictedInputSlot.PlacableItemType.PROVIDER_PATTERN, host.getPatternInv(), 0), SlotSemantics.ENCODED_PATTERN);
         this.createPlayerInventorySlots(playerInventory);
