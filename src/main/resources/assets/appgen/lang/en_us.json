@@ -1,6 +1,7 @@
 {
     "itemGroup.appgen": "Applied Generators",
     "block.appgen.flux_cell": "Flux Cell",
+    "block.appgen.pattern_buffer": "Pattern Buffer",
     "block.appgen.singularity_generator_1k": "1k Singularity Generator",
     "block.appgen.singularity_generator_4k": "4k Singularity Generator",
     "block.appgen.singularity_generator_16k": "16k Singularity Generator",
@@ -34,6 +35,7 @@
     "item.appgen.ember_crystal": "Ember Crystal",
     "item.appgen.ember_dust": "Ember Dust",
     "gui.appgen.flux_cell": "Flux Cell",
+    "gui.appgen.pattern_buffer": "Pattern Buffer",
     "gui.appgen.singularity_generator": "Singularity Generator",
     "gui.appgen.singularity_generator.progress": "Remaining: %s FE / %s FE\nGenerating: %s FE/t",
     "gui.appgen.flux_generator": "Flux Generator",
