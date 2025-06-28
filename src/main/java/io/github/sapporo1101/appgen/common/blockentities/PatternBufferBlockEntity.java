@@ -165,7 +165,7 @@ public class PatternBufferBlockEntity extends AEBaseBlockEntity implements Inter
             try {
                 possibleInputs = this.patternInput.getInputs().get(i);
             } catch (Exception e) {
-                return;
+                continue;
             }
             System.out.println("Possible inputs for slot " + i + ": " + possibleInputs);
             for (GenericStack input : possibleInputs) {
@@ -230,8 +230,8 @@ public class PatternBufferBlockEntity extends AEBaseBlockEntity implements Inter
             return this.invs.stream().mapToLong(inv -> inv.getMaxAmount(aeKey)).sum();
         }
 
-        @Override
-        public long getCapacity(AEKeyType aeKeyType) {
+        private long getMaxCapacity(AEKeyType aeKeyType) {
+            if (patternInput.getInputs().isEmpty()) return 0;
             long baseCapacity = 0;
             if (aeKeyType == AEKeyType.items()) baseCapacity = 1024;
             if (aeKeyType == AEKeyType.fluids()) baseCapacity = 1024000;
@@ -244,9 +244,16 @@ public class PatternBufferBlockEntity extends AEBaseBlockEntity implements Inter
             return baseCapacity * upgradeMultiplier;
         }
 
+        @Override
+        public long getCapacity(AEKeyType aeKeyType) {
+            long i = (long) Math.ceil((double) this.invs.stream().mapToLong(inv -> inv.getCapacity(aeKeyType)).sum() / this.invs.size());
+            System.out.println("PatternBuffer getCapacity called for keyType: " + aeKeyType + ", returning: " + i);
+            return i;
+        }
+
         public void setCapacity(int slot, AEKeyType aeKeyType, long capacity) {
             if (slot < 0 || slot >= this.invs.size()) return;
-            capacity = Math.min(capacity, this.getCapacity(aeKeyType));
+            capacity = Math.min(capacity, this.getMaxCapacity(aeKeyType));
             this.invs.get(slot).setCapacity(aeKeyType, capacity);
         }
 
