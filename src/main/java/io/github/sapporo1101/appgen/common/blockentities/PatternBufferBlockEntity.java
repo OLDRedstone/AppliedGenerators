@@ -10,21 +10,28 @@ import appeng.api.stacks.AEKeyType;
 import appeng.api.stacks.GenericStack;
 import appeng.api.upgrades.IUpgradeInventory;
 import appeng.api.upgrades.IUpgradeableObject;
-import appeng.api.upgrades.UpgradeInventories;
+import appeng.api.upgrades.MachineUpgradesChanged;
+import appeng.api.upgrades.Upgrades;
 import appeng.blockentity.AEBaseBlockEntity;
 import appeng.core.definitions.AEItems;
 import appeng.helpers.externalstorage.GenericStackInv;
 import appeng.util.inv.AppEngInternalInventory;
 import appeng.util.inv.InternalInventoryHost;
+import appeng.util.inv.filter.IAEItemFilter;
+import com.glodblock.github.appflux.common.AFSingletons;
 import com.glodblock.github.glodium.util.GlodUtil;
 import io.github.sapporo1101.appgen.common.AGSingletons;
 import io.github.sapporo1101.appgen.xmod.ExternalTypes;
+import it.unimi.dsi.fastutil.objects.Reference2IntArrayMap;
+import it.unimi.dsi.fastutil.objects.Reference2IntMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
@@ -40,7 +47,7 @@ public class PatternBufferBlockEntity extends AEBaseBlockEntity implements Inter
 
     private final PatternBufferInv storageInv = new PatternBufferInv(this::onStorageChanged, 36);
     private final AppEngInternalInventory patternInv = new AppEngInternalInventory(this, 1);
-    private final IUpgradeInventory upgrades = UpgradeInventories.forMachine(AGSingletons.PATTERN_BUFFER, 5, this::onUpgradeChanged);
+    private final IUpgradeInventory upgrades = new PatternBufferUpgradeInventory(AGSingletons.PATTERN_BUFFER, 5, this::onUpgradeChanged);
 
     private final PatternInput patternInput = new PatternInput();
 
@@ -52,13 +59,13 @@ public class PatternBufferBlockEntity extends AEBaseBlockEntity implements Inter
         if (this.level == null || this.level.isClientSide()) return;
         this.updateRedstoneState();
         this.level.updateNeighborsAt(this.worldPosition, this.getBlockState().getBlock());
-        saveChanges();
+        this.saveChanges();
     }
 
     private void onUpgradeChanged() {
         if (this.level == null || this.level.isClientSide()) return;
         this.updateRedstoneState();
-        saveChanges();
+        this.saveChanges();
     }
 
     @Override
@@ -447,6 +454,117 @@ public class PatternBufferBlockEntity extends AEBaseBlockEntity implements Inter
                 var stack = GenericStack.readTag(registries, tag.getCompound(i));
                 this.inputs.get(index).add(stack);
             }
+        }
+    }
+
+    private static abstract class UpgradeInventory extends AppEngInternalInventory implements InternalInventoryHost, IUpgradeInventory {
+        private final Item item;
+
+        // Cache of which upgrades are installed
+        @Nullable
+        private Reference2IntMap<Item> installed = null;
+
+        public UpgradeInventory(Item item, int slots) {
+            super(null, slots, 1);
+            this.item = item;
+            this.setHost(this);
+            this.setFilter(new UpgradeInventory.UpgradeInvFilter());
+        }
+
+        @Override
+        public boolean isClientSide() {
+            return false;
+        }
+
+        @Override
+        protected boolean eventsEnabled() {
+            return true;
+        }
+
+        @Override
+        public int getMaxInstalled(ItemLike upgradeCard) {
+            return Upgrades.getMaxInstallable(upgradeCard, item);
+        }
+
+        @Override
+        public ItemLike getUpgradableItem() {
+            return item;
+        }
+
+        @Override
+        public int getInstalledUpgrades(ItemLike upgradeCard) {
+            if (installed == null) {
+                this.updateUpgradeInfo();
+            }
+
+            return installed.getOrDefault(upgradeCard.asItem(), 0);
+        }
+
+        private void updateUpgradeInfo() {
+            this.installed = new Reference2IntArrayMap<>(size());
+
+            for (var is : this) {
+                var maxInstalled = getMaxInstalled(is.getItem());
+                if (maxInstalled > 0) {
+                    this.installed.merge(is.getItem(), 1, (a, b) -> Math.min(maxInstalled, a + b));
+                }
+            }
+        }
+
+        @Override
+        public void readFromNBT(CompoundTag data, String name, HolderLookup.Provider registries) {
+            super.readFromNBT(data, name, registries);
+            this.updateUpgradeInfo();
+        }
+
+        @Override
+        public void saveChangedInventory(AppEngInternalInventory inv) {
+        }
+
+        @Override
+        public void onChangeInventory(AppEngInternalInventory inv, int slot) {
+            this.installed = null;
+        }
+
+        @SuppressWarnings("UnstableApiUsage")
+        @Override
+        public void sendChangeNotification(int slot) {
+            this.installed = null;
+            super.sendChangeNotification(slot);
+        }
+
+        private class UpgradeInvFilter implements IAEItemFilter {
+
+            @Override
+            public boolean allowInsert(InternalInventory inv, int slot, ItemStack itemstack) {
+                var cardItem = itemstack.getItem();
+                return getInstalledUpgrades(cardItem) < getMaxInstalled(cardItem);
+            }
+        }
+    }
+
+    private static class PatternBufferUpgradeInventory extends UpgradeInventory {
+        @Nullable
+        private final MachineUpgradesChanged changeCallback;
+
+        public PatternBufferUpgradeInventory(ItemLike item, int slots, @Nullable MachineUpgradesChanged changeCallback) {
+            super(item.asItem(), slots);
+            this.changeCallback = changeCallback;
+        }
+
+        @Override
+        public void onChangeInventory(AppEngInternalInventory inv, int slot) {
+            super.onChangeInventory(inv, slot);
+
+            if (changeCallback != null) {
+                changeCallback.onUpgradesChanged();
+            }
+        }
+
+        @Override
+        public boolean isInstalled(ItemLike upgradeCard) {
+            if (upgradeCard == AFSingletons.INDUCTION_CARD) return true;
+            return super.isInstalled(upgradeCard);
         }
     }
 }
