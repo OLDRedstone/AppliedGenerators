@@ -179,3 +179,21 @@ idea {
         downloadJavadoc = true
     }
 }
+
+abstract class ListDependenciesJarsTask extends DefaultTask {
+    @InputFiles
+    abstract ConfigurableFileCollection getRuntimeClasspath()
+
+    @TaskAction
+    void listDependencies() {
+        runtimeClasspath.files.each { file ->
+            println(file.absolutePath)
+        }
+    }
+}
+
+tasks.register("listDependenciesJars", ListDependenciesJarsTask) {
+    group = "build"
+    description = "Lists all dependencies in a jar file format."
+    runtimeClasspath.from(configurations.runtimeClasspath)
+}

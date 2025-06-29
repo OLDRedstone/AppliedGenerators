@@ -121,3 +121,4 @@ runs/
 
 bin/
 /forge.yaml
+/temp_decompiled/

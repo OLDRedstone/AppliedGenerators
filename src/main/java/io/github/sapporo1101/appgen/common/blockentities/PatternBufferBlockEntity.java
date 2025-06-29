@@ -32,6 +32,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+
+import static io.github.sapporo1101.appgen.common.blocks.PatternBufferBlock.POWERED;
 
 public class PatternBufferBlockEntity extends AEBaseBlockEntity implements InternalInventoryHost, IUpgradeableObject {
 
@@ -46,10 +49,15 @@ public class PatternBufferBlockEntity extends AEBaseBlockEntity implements Inter
     }
 
     private void onStorageChanged() {
-        setChanged();
+        if (this.level == null || this.level.isClientSide()) return;
+        this.updateRedstoneState();
+        this.level.updateNeighborsAt(this.worldPosition, this.getBlockState().getBlock());
+        saveChanges();
     }
 
     private void onUpgradeChanged() {
+        if (this.level == null || this.level.isClientSide()) return;
+        this.updateRedstoneState();
         saveChanges();
     }
 
@@ -58,7 +66,8 @@ public class PatternBufferBlockEntity extends AEBaseBlockEntity implements Inter
         System.out.println("PatternBuffer onChangeInventory called for slot: " + slot);
         this.updatePattern();
         this.updateCapacity();
-        InternalInventoryHost.super.onChangeInventory(inv, slot);
+        this.updateRedstoneState();
+        this.saveChanges();
     }
 
     @Override
@@ -176,6 +185,18 @@ public class PatternBufferBlockEntity extends AEBaseBlockEntity implements Inter
         }
     }
 
+    private void updateRedstoneState() {
+        System.out.println("PatternBuffer updateRedstoneState called.");
+        boolean powered = this.getBlockState().getValue(POWERED);
+        boolean newPowered = this.upgrades.isInstalled(AEItems.REDSTONE_CARD) && this.patternInput.isRecipeSatisfied();
+        System.out.println("PatternBuffer redstonePowered: " + newPowered + ", current powered state: " + powered);
+        if (this.level != null && powered != newPowered) {
+            this.level.setBlockAndUpdate(this.getBlockPos(), this.level.getBlockState(this.getBlockPos()).setValue(POWERED, newPowered));
+            this.level.updateNeighborsAt(this.getBlockPos(), this.getBlockState().getBlock());
+            System.out.println("PatternBuffer redstone state updated to: " + newPowered);
+        }
+    }
+
     public PatternBufferInv getStorageInv() {
         return storageInv;
     }
@@ -227,7 +248,12 @@ public class PatternBufferBlockEntity extends AEBaseBlockEntity implements Inter
 
         @Override
         public long getMaxAmount(AEKey aeKey) {
-            return this.invs.stream().mapToLong(inv -> inv.getMaxAmount(aeKey)).sum();
+            return (long) Math.ceil((double) this.invs.stream().mapToLong(inv -> inv.getCapacity(aeKey.getType()) * this.isValidKey(inv, aeKey)).sum() / this.invs.size());
+        }
+
+        private int isValidKey(GenericStackInv inv, AEKey aeKey) {
+            int i = this.invs.indexOf(inv);
+            return PatternBufferBlockEntity.this.isValidKey(i, aeKey) ? 1 : 0;
         }
 
         private long getMaxCapacity(AEKeyType aeKeyType) {
@@ -247,7 +273,8 @@ public class PatternBufferBlockEntity extends AEBaseBlockEntity implements Inter
         @Override
         public long getCapacity(AEKeyType aeKeyType) {
             long i = (long) Math.ceil((double) this.invs.stream().mapToLong(inv -> inv.getCapacity(aeKeyType)).sum() / this.invs.size());
-            System.out.println("PatternBuffer getCapacity called for keyType: " + aeKeyType + ", returning: " + i);
+            if (aeKeyType == ExternalTypes.FLUX)
+                System.out.println("PatternBuffer getCapacity called for keyType: " + aeKeyType + ", returning: " + i);
             return i;
         }
 
@@ -283,13 +310,13 @@ public class PatternBufferBlockEntity extends AEBaseBlockEntity implements Inter
 
         @Override
         public boolean isAllowedIn(int slot, AEKey aeKey) {
-            System.out.println("PatternBuffer isAllowedIn called for slot: " + slot + ", key: " + aeKey + ", valid: " + isValidKey(slot, aeKey));
-            return isValidKey(slot, aeKey);
+//            System.out.println("PatternBuffer isAllowedIn called for slot: " + slot + ", key: " + aeKey + ", valid: " + isValidKey(slot, aeKey));
+            return PatternBufferBlockEntity.this.isValidKey(slot, aeKey);
         }
 
         @Override
         public long insert(int slot, AEKey aeKey, long l, Actionable actionable) {
-            System.out.println("PatternBuffer insert called for slot: " + slot + ", key: " + aeKey + ", amount: " + l);
+//            System.out.println("PatternBuffer insert called for slot: " + slot + ", key: " + aeKey + ", amount: " + l);
             if (!this.isAllowedIn(slot, aeKey)) return 0;
             System.out.println("PatternBuffer inserting into slot: " + slot);
             return this.invs.get(slot) != null ? this.invs.get(slot).insert(0, aeKey, l, actionable) : 0;
@@ -340,7 +367,7 @@ public class PatternBufferBlockEntity extends AEBaseBlockEntity implements Inter
         }
     }
 
-    private static class PatternInput {
+    private class PatternInput {
         private List<List<GenericStack>> inputs = new ArrayList<>();
 
         public PatternInput() {
@@ -352,6 +379,27 @@ public class PatternBufferBlockEntity extends AEBaseBlockEntity implements Inter
 
         public List<List<GenericStack>> getInputs() {
             return inputs;
+        }
+
+        public boolean isRecipeSatisfied() {
+            System.out.println("Pattern inventory is: " + patternInv.getStackInSlot(0) + ", client: " + Objects.requireNonNull(level).isClientSide());
+            if (PatternBufferBlockEntity.this.patternInv.isEmpty()) return false;
+            System.out.println("Pattern inputs are: " + this.inputs);
+            if (this.inputs.isEmpty()) return false;
+            forInput:
+            for (int i = 0; i < this.inputs.size(); i++) {
+                List<GenericStack> possibleInputs = this.inputs.get(i);
+                if (possibleInputs.isEmpty()) continue;
+                for (GenericStack input : possibleInputs) {
+                    if (input == null || input.what() == null) continue;
+                    if (input.what().matches(storageInv.getStack(i)) && storageInv.getAmount(i) >= input.amount())
+                        continue forInput;
+                }
+                System.out.println("input " + i + " is not satisfied for pattern: " + patternInv.getStackInSlot(0));
+                return false;
+            }
+            System.out.println("all inputs are satisfied for pattern: " + patternInv.getStackInSlot(0));
+            return true;
         }
 
         public void writeToChildTag(CompoundTag tag, String name, HolderLookup.Provider registries) {
