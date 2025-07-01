@@ -120,5 +120,6 @@ runs/
 !gradle-wrapper.jar
 
 bin/
-/forge.yaml
-/temp_decompiled/
+forge.yaml
+temp_decompiled/
+src/generated/
