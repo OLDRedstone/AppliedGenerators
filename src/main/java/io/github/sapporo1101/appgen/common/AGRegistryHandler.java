@@ -83,26 +83,8 @@ public class AGRegistryHandler extends RegistryHandler {
         Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("flux_cell"), FluxCellMenu.TYPE);
         Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("pattern_buffer"), PatternBufferMenu.TYPE);
         Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("genesis_synthesizer"), GenesisSynthesizerMenu.TYPE);
-        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("singularity_generator_1k"), SingularityGeneratorMenu.TYPE);
-        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("singularity_generator_4k"), SingularityGeneratorMenu.TYPE);
-        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("singularity_generator_16k"), SingularityGeneratorMenu.TYPE);
-        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("singularity_generator_64k"), SingularityGeneratorMenu.TYPE);
-        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("singularity_generator_256k"), SingularityGeneratorMenu.TYPE);
-        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("singularity_generator_1m"), SingularityGeneratorMenu.TYPE);
-        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("singularity_generator_4m"), SingularityGeneratorMenu.TYPE);
-        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("singularity_generator_16m"), SingularityGeneratorMenu.TYPE);
-        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("singularity_generator_64m"), SingularityGeneratorMenu.TYPE);
-        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("singularity_generator_256m"), SingularityGeneratorMenu.TYPE);
-        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("flux_generator_1k"), FluxGeneratorMenu.TYPE);
-        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("flux_generator_4k"), FluxGeneratorMenu.TYPE);
-        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("flux_generator_16k"), FluxGeneratorMenu.TYPE);
-        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("flux_generator_64k"), FluxGeneratorMenu.TYPE);
-        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("flux_generator_256k"), FluxGeneratorMenu.TYPE);
-        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("flux_generator_1m"), FluxGeneratorMenu.TYPE);
-        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("flux_generator_4m"), FluxGeneratorMenu.TYPE);
-        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("flux_generator_16m"), FluxGeneratorMenu.TYPE);
-        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("flux_generator_64m"), FluxGeneratorMenu.TYPE);
-        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("flux_generator_256m"), FluxGeneratorMenu.TYPE);
+        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("singularity_generator"), SingularityGeneratorMenu.TYPE);
+        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("flux_generator"), FluxGeneratorMenu.TYPE);
     }
 
     private <T extends AEBaseBlockEntity> void bindTileEntity(Class<T> clazz, AEBaseEntityBlock<T> block, BlockEntityType.BlockEntitySupplier<? extends T> supplier) {
