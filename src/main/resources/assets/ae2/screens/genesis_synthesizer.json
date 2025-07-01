@@ -47,6 +47,10 @@
         "singularityBar": {
             "texture": "guis/genesis_synthesizer.png",
             "srcRect": [182, 0, 6, 18]
+        },
+        "powerAlert": {
+            "texture": "guis/genesis_synthesizer.png",
+            "srcRect": [188, 0, 18, 18]
         }
     },
     "widgets": {
@@ -57,6 +61,10 @@
         "singularityBar": {
             "left": 93,
             "top": 23
+        },
+        "powerAlert": {
+            "left": 117,
+            "top": 67
         }
     }
 }

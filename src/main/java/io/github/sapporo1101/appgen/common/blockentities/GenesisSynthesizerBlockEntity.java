@@ -83,6 +83,7 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
     private boolean hasInventoryChanged = false;
     private GenesisSynthesizerRecipe cachedTask = null;
     private int progress = 0;
+    private boolean showWarning = false;
 
 
     private final Set<Direction> outputSides = EnumSet.noneOf(Direction.class);
@@ -370,7 +371,7 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
 
                 final int progressReq = MAX_PROGRESS - this.getProgress();
                 final float powerRatio = progressReq < speedFactor ? (float) progressReq / speedFactor : 1;
-                final int requiredTicks = Mth.ceil((float) MAX_PROGRESS / speedFactor);
+                final int requiredTicks = Mth.ceil((float) MAX_PROGRESS / speedFactor) + 16;
                 final int powerConsumption = Mth.floor(((float) Objects.requireNonNull(getTask()).getEnergy() / requiredTicks) * powerRatio);
                 final double powerThreshold = powerConsumption - 0.01;
 
@@ -390,6 +391,7 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
                     src.extractAEPower(powerConsumption, Actionable.MODULATE, PowerMultiplier.CONFIG);
                     System.out.println("GenesisSynthesizer extracted power: " + powerConsumption);
                     this.addProgress(speedFactor);
+                    this.showWarning = false;
                 } else if (powerReq != 0) {
                     var progressRatio = src == this
                             ? powerReq / powerConsumption
@@ -405,6 +407,8 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
                         System.out.println("GenesisSynthesizer extracted power: " + extracted + ", actual factor: " + actualFactor);
                         this.addProgress(actualFactor);
                     }
+
+                    this.showWarning = true;
                 }
             });
 
@@ -479,7 +483,8 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
                 this.setWorking(false);
             }
         } else {
-            setWorking(false);
+            this.setWorking(false);
+            this.showWarning = false;
         }
 
         if (this.pushOutResult()) {
@@ -618,6 +623,10 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
 
     public int getSingularityCount() {
         return Math.toIntExact(this.singularityTank.getAmount(0));
+    }
+
+    public boolean showWarning() {
+        return this.showWarning;
     }
 
     private static class RestrictSingularityFilter implements IAEItemFilter {

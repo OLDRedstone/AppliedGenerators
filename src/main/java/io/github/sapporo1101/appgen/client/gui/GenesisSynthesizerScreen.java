@@ -3,10 +3,12 @@ package io.github.sapporo1101.appgen.client.gui;
 import appeng.api.config.Settings;
 import appeng.api.config.YesNo;
 import appeng.client.gui.implementations.UpgradeableScreen;
+import appeng.client.gui.style.Blitter;
 import appeng.client.gui.style.ScreenStyle;
 import appeng.client.gui.widgets.ProgressBar;
 import appeng.client.gui.widgets.ServerSettingToggleButton;
 import appeng.client.gui.widgets.SettingToggleButton;
+import appeng.core.localization.Tooltips;
 import com.glodblock.github.extendedae.client.button.ActionEPPButton;
 import com.glodblock.github.extendedae.client.button.EPPIcon;
 import com.glodblock.github.extendedae.client.gui.subgui.OutputSideConfig;
@@ -15,9 +17,15 @@ import com.glodblock.github.extendedae.network.packet.CEAEGenericPacket;
 import io.github.sapporo1101.appgen.client.gui.widget.SubProgressBar;
 import io.github.sapporo1101.appgen.common.AGSingletons;
 import io.github.sapporo1101.appgen.menu.GenesisSynthesizerMenu;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+import net.pedroksl.advanced_ae.common.definitions.AAEText;
+import org.jetbrains.annotations.NotNull;
 
 public class GenesisSynthesizerScreen extends UpgradeableScreen<GenesisSynthesizerMenu> {
 
@@ -25,6 +33,7 @@ public class GenesisSynthesizerScreen extends UpgradeableScreen<GenesisSynthesiz
     private final SettingToggleButton<YesNo> autoExportBtn;
     private final ActionEPPButton outputSideBtn;
     private final SubProgressBar singularityBar;
+    private final AlertWidget powerAlert;
 
     public GenesisSynthesizerScreen(GenesisSynthesizerMenu menu, Inventory playerInventory, Component title, ScreenStyle style) {
         super(menu, playerInventory, title, style);
@@ -37,6 +46,9 @@ public class GenesisSynthesizerScreen extends UpgradeableScreen<GenesisSynthesiz
         this.outputSideBtn = new ActionEPPButton(b -> this.openOutputConfig(), EPPIcon.OUTPUT_SIDES);
         this.outputSideBtn.setMessage(Component.translatable("gui.extendedae.set_output_sides.open"));
         this.addToLeftToolbar(this.outputSideBtn);
+        this.powerAlert = new AlertWidget(style.getImage("powerAlert"));
+        this.powerAlert.setTooltip(Tooltip.create(Tooltips.of(AAEText.InsufficientPower.text().withStyle(Tooltips.RED), Component.literal("\n").append(AAEText.InsufficientPowerDetails.text()).withStyle(Tooltips.NORMAL_TOOLTIP_TEXT))));
+        this.widgets.add("powerAlert", this.powerAlert);
     }
 
     private void openOutputConfig() {
@@ -59,5 +71,22 @@ public class GenesisSynthesizerScreen extends UpgradeableScreen<GenesisSynthesiz
         this.singularityBar.setFullMsg(Component.translatable("gui.appgen.genesis_synthesizer.singularity_info", this.menu.getCurrentSubProgress(), this.menu.getMaxSubProgress()));
         this.autoExportBtn.set(getMenu().getAutoExport());
         this.outputSideBtn.setVisibility(this.autoExportBtn.getCurrentValue() == YesNo.YES);
+        this.powerAlert.visible = this.getMenu().showWarning;
+    }
+
+    private static class AlertWidget extends AbstractWidget {
+        private final Blitter powerAlert;
+
+        public AlertWidget(Blitter powerAlert) {
+            super(0, 0, 18, 18, Component.empty());
+            this.powerAlert = powerAlert;
+        }
+
+        protected void renderWidget(@NotNull GuiGraphics guiGraphics, int i, int i1, float v) {
+            this.powerAlert.dest(this.getX(), this.getY()).blit(guiGraphics);
+        }
+
+        protected void updateWidgetNarration(@NotNull NarrationElementOutput narrationElementOutput) {
+        }
     }
 }

@@ -36,6 +36,9 @@ public class GenesisSynthesizerMenu extends UpgradeableMenu<GenesisSynthesizerBl
     @GuiSync(3)
     public int processingTime = -1;
 
+    @GuiSync(7)
+    public boolean showWarning = false;
+
     @GuiSync(8)
     public YesNo autoExport = YesNo.NO;
 
@@ -83,6 +86,7 @@ public class GenesisSynthesizerMenu extends UpgradeableMenu<GenesisSynthesizerBl
         if (isServerSide()) {
             this.processingTime = this.getHost().getProgress();
             this.singularityCount = this.getHost().getSingularityCount();
+            this.showWarning = this.getHost().showWarning();
         }
         super.standardDetectAndSendChanges();
     }
