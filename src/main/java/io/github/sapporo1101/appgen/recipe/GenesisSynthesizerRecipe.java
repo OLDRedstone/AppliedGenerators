@@ -14,13 +14,13 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.pedroksl.advanced_ae.recipes.InitRecipeTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("ClassCanBeRecord")
 public class GenesisSynthesizerRecipe implements Recipe<RecipeInput> {
 
     public static final ResourceLocation ID = AppliedGenerators.id("synthesizing");

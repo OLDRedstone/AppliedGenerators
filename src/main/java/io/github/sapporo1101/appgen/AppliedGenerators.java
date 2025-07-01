@@ -4,6 +4,8 @@ import appeng.init.InitCapabilityProviders;
 import io.github.sapporo1101.appgen.client.ClientRegistryHandler;
 import io.github.sapporo1101.appgen.common.AGRegistryHandler;
 import io.github.sapporo1101.appgen.common.AGSingletons;
+import io.github.sapporo1101.appgen.recipe.InitRecipeSerializers;
+import io.github.sapporo1101.appgen.recipe.InitRecipeTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -20,6 +22,8 @@ import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.Objects;
 
 @Mod(AppliedGenerators.MODID)
 public class AppliedGenerators {
@@ -47,6 +51,13 @@ public class AppliedGenerators {
 
         bus.addListener(this::commonSetup);
         bus.addListener(InitCapabilityProviders::register);
+        bus.addListener((RegisterEvent event) -> {
+            if (event.getRegistryKey() == Registries.RECIPE_TYPE) {
+                InitRecipeTypes.init(event.getRegistry(Registries.RECIPE_TYPE));
+            } else if (event.getRegistryKey() == Registries.RECIPE_SERIALIZER) {
+                InitRecipeSerializers.register(Objects.requireNonNull(event.getRegistry(Registries.RECIPE_SERIALIZER)));
+            }
+        });
 
         bus.register(AGRegistryHandler.INSTANCE);
     }
