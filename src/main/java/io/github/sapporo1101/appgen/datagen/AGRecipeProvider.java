@@ -63,10 +63,11 @@ public class AGRecipeProvider extends RecipeProvider {
 
         // Genesis Synthesizer Recipes
         GenesisSynthesizerRecipeBuilder.synthesize(AGSingletons.ORIGINATION_PRESS, 1, 1000000)
-                .input(AGSingletons.ORIGINATION_PROCESSOR, 2)
-                .input(AEItems.BLANK_PATTERN)
-                .input(AGSingletons.EMBER_CRYSTAL_CHARGED)
-                .fluid(Fluids.LAVA, 1000)
+                .input(AGSingletons.EMBER_CRYSTAL_CHARGED, 4)
+                .input(AEItems.CALCULATION_PROCESSOR_PRESS)
+                .input(Items.MAGMA_CREAM, 4)
+                .input(AGSingletons.EMBER_CRYSTAL, 4)
+                .fluid(Fluids.LAVA, 4000)
                 .save(recipeOutput, AppliedGenerators.id("synthesizer/origination_press"));
         GenesisSynthesizerRecipeBuilder.synthesize(AGSingletons.EMBER_BUDDING_DAMAGED, 1, 100000)
                 .input(AGSingletons.EMBER_CRYSTAL_CHARGED, 2)
@@ -90,7 +91,7 @@ public class AGRecipeProvider extends RecipeProvider {
                 .input(AGSingletons.EMBER_CRYSTAL_CHARGED, 100)
                 .input(AGSingletons.EMBER_BUDDING_FLAWED)
                 .input(AGSingletons.EMBER_CRYSTAL)
-                .fluid(Fluids.LAVA, 1000)
+                .fluid(Fluids.LAVA, 10000)
                 .save(recipeOutput, AppliedGenerators.id("synthesizer/ember_budding_flawless"));
 
         // World Transformation Recipes
