@@ -37,7 +37,7 @@ public class AGRecipeProvider extends RecipeProvider {
                 .save(recipeOutput, AppliedGenerators.id("pattern_buffer"));
 
         GenesisSynthesizerRecipeBuilder.synthesize(AGSingletons.EMBER_BUDDING_DAMAGED, 1, 1000000)
-                .input(AEItems.SINGULARITY)
+                .input(AGSingletons.EMBER_CRYSTAL_CHARGED)
                 .input(AGSingletons.EMBER_BLOCK)
                 .input(AGSingletons.EMBER_CRYSTAL)
                 .fluid(Fluids.LAVA, 1000)

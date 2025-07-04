@@ -32,15 +32,15 @@ public class GenesisSynthesizerScreen extends UpgradeableScreen<GenesisSynthesiz
     private final ProgressBar pb;
     private final SettingToggleButton<YesNo> autoExportBtn;
     private final ActionEPPButton outputSideBtn;
-    private final SubProgressBar singularityBar;
+    private final SubProgressBar crystalBar;
     private final AlertWidget powerAlert;
 
     public GenesisSynthesizerScreen(GenesisSynthesizerMenu menu, Inventory playerInventory, Component title, ScreenStyle style) {
         super(menu, playerInventory, title, style);
         this.pb = new ProgressBar(this.menu, style.getImage("progressBar"), ProgressBar.Direction.VERTICAL);
         widgets.add("progressBar", this.pb);
-        this.singularityBar = new SubProgressBar(this.menu, style.getImage("singularityBar"), ProgressBar.Direction.VERTICAL);
-        widgets.add("singularityBar", this.singularityBar);
+        this.crystalBar = new SubProgressBar(this.menu, style.getImage("crystalBar"), ProgressBar.Direction.VERTICAL);
+        widgets.add("crystalBar", this.crystalBar);
         this.autoExportBtn = new ServerSettingToggleButton<>(Settings.AUTO_EXPORT, YesNo.NO);
         this.addToLeftToolbar(autoExportBtn);
         this.outputSideBtn = new ActionEPPButton(b -> this.openOutputConfig(), EPPIcon.OUTPUT_SIDES);
@@ -68,7 +68,7 @@ public class GenesisSynthesizerScreen extends UpgradeableScreen<GenesisSynthesiz
         super.updateBeforeRender();
         int progress = this.menu.getCurrentProgress() * 100 / this.menu.getMaxProgress();
         this.pb.setFullMsg(Component.literal(progress + "%"));
-        this.singularityBar.setFullMsg(Component.translatable("gui.appgen.genesis_synthesizer.singularity_info", this.menu.getCurrentSubProgress(), this.menu.getMaxSubProgress()));
+        this.crystalBar.setFullMsg(Component.translatable("gui.appgen.genesis_synthesizer.crystal_info", this.menu.getCurrentSubProgress(), this.menu.getMaxSubProgress()));
         this.autoExportBtn.set(getMenu().getAutoExport());
         this.outputSideBtn.setVisibility(this.autoExportBtn.getCurrentValue() == YesNo.YES);
         this.powerAlert.visible = this.getMenu().showWarning;

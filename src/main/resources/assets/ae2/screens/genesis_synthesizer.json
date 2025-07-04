@@ -44,7 +44,7 @@
             "texture": "guis/genesis_synthesizer.png",
             "srcRect": [176, 0, 6, 18]
         },
-        "singularityBar": {
+        "crystalBar": {
             "texture": "guis/genesis_synthesizer.png",
             "srcRect": [182, 0, 6, 18]
         },
@@ -58,7 +58,7 @@
             "left": 140,
             "top": 41
         },
-        "singularityBar": {
+        "crystalBar": {
             "left": 93,
             "top": 23
         },

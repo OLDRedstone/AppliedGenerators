@@ -31,7 +31,7 @@ public class GenesisSynthesizerMenu extends UpgradeableMenu<GenesisSynthesizerBl
     public static final SlotSemantic AG_TANK_OUTPUT = SlotSemantics.register("AG_TANK_OUTPUT", false);
 
     @GuiSync(2)
-    public int singularityCount = -1;
+    public int crystalCount = -1;
 
     @GuiSync(3)
     public int processingTime = -1;
@@ -56,7 +56,7 @@ public class GenesisSynthesizerMenu extends UpgradeableMenu<GenesisSynthesizerBl
         for (int index = 0; index < host.getInputInv().size(); index++) {
             this.addSlot(new AppEngSlot(host.getInputInv(), index), SlotSemantics.MACHINE_INPUT);
         }
-        this.addSlot(new AppEngSlot(host.getSingularityInv(), 0), SlotSemantics.STORAGE);
+        this.addSlot(new AppEngSlot(host.getCrystalInv(), 0), SlotSemantics.STORAGE);
         for (int index = 0; index < host.getOutputExposed().size(); index++) {
             this.addSlot(new AppEngSlot(host.getOutputExposed(), index), SlotSemantics.MACHINE_OUTPUT);
         }
@@ -85,7 +85,7 @@ public class GenesisSynthesizerMenu extends UpgradeableMenu<GenesisSynthesizerBl
     protected void standardDetectAndSendChanges() {
         if (isServerSide()) {
             this.processingTime = this.getHost().getProgress();
-            this.singularityCount = this.getHost().getSingularityCount();
+            this.crystalCount = this.getHost().getCrystalCount();
             this.showWarning = this.getHost().showWarning();
         }
         super.standardDetectAndSendChanges();
@@ -117,11 +117,11 @@ public class GenesisSynthesizerMenu extends UpgradeableMenu<GenesisSynthesizerBl
 
     @Override
     public int getCurrentSubProgress() {
-        return this.singularityCount;
+        return this.crystalCount;
     }
 
     @Override
     public int getMaxSubProgress() {
-        return GenesisSynthesizerBlockEntity.MAX_SINGULARITY_TANK;
+        return GenesisSynthesizerBlockEntity.MAX_CRYSTAL_TANK;
     }
 }

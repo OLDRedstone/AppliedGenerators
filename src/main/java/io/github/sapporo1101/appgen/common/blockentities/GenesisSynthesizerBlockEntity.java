@@ -27,7 +27,6 @@ import appeng.util.SettingsFrom;
 import appeng.util.inv.AppEngInternalInventory;
 import appeng.util.inv.CombinedInternalInventory;
 import appeng.util.inv.FilteredInternalInventory;
-import appeng.util.inv.filter.AEItemDefinitionFilter;
 import appeng.util.inv.filter.AEItemFilters;
 import appeng.util.inv.filter.IAEItemFilter;
 import com.glodblock.github.extendedae.api.IRecipeMachine;
@@ -49,6 +48,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.Level;
@@ -65,12 +65,12 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
 
     public static final long POWER_MAXIMUM_AMOUNT = 10_000_000;
     public static final int MAX_PROGRESS = 200;
-    public static final int MAX_SINGULARITY_TANK = 1000;
+    public static final int MAX_CRYSTAL_TANK = 1000;
 
-    private final AppEngInternalInventory inputInv = new AppEngInternalInventory(this, 9, 64, new RestrictSingularityFilter());
-    private final AppEngInternalInventory singularityInv = new AppEngInternalInventory(this, 1, 64, new AEItemDefinitionFilter(AEItems.SINGULARITY));
+    private final AppEngInternalInventory inputInv = new AppEngInternalInventory(this, 9, 64, new RestrictItemFilter(AGSingletons.EMBER_CRYSTAL_CHARGED));
+    private final AppEngInternalInventory crystalInv = new AppEngInternalInventory(this, 1, 64, new AllowItemFilter(AGSingletons.EMBER_CRYSTAL_CHARGED));
     private final AppEngInternalInventory outputInv = new AppEngInternalInventory(this, 1, 64);
-    private final InternalInventory combinedInputInv = new CombinedInternalInventory(this.inputInv, this.singularityInv);
+    private final InternalInventory combinedInputInv = new CombinedInternalInventory(this.inputInv, this.crystalInv);
     private final InternalInventory inv = new CombinedInternalInventory(this.combinedInputInv, this.outputInv);
     private final FilteredInternalInventory combinedInputExposed = new FilteredInternalInventory(this.combinedInputInv, AEItemFilters.INSERT_ONLY);
     private final FilteredInternalInventory outputExposed = new FilteredInternalInventory(this.outputInv, AEItemFilters.EXTRACT_ONLY);
@@ -78,7 +78,7 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
     private final CustomTankInv tankInv = new CustomTankInv(this::onChangeTank, GenericStackInv.Mode.STORAGE, 2);
     private final IUpgradeInventory upgrades = UpgradeInventories.forMachine(AGSingletons.GENESIS_SYNTHESIZER, 4, this::saveChanges);
     private final ConfigManager configManager = new ConfigManager(this::onConfigChanged);
-    private final GenericStackInv singularityTank = new GenericSingularityTank(null);
+    private final GenericStackInv crystalTank = new GenericItemTank(null, AGSingletons.EMBER_CRYSTAL_CHARGED);
     private boolean isWorking = false;
     private boolean hasInventoryChanged = false;
     private GenesisSynthesizerRecipe cachedTask = null;
@@ -114,11 +114,6 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
             this.progress = newProgress;
             changed = true;
         }
-//        var outputStack = ItemStack.OPTIONAL_STREAM_CODEC.decode(data);
-//        if (!ItemStack.isSameItem(outputStack, this.renderOutput)) {
-//            this.renderOutput = outputStack;
-//            changed = true;
-//        }
         return changed;
     }
 
@@ -127,8 +122,6 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
         super.writeToStream(data);
         data.writeBoolean(this.isWorking);
         data.writeInt(this.progress);
-//        this.renderOutput = this.ctx.currentRecipe == null ? ItemStack.EMPTY : this.ctx.currentRecipe.value().output;
-//        ItemStack.OPTIONAL_STREAM_CODEC.encode(data, this.renderOutput);
     }
 
     @Override
@@ -161,7 +154,7 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
     public void saveAdditional(CompoundTag data, HolderLookup.Provider registries) {
         super.saveAdditional(data, registries);
         this.tankInv.writeToChildTag(data, "tank", registries);
-        this.singularityTank.writeToChildTag(data, "singularity_tank", registries);
+        this.crystalTank.writeToChildTag(data, "crystal_tank", registries);
         this.upgrades.writeToNBT(data, "upgrades", registries);
         this.configManager.writeToNBT(data, registries);
         var sides = new ListTag();
@@ -175,7 +168,7 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
     public void loadTag(CompoundTag data, HolderLookup.Provider registries) {
         super.loadTag(data, registries);
         this.tankInv.readFromChildTag(data, "tank", registries);
-        this.singularityTank.readFromChildTag(data, "singularity_tank", registries);
+        this.crystalTank.readFromChildTag(data, "crystal_tank", registries);
         this.upgrades.readFromNBT(data, "upgrades", registries);
         this.configManager.readFromNBT(data, registries);
         this.outputSides.clear();
@@ -227,7 +220,7 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
     private void onChangeInventory() {
         System.out.println("GenesisSynthesizerBlockEntity onChangeInventory called, hasAutoExportWork: " + this.hasAutoExportWork() + ", hasCraftWork: " + this.hasCraftWork());
         this.hasInventoryChanged = true;
-        this.chargeSingularityTank();
+        this.chargeCrystalTank();
         getMainNode().ifPresent((grid, node) -> grid.getTickManager().wakeDevice(node));
     }
 
@@ -246,8 +239,8 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
         return this.inputInv;
     }
 
-    public InternalInventory getSingularityInv() {
-        return this.singularityInv;
+    public InternalInventory getCrystalInv() {
+        return this.crystalInv;
     }
 
     public InternalInventory getOutputExposed() {
@@ -453,11 +446,11 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
                                     continue consume;
                                 }
                             }
-                            GenericStack singularityStack = this.singularityTank.getStack(0);
-                            ItemStack singularityItemStack = singularityStack != null ? ((AEItemKey) singularityStack.what()).toStack((int) singularityStack.amount()) : ItemStack.EMPTY;
-                            if (input.checkType(singularityItemStack)) {
-                                input.consume(singularityItemStack);
-                                this.singularityTank.setStack(0, GenericStack.fromItemStack(singularityItemStack));
+                            GenericStack crystalStack = this.crystalTank.getStack(0);
+                            ItemStack crystalItemStack = crystalStack != null ? ((AEItemKey) crystalStack.what()).toStack((int) crystalStack.amount()) : ItemStack.EMPTY;
+                            if (input.checkType(crystalItemStack)) {
+                                input.consume(crystalItemStack);
+                                this.crystalTank.setStack(0, GenericStack.fromItemStack(crystalItemStack));
                             }
 
                             if (fluidStack != null && !input.isEmpty() && input.checkType(fluidStack)) {
@@ -584,9 +577,9 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
         for (var x = 0; x < this.inputInv.size(); x++) {
             inputs.add(this.inputInv.getStackInSlot(x));
         }
-        GenericStack singularityStack = this.singularityTank.getStack(0);
-        ItemStack singularityItemStack = singularityStack != null ? ((AEItemKey) singularityStack.what()).toStack((int) singularityStack.amount()) : ItemStack.EMPTY;
-        inputs.add(singularityItemStack);
+        GenericStack crystalStack = this.crystalTank.getStack(0);
+        ItemStack crystalItemStack = crystalStack != null ? ((AEItemKey) crystalStack.what()).toStack((int) crystalStack.amount()) : ItemStack.EMPTY;
+        inputs.add(crystalItemStack);
 
         return GenesisSynthesizerRecipes.findRecipe(level, inputs, this.tankInv.getStack(0));
     }
@@ -603,43 +596,68 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
         }
     }
 
-    private void chargeSingularityTank() {
-        if (!this.singularityInv.getStackInSlot(0).isEmpty()) {
-            ItemStack singularityInvStack = this.singularityInv.getStackInSlot(0);
-            if (singularityInvStack != null && AEItems.SINGULARITY.is(singularityInvStack)) {
-                if (this.getSingularityCount() < MAX_SINGULARITY_TANK) {
-                    ItemStack extracted = this.singularityInv.extractItem(0, MAX_SINGULARITY_TANK - this.getSingularityCount(), false);
-                    System.out.println("GenesisSynthesizerBlockEntity extracted singularity: " + extracted);
-                    GenericStack singularityTankStack = this.singularityTank.getStack(0);
-                    ItemStack singularityTankItemStack = singularityTankStack != null ? ((AEItemKey) singularityTankStack.what()).toStack((int) singularityTankStack.amount()) : ItemStack.EMPTY;
-                    System.out.println("GenesisSynthesizerBlockEntity singularityTankStack: " + singularityTankItemStack);
-                    extracted.setCount(extracted.getCount() + singularityTankItemStack.getCount());
-                    this.singularityTank.setStack(0, GenericStack.fromItemStack(extracted));
-                    System.out.println("GenesisSynthesizerBlockEntity charged singularity tank, set count: " + extracted.getCount() + " new count: " + this.singularityTank.getAmount(0) + " / " + this.singularityTank.getCapacity(AEKeyType.items()));
+    private void chargeCrystalTank() {
+        if (!this.crystalInv.getStackInSlot(0).isEmpty()) {
+            ItemStack crystalInvStack = this.crystalInv.getStackInSlot(0);
+            if (crystalInvStack != null && crystalInvStack.is(AGSingletons.EMBER_CRYSTAL_CHARGED)) {
+                if (this.getCrystalCount() < MAX_CRYSTAL_TANK) {
+                    ItemStack extracted = this.crystalInv.extractItem(0, MAX_CRYSTAL_TANK - this.getCrystalCount(), false);
+                    System.out.println("GenesisSynthesizerBlockEntity extracted crystal: " + extracted);
+                    GenericStack crystalTankStack = this.crystalTank.getStack(0);
+                    ItemStack crystalTankItemStack = crystalTankStack != null ? ((AEItemKey) crystalTankStack.what()).toStack((int) crystalTankStack.amount()) : ItemStack.EMPTY;
+                    System.out.println("GenesisSynthesizerBlockEntity crystalTankStack: " + crystalTankItemStack);
+                    extracted.setCount(extracted.getCount() + crystalTankItemStack.getCount());
+                    this.crystalTank.setStack(0, GenericStack.fromItemStack(extracted));
+                    System.out.println("GenesisSynthesizerBlockEntity charged crystal tank, set count: " + extracted.getCount() + " new count: " + this.crystalTank.getAmount(0) + " / " + this.crystalTank.getCapacity(AEKeyType.items()));
                 }
             }
         }
     }
 
-    public int getSingularityCount() {
-        return Math.toIntExact(this.singularityTank.getAmount(0));
+    public int getCrystalCount() {
+        return Math.toIntExact(this.crystalTank.getAmount(0));
     }
 
     public boolean showWarning() {
         return this.showWarning;
     }
 
-    private static class RestrictSingularityFilter implements IAEItemFilter {
+    private static class RestrictItemFilter implements IAEItemFilter {
+
+        private final Item RESTRICTED_ITEM;
+
+        public RestrictItemFilter(Item item) {
+            this.RESTRICTED_ITEM = item;
+        }
+
         @Override
         public boolean allowInsert(InternalInventory inv, int slot, ItemStack stack) {
-            return !AEItems.SINGULARITY.is(stack);
+            return !stack.is(this.RESTRICTED_ITEM);
         }
     }
 
-    private static class GenericSingularityTank extends GenericStackInv {
-        public GenericSingularityTank(@Nullable Runnable listener) {
+    private static class AllowItemFilter implements IAEItemFilter {
+
+        private final Item ALLOWED_ITEM;
+
+        public AllowItemFilter(Item item) {
+            this.ALLOWED_ITEM = item;
+        }
+
+        @Override
+        public boolean allowInsert(InternalInventory inv, int slot, ItemStack stack) {
+            return stack.is(this.ALLOWED_ITEM);
+        }
+    }
+
+    private static class GenericItemTank extends GenericStackInv {
+
+        private final Item RESTRICTED_ITEM;
+
+        public GenericItemTank(@Nullable Runnable listener, Item item) {
             super(Set.of(AEKeyType.items()), listener, Mode.STORAGE, 1);
-            this.setCapacity(AEKeyType.items(), GenesisSynthesizerBlockEntity.MAX_SINGULARITY_TANK);
+            this.setCapacity(AEKeyType.items(), GenesisSynthesizerBlockEntity.MAX_CRYSTAL_TANK);
+            this.RESTRICTED_ITEM = item;
         }
 
         @Override
@@ -649,7 +667,7 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
 
         @Override
         public boolean isAllowedIn(int slot, AEKey what) {
-            return what instanceof AEItemKey && AEItems.SINGULARITY.is(what);
+            return what instanceof AEItemKey itemKey && itemKey.toStack().is(this.RESTRICTED_ITEM);
         }
     }
 
