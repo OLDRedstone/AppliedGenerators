@@ -42,7 +42,10 @@ public class AGSingletons {
     public static Block EMBER_BLOCK;
 
     public static CommonItem EMBER_CRYSTAL;
+    public static CommonItem EMBER_CRYSTAL_CHARGED;
     public static CommonItem EMBER_DUST;
+    public static CommonItem ORIGINATION_CIRCUIT;
+    public static CommonItem ORIGINATION_PROCESSOR;
 
     public static void init(AGRegistryHandler regHandler) {
         FLUX_CELL = new FluxCellBlock();
@@ -79,7 +82,10 @@ public class AGSingletons {
         EMBER_BLOCK = new Block(stoneProps().strength(3, 8).requiresCorrectToolForDrops());
 
         EMBER_CRYSTAL = new CommonItem();
+        EMBER_CRYSTAL_CHARGED = new CommonItem();
         EMBER_DUST = new CommonItem();
+        ORIGINATION_CIRCUIT = new CommonItem();
+        ORIGINATION_PROCESSOR = new CommonItem();
 
         regHandler.block("flux_cell", FLUX_CELL, FluxCellBlockEntity.class, FluxCellBlockEntity::new);
         regHandler.block("pattern_buffer", PATTERN_BUFFER, PatternBufferBlockEntity.class, PatternBufferBlockEntity::new);
@@ -115,6 +121,9 @@ public class AGSingletons {
         regHandler.block("ember_block", EMBER_BLOCK);
 
         regHandler.item("ember_crystal", EMBER_CRYSTAL);
+        regHandler.item("ember_crystal_charged", EMBER_CRYSTAL_CHARGED);
         regHandler.item("ember_dust", EMBER_DUST);
+        regHandler.item("printed_origination_processor", ORIGINATION_CIRCUIT);
+        regHandler.item("origination_processor", ORIGINATION_PROCESSOR);
     }
 }
