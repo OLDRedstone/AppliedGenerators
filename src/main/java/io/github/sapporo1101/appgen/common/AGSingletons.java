@@ -44,8 +44,9 @@ public class AGSingletons {
     public static CommonItem EMBER_CRYSTAL;
     public static CommonItem EMBER_CRYSTAL_CHARGED;
     public static CommonItem EMBER_DUST;
-    public static CommonItem ORIGINATION_CIRCUIT;
+    public static CommonItem ORIGINATION_PRINT;
     public static CommonItem ORIGINATION_PROCESSOR;
+    public static CommonItem ORIGINATION_PRESS;
 
     public static void init(AGRegistryHandler regHandler) {
         FLUX_CELL = new FluxCellBlock();
@@ -84,8 +85,9 @@ public class AGSingletons {
         EMBER_CRYSTAL = new CommonItem();
         EMBER_CRYSTAL_CHARGED = new CommonItem();
         EMBER_DUST = new CommonItem();
-        ORIGINATION_CIRCUIT = new CommonItem();
+        ORIGINATION_PRINT = new CommonItem();
         ORIGINATION_PROCESSOR = new CommonItem();
+        ORIGINATION_PRESS = new CommonItem();
 
         regHandler.block("flux_cell", FLUX_CELL, FluxCellBlockEntity.class, FluxCellBlockEntity::new);
         regHandler.block("pattern_buffer", PATTERN_BUFFER, PatternBufferBlockEntity.class, PatternBufferBlockEntity::new);
@@ -123,7 +125,8 @@ public class AGSingletons {
         regHandler.item("ember_crystal", EMBER_CRYSTAL);
         regHandler.item("ember_crystal_charged", EMBER_CRYSTAL_CHARGED);
         regHandler.item("ember_dust", EMBER_DUST);
-        regHandler.item("printed_origination_processor", ORIGINATION_CIRCUIT);
+        regHandler.item("printed_origination_processor", ORIGINATION_PRINT);
         regHandler.item("origination_processor", ORIGINATION_PROCESSOR);
+        regHandler.item("origination_processor_press", ORIGINATION_PRESS);
     }
 }
