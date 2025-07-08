@@ -38,6 +38,8 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.Collection;
+
 public class AGRegistryHandler extends RegistryHandler {
 
     public static final AGRegistryHandler INSTANCE = new AGRegistryHandler();
@@ -53,13 +55,16 @@ public class AGRegistryHandler extends RegistryHandler {
         this.cap(FluxCellBlockEntity.class, Capabilities.EnergyStorage.BLOCK, FluxCellBlockEntity::getEnergyStorage);
         this.cap(GenesisSynthesizerBlockEntity.class, AECapabilities.GENERIC_INTERNAL_INV, (object, context) -> object.getTank());
         this.cap(PatternBufferBlockEntity.class, AECapabilities.GENERIC_INTERNAL_INV, (object, context) -> object.getStorageInv());
-//        this.cap(PatternBufferBlockEntity.class, Capabilities.EnergyStorage.BLOCK, (object, context) -> object.getStorageInv());
     }
 
     public <T extends AEBaseBlockEntity> void block(String name, AEBaseEntityBlock<T> block, Class<T> clazz, BlockEntityType.BlockEntitySupplier<? extends T> supplier) {
         bindTileEntity(clazz, block, supplier);
         block(name, block, b -> new AEBaseBlockItem(b, new Item.Properties()));
         tile(name, block.getBlockEntityType());
+    }
+
+    public Collection<Block> getBlocks() {
+        return this.blocks.stream().map(Pair::getRight).toList();
     }
 
     @Override

@@ -1,7 +1,7 @@
 package io.github.sapporo1101.appgen.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
-import io.github.sapporo1101.appgen.misc.LavaTransformLogic;
+import io.github.sapporo1101.appgen.util.LavaTransformLogic;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;

@@ -1,4 +1,4 @@
-package io.github.sapporo1101.appgen.misc;
+package io.github.sapporo1101.appgen.util;
 
 import appeng.recipes.AERecipeTypes;
 import net.minecraft.tags.FluidTags;
