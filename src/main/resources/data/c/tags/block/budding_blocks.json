@@ -1,9 +1,0 @@
-{
-    "replace": false,
-    "values": [
-        "appgen:ember_budding_flawless",
-        "appgen:ember_budding_flawed",
-        "appgen:ember_budding_chipped",
-        "appgen:ember_budding_damaged"
-    ]
-}

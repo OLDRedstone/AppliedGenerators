@@ -1,5 +1,6 @@
 package io.github.sapporo1101.appgen.datagen;
 
+import appeng.datagen.providers.tags.ConventionTags;
 import io.github.sapporo1101.appgen.AppliedGenerators;
 import io.github.sapporo1101.appgen.common.AGSingletons;
 import io.github.sapporo1101.appgen.util.AGTags;
@@ -22,7 +23,56 @@ public class AGItemTagProvider extends ItemTagsProvider {
 
     @Override
     protected void addTags(HolderLookup.@NotNull Provider provider) {
-        tag(Tags.Items.DUSTS).add(AGSingletons.GOLD_DUST);
-        tag(AGTags.GOLD_DUST).add(AGSingletons.GOLD_DUST);
+        tag(AGTags.SINGULARITY_GENERATORS)
+                .add(AGSingletons.SINGULARITY_GENERATOR_1K.asItem())
+                .add(AGSingletons.SINGULARITY_GENERATOR_4K.asItem())
+                .add(AGSingletons.SINGULARITY_GENERATOR_16K.asItem())
+                .add(AGSingletons.SINGULARITY_GENERATOR_64K.asItem())
+                .add(AGSingletons.SINGULARITY_GENERATOR_256K.asItem())
+                .add(AGSingletons.SINGULARITY_GENERATOR_1M.asItem())
+                .add(AGSingletons.SINGULARITY_GENERATOR_4M.asItem())
+                .add(AGSingletons.SINGULARITY_GENERATOR_16M.asItem())
+                .add(AGSingletons.SINGULARITY_GENERATOR_64M.asItem())
+                .add(AGSingletons.SINGULARITY_GENERATOR_256M.asItem());
+        tag(AGTags.FLUX_GENERATORS)
+                .add(AGSingletons.FLUX_GENERATOR_1K.asItem())
+                .add(AGSingletons.FLUX_GENERATOR_4K.asItem())
+                .add(AGSingletons.FLUX_GENERATOR_16K.asItem())
+                .add(AGSingletons.FLUX_GENERATOR_64K.asItem())
+                .add(AGSingletons.FLUX_GENERATOR_256K.asItem())
+                .add(AGSingletons.FLUX_GENERATOR_1M.asItem())
+                .add(AGSingletons.FLUX_GENERATOR_4M.asItem())
+                .add(AGSingletons.FLUX_GENERATOR_16M.asItem())
+                .add(AGSingletons.FLUX_GENERATOR_64M.asItem())
+                .add(AGSingletons.FLUX_GENERATOR_256M.asItem());
+        tag(AGTags.GENERATORS)
+                .addTag(AGTags.SINGULARITY_GENERATORS)
+                .addTag(AGTags.FLUX_GENERATORS);
+        tag(AGTags.EMBER_DUST)
+                .add(AGSingletons.EMBER_DUST);
+        tag(AGTags.GOLD_DUST)
+                .add(AGSingletons.GOLD_DUST);
+        tag(Tags.Items.DUSTS)
+                .addTag(AGTags.EMBER_DUST)
+                .addTag(AGTags.GOLD_DUST);
+        tag(AGTags.EMBER_BLOCK)
+                .add(AGSingletons.EMBER_BLOCK.asItem());
+        tag(Tags.Items.STORAGE_BLOCKS)
+                .addTag(AGTags.EMBER_BLOCK);
+        tag(AGTags.EMBER_CRYSTAL)
+                .add(AGSingletons.EMBER_CRYSTAL);
+        tag(Tags.Items.GEMS)
+                .addTag(AGTags.EMBER_CRYSTAL);
+        tag(ConventionTags.BUDDING_BLOCKS)
+                .add(AGSingletons.EMBER_BUDDING_DAMAGED.asItem())
+                .add(AGSingletons.EMBER_BUDDING_CHIPPED.asItem())
+                .add(AGSingletons.EMBER_BUDDING_FLAWED.asItem())
+                .add(AGSingletons.EMBER_BUDDING_FLAWLESS.asItem());
+        tag(ConventionTags.BUDS)
+                .add(AGSingletons.EMBER_BUD_SMALL.asItem())
+                .add(AGSingletons.EMBER_BUD_MEDIUM.asItem())
+                .add(AGSingletons.EMBER_BUD_LARGE.asItem());
+        tag(ConventionTags.CLUSTERS)
+                .add(AGSingletons.EMBER_CLUSTER.asItem());
     }
 }
