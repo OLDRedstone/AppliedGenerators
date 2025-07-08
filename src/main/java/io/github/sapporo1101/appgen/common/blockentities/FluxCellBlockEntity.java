@@ -182,19 +182,15 @@ public class FluxCellBlockEntity extends AEBaseBlockEntity implements BlockEntit
         return new FluxCellEnergyStorage(this.feInv, this.outputSides, dir);
     }
 
-    static class FluxCellEnergyStorage implements IEnergyStorage {
-        private final GenericStackInv inv;
-        private final Set<Direction> outputSides;
-        private final Direction dir;
-
-        public FluxCellEnergyStorage(GenericStackInv inv, Set<Direction> outputSides, Direction dir) {
-            this.inv = inv;
-            this.outputSides = outputSides;
-            this.dir = dir;
-        }
+    private record FluxCellEnergyStorage(
+            GenericStackInv inv,
+            Set<Direction> outputSides,
+            Direction dir
+    ) implements IEnergyStorage {
 
         @Override
         public int receiveEnergy(int toReceive, boolean simulate) {
+            if (!canReceive()) return 0;
             if (simulate) {
                 // Simulate the insertion of energy
                 return Math.toIntExact(this.inv.insert(FluxKey.of(EnergyType.FE), toReceive, Actionable.SIMULATE, null));
@@ -236,6 +232,7 @@ public class FluxCellBlockEntity extends AEBaseBlockEntity implements BlockEntit
 
         @Override
         public boolean canReceive() {
+            if (this.dir == null) return this.outputSides.isEmpty();
             return !this.outputSides.contains(this.dir);
         }
     }
