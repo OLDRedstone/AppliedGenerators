@@ -47,6 +47,16 @@ public class AGSingletons {
     public static CommonItem ORIGINATION_PRINT;
     public static CommonItem ORIGINATION_PROCESSOR;
     public static CommonItem ORIGINATION_PRESS;
+    public static CommonItem COMPONENT_1K;
+    public static CommonItem COMPONENT_4K;
+    public static CommonItem COMPONENT_16K;
+    public static CommonItem COMPONENT_64K;
+    public static CommonItem COMPONENT_256K;
+    public static CommonItem COMPONENT_1M;
+    public static CommonItem COMPONENT_4M;
+    public static CommonItem COMPONENT_16M;
+    public static CommonItem COMPONENT_64M;
+    public static CommonItem COMPONENT_256M;
 
     public static void init(AGRegistryHandler regHandler) {
         FLUX_CELL = new FluxCellBlock();
@@ -88,6 +98,16 @@ public class AGSingletons {
         ORIGINATION_PRINT = new CommonItem();
         ORIGINATION_PROCESSOR = new CommonItem();
         ORIGINATION_PRESS = new CommonItem();
+        COMPONENT_1K = new CommonItem();
+        COMPONENT_4K = new CommonItem();
+        COMPONENT_16K = new CommonItem();
+        COMPONENT_64K = new CommonItem();
+        COMPONENT_256K = new CommonItem();
+        COMPONENT_1M = new CommonItem();
+        COMPONENT_4M = new CommonItem();
+        COMPONENT_16M = new CommonItem();
+        COMPONENT_64M = new CommonItem();
+        COMPONENT_256M = new CommonItem();
 
         regHandler.block("flux_cell", FLUX_CELL, FluxCellBlockEntity.class, FluxCellBlockEntity::new);
         regHandler.block("pattern_buffer", PATTERN_BUFFER, PatternBufferBlockEntity.class, PatternBufferBlockEntity::new);
@@ -128,5 +148,15 @@ public class AGSingletons {
         regHandler.item("printed_origination_processor", ORIGINATION_PRINT);
         regHandler.item("origination_processor", ORIGINATION_PROCESSOR);
         regHandler.item("origination_processor_press", ORIGINATION_PRESS);
+        regHandler.item("generating_component_1k", COMPONENT_1K);
+        regHandler.item("generating_component_4k", COMPONENT_4K);
+        regHandler.item("generating_component_16k", COMPONENT_16K);
+        regHandler.item("generating_component_64k", COMPONENT_64K);
+        regHandler.item("generating_component_256k", COMPONENT_256K);
+        regHandler.item("generating_component_1m", COMPONENT_1M);
+        regHandler.item("generating_component_4m", COMPONENT_4M);
+        regHandler.item("generating_component_16m", COMPONENT_16M);
+        regHandler.item("generating_component_64m", COMPONENT_64M);
+        regHandler.item("generating_component_256m", COMPONENT_256M);
     }
 }
