@@ -39,7 +39,7 @@ public class GenesisSynthesizerScreen extends UpgradeableScreen<GenesisSynthesiz
         super(menu, playerInventory, title, style);
         this.pb = new ProgressBar(this.menu, style.getImage("progressBar"), ProgressBar.Direction.VERTICAL);
         widgets.add("progressBar", this.pb);
-        this.crystalBar = new SubProgressBar(this.menu, style.getImage("crystalBar"), ProgressBar.Direction.VERTICAL);
+        this.crystalBar = new SubProgressBar(this.menu, style.getImage("crystalBar"), SubProgressBar.Direction.VERTICAL);
         widgets.add("crystalBar", this.crystalBar);
         this.autoExportBtn = new ServerSettingToggleButton<>(Settings.AUTO_EXPORT, YesNo.NO);
         this.addToLeftToolbar(autoExportBtn);

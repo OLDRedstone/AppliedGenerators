@@ -19,17 +19,17 @@ public class SubProgressBar extends AbstractWidget implements ITooltip {
 
     private final ISubProgressProvider source;
     private final Blitter blitter;
-    private final appeng.client.gui.widgets.ProgressBar.Direction layout;
+    private final Direction layout;
     private final Rect2i sourceRect;
     private final Component titleName;
     private Component fullMsg;
 
-    public SubProgressBar(ISubProgressProvider source, Blitter blitter, appeng.client.gui.widgets.ProgressBar.Direction dir) {
+    public SubProgressBar(ISubProgressProvider source, Blitter blitter, Direction dir) {
         this(source, blitter, dir, null);
     }
 
     public SubProgressBar(ISubProgressProvider source, Blitter blitter,
-                          appeng.client.gui.widgets.ProgressBar.Direction dir, Component title) {
+                          Direction dir, Component title) {
         super(0, 0, blitter.getSrcWidth(), blitter.getSrcHeight(), Component.empty());
         this.source = source;
         this.blitter = blitter.copy();
@@ -59,7 +59,7 @@ public class SubProgressBar extends AbstractWidget implements ITooltip {
             int destX = getX();
             int destY = getY();
 
-            if (this.layout == appeng.client.gui.widgets.ProgressBar.Direction.VERTICAL) {
+            if (this.layout == Direction.VERTICAL) {
                 int diff = this.height - (max > 0 ? this.height * current / max : 0);
                 destY += diff;
                 srcY += diff;
