@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@SuppressWarnings("unused")
 public class GenesisSynthesizerRecipeBuilder {
     private final List<IngredientStack.Item> inputs = new ArrayList<>();
     private IngredientStack.Fluid fluid = null;

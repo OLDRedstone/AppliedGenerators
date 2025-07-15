@@ -5,7 +5,7 @@
     "textures": {
         "top": "appgen:block/generators/top_opened",
         "bottom": "ae2:block/generics/bottom",
-        "core": "ae2:block/mysterious_cube_core",
+        "core": "appgen:block/synthesizer/core",
         "front": "appgen:block/synthesizer/front",
         "side": "appgen:block/synthesizer/side",
         "overlay_on": "#overlay_on",
