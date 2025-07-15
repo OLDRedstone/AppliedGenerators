@@ -11,20 +11,17 @@ import com.glodblock.github.extendedae.network.EAENetworkHandler;
 import com.glodblock.github.extendedae.network.packet.CEAEGenericPacket;
 import io.github.sapporo1101.appgen.common.AGSingletons;
 import io.github.sapporo1101.appgen.menu.SingularityGeneratorMenu;
+import io.github.sapporo1101.appgen.util.CommaSeparator;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.pedroksl.advanced_ae.api.AAESettings;
 import net.pedroksl.advanced_ae.client.gui.widgets.AAEServerSettingToggleButton;
 
-import java.text.DecimalFormat;
-
 public class SingularityGeneratorScreen extends UpgradeableScreen<SingularityGeneratorMenu> {
     private final ProgressBar pb;
     private final AAEServerSettingToggleButton<YesNo> meExportBtn;
     private final ActionEPPButton outputSideBtn;
-
-    private final DecimalFormat formatter = new DecimalFormat("#,###");
 
     public SingularityGeneratorScreen(SingularityGeneratorMenu menu, Inventory playerInventory, Component title, ScreenStyle style) {
         super(menu, playerInventory, title, style);
@@ -54,9 +51,9 @@ public class SingularityGeneratorScreen extends UpgradeableScreen<SingularityGen
         super.updateBeforeRender();
         this.pb.setFullMsg(Component.translatable(
                 "gui.appgen.singularity_generator.progress",
-                this.formatter.format(this.menu.generatableFE),
-                this.formatter.format(this.menu.getHost().getFEPerSingularity()),
-                this.formatter.format(Math.round(this.menu.lastGeneratePerTick))
+                CommaSeparator.FORMATTER.format(this.menu.generatableFE),
+                CommaSeparator.FORMATTER.format(this.menu.getHost().getFEPerSingularity()),
+                CommaSeparator.FORMATTER.format(Math.round(this.menu.lastGeneratePerTick))
         ));
         this.meExportBtn.set(this.getMenu().getMeExport());
         this.outputSideBtn.setVisibility(this.meExportBtn.getCurrentValue() == YesNo.NO);

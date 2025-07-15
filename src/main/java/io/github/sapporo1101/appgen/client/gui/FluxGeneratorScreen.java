@@ -14,6 +14,7 @@ import com.glodblock.github.extendedae.network.EAENetworkHandler;
 import com.glodblock.github.extendedae.network.packet.CEAEGenericPacket;
 import io.github.sapporo1101.appgen.common.AGSingletons;
 import io.github.sapporo1101.appgen.menu.FluxGeneratorMenu;
+import io.github.sapporo1101.appgen.util.CommaSeparator;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
@@ -21,14 +22,10 @@ import net.minecraft.world.item.ItemStack;
 import net.pedroksl.advanced_ae.api.AAESettings;
 import net.pedroksl.advanced_ae.client.gui.widgets.AAEServerSettingToggleButton;
 
-import java.text.DecimalFormat;
-
 public class FluxGeneratorScreen extends UpgradeableScreen<FluxGeneratorMenu> {
     private final ServerSettingToggleButton<RedstoneMode> redstoneMode;
     private final AAEServerSettingToggleButton<YesNo> meExportBtn;
     private final ActionEPPButton outputSideBtn;
-
-    private final DecimalFormat formatter = new DecimalFormat("#,###");
 
     public FluxGeneratorScreen(FluxGeneratorMenu menu, Inventory playerInventory, Component title, ScreenStyle style) {
         super(menu, playerInventory, title, style);
@@ -57,7 +54,7 @@ public class FluxGeneratorScreen extends UpgradeableScreen<FluxGeneratorMenu> {
     protected void updateBeforeRender() {
         super.updateBeforeRender();
         this.setTextContent("active_info", Component.translatable("gui.appgen.flux_generator.active_info", this.menu.isOn));
-        this.setTextContent("generating_info", Component.translatable("gui.appgen.flux_generator.generating_info", formatter.format(this.menu.lastGeneratePerTick)));
+        this.setTextContent("generating_info", Component.translatable("gui.appgen.flux_generator.generating_info", CommaSeparator.FORMATTER.format(this.menu.lastGeneratePerTick)));
         this.redstoneMode.set(this.getMenu().getRedStoneMode());
         this.redstoneMode.setVisibility(this.getMenu().hasUpgrade(AEItems.REDSTONE_CARD));
         this.meExportBtn.set(this.getMenu().getMeExport());
