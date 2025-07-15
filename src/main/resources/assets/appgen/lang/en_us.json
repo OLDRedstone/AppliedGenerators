@@ -57,5 +57,7 @@
     "gui.appgen.flux_generator.active_info": "Active: %s",
     "gui.appgen.flux_generator.generating_info": "Generating: %s FE/t",
     "gui.appgen.genesis_synthesizer": "Genesis Synthesizer",
-    "gui.appgen.genesis_synthesizer.crystal_info": "Charged Ember Crystal: %s / %s"
+    "gui.appgen.genesis_synthesizer.crystal_info": "Charged Ember Crystal: %s / %s",
+    "emi.category.appgen.genesis_synthesizer": "Genesis Synthesizer",
+    "emi.text.appgen.genesis_synthesizer.energy": "Used Power: %s FE"
 }

@@ -13,6 +13,10 @@ repositories {
     maven { url "https://cursemaven.com" }
     maven { url 'https://modmaven.dev/' }
     maven { url "https://api.modrinth.com/maven" }
+    maven {
+        name = "TerraformersMC"
+        url = "https://maven.terraformersmc.com/"
+    }
     mavenCentral()
 }
 
@@ -130,6 +134,8 @@ dependencies {
     implementation "curse.maven:advancedae-1084104:6225993"
     implementation "mekanism:Mekanism:1.21.1-10.7.14.79"
     implementation "maven.modrinth:jade:15.10.0+neoforge"
+    compileOnly "dev.emi:emi-neoforge:1.1.22+1.21.1:api"
+    runtimeOnly "dev.emi:emi-neoforge:1.1.22+1.21.1"
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
