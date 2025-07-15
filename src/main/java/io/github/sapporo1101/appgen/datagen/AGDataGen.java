@@ -23,6 +23,7 @@ public class AGDataGen {
         CompletableFuture<HolderLookup.Provider> lookup = event.getLookupProvider();
 
         gen.addProvider(event.includeServer(), new AGRecipeProvider(out, lookup));
+        gen.addProvider(event.includeServer(), new AGLootTableProvider(out, lookup));
         AGBlockTagProvider blockTags = new AGBlockTagProvider(out, lookup, fileHelper);
         AGItemTagProvider itemTags = new AGItemTagProvider(out, lookup, blockTags.contentsGetter(), fileHelper);
 

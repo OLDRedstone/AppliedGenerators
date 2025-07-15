@@ -1,7 +1,7 @@
 package io.github.sapporo1101.appgen.common.blocks;
 
 import appeng.block.AEBaseBlock;
-import com.glodblock.github.extendedae.api.ISpecialDrop;
+import io.github.sapporo1101.appgen.common.blocks.interfaces.ISpecialDrop;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
