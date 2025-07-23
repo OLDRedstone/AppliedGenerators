@@ -69,3 +69,6 @@ The Singularity Generators support the following [upgrades](ae2:items-blocks-mac
 
 -   <ItemLink id="ae2:speed_card" /> increases the generation speed of the Flux Generator by +50%, for a max of +150%, or 250% of the base generation speed.
 -   <ItemLink id="ae2:redstone_card" /> allows the Flux Generator to be turned on and off by redstone signals, which can be used to control the generation of FE.
+
+(Note: Pulse-mode Flux Generators don't always produce energy on every pulse. If the pulses are fast
+enough, they generate energy all at once.)
