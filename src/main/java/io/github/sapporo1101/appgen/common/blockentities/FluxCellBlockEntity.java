@@ -22,6 +22,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
@@ -35,20 +36,22 @@ import java.util.Set;
 import static io.github.sapporo1101.appgen.common.blocks.FluxCellBlock.FE_STORAGE;
 import static io.github.sapporo1101.appgen.common.blocks.FluxCellBlock.MAX_FULLNESS;
 
-public class FluxCellBlockEntity extends AEBaseBlockEntity implements BlockEntityTicker<FluxCellBlockEntity> {
+public abstract class FluxCellBlockEntity extends AEBaseBlockEntity implements BlockEntityTicker<FluxCellBlockEntity> {
     private final GenericStackInv feInv;
     private final Set<Direction> outputSides = EnumSet.noneOf(Direction.class);
 
-    public FluxCellBlockEntity(BlockPos pos, BlockState blockState) {
-        super(GlodUtil.getTileType(FluxCellBlockEntity.class, FluxCellBlockEntity::new, AGSingletons.FLUX_CELL), pos, blockState);
+    public FluxCellBlockEntity(BlockEntityType<?> blockEntityType, BlockPos pos, BlockState blockState) {
+        super(blockEntityType, pos, blockState);
         this.feInv = new GenericStackInv(this::setChanged, 36);
         this.feInv.setCapacity(AEKeyType.items(), 0);
         this.feInv.setCapacity(AEKeyType.fluids(), 0);
         if (ExternalTypes.GAS != null) this.feInv.setCapacity(ExternalTypes.GAS, 0);
         if (ExternalTypes.MANA != null) this.feInv.setCapacity(ExternalTypes.MANA, 0);
-        if (ExternalTypes.FLUX != null) this.feInv.setCapacity(ExternalTypes.FLUX, 1048576);
+        if (ExternalTypes.FLUX != null) this.feInv.setCapacity(ExternalTypes.FLUX, this.getFluxCapacity());
         if (ExternalTypes.SOURCE != null) this.feInv.setCapacity(ExternalTypes.SOURCE, 0);
     }
+
+    protected abstract long getFluxCapacity();
 
     public int getFullness() {
         long fluxAmount = 0;
@@ -234,6 +237,28 @@ public class FluxCellBlockEntity extends AEBaseBlockEntity implements BlockEntit
         public boolean canReceive() {
             if (this.dir == null) return this.outputSides.isEmpty();
             return !this.outputSides.contains(this.dir);
+        }
+    }
+
+    public static class Standard extends FluxCellBlockEntity {
+        public Standard(BlockPos pos, BlockState blockState) {
+            super(GlodUtil.getTileType(Standard.class, Standard::new, AGSingletons.FLUX_CELL), pos, blockState);
+        }
+
+        @Override
+        protected long getFluxCapacity() {
+            return 1048576;
+        }
+    }
+
+    public static class Dense extends FluxCellBlockEntity {
+        public Dense(BlockPos pos, BlockState blockState) {
+            super(GlodUtil.getTileType(Dense.class, Dense::new, AGSingletons.DENSE_FLUX_CELL), pos, blockState);
+        }
+
+        @Override
+        protected long getFluxCapacity() {
+            return 16777216;
         }
     }
 }

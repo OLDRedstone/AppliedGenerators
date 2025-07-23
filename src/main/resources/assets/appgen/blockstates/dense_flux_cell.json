@@ -1,0 +1,19 @@
+{
+    "variants": {
+        "fullness=0": {
+            "model": "appgen:block/flux_cells/dense_0"
+        },
+        "fullness=1": {
+            "model": "appgen:block/flux_cells/dense_1"
+        },
+        "fullness=2": {
+            "model": "appgen:block/flux_cells/dense_2"
+        },
+        "fullness=3": {
+            "model": "appgen:block/flux_cells/dense_3"
+        },
+        "fullness=4": {
+            "model": "appgen:block/flux_cells/dense_4"
+        }
+    }
+}

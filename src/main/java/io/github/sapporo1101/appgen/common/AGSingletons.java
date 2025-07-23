@@ -8,7 +8,8 @@ import net.minecraft.world.level.block.Block;
 import static appeng.block.AEBaseBlock.stoneProps;
 
 public class AGSingletons {
-    public static FluxCellBlock FLUX_CELL;
+    public static FluxCellBlock.Standard FLUX_CELL;
+    public static FluxCellBlock.Dense DENSE_FLUX_CELL;
     public static PatternBufferBlock PATTERN_BUFFER;
     public static GenesisSynthesizerBlock GENESIS_SYNTHESIZER;
     public static SingularityGeneratorBlock.SG1k SINGULARITY_GENERATOR_1K;
@@ -60,7 +61,8 @@ public class AGSingletons {
     public static CommonItem COMPONENT_256M;
 
     public static void init(AGRegistryHandler regHandler) {
-        FLUX_CELL = new FluxCellBlock();
+        FLUX_CELL = new FluxCellBlock.Standard();
+        DENSE_FLUX_CELL = new FluxCellBlock.Dense();
         PATTERN_BUFFER = new PatternBufferBlock();
         GENESIS_SYNTHESIZER = new GenesisSynthesizerBlock();
         SINGULARITY_GENERATOR_1K = new SingularityGeneratorBlock.SG1k();
@@ -111,7 +113,8 @@ public class AGSingletons {
         COMPONENT_64M = new CommonItem();
         COMPONENT_256M = new CommonItem();
 
-        regHandler.block("flux_cell", FLUX_CELL, FluxCellBlockEntity.class, FluxCellBlockEntity::new);
+        regHandler.block("flux_cell", FLUX_CELL, FluxCellBlockEntity.Standard.class, FluxCellBlockEntity.Standard::new);
+        regHandler.block("dense_flux_cell", DENSE_FLUX_CELL, FluxCellBlockEntity.Dense.class, FluxCellBlockEntity.Dense::new);
         regHandler.block("pattern_buffer", PATTERN_BUFFER, PatternBufferBlockEntity.class, PatternBufferBlockEntity::new);
         regHandler.block("genesis_synthesizer", GENESIS_SYNTHESIZER, GenesisSynthesizerBlockEntity.class, GenesisSynthesizerBlockEntity::new);
         regHandler.block("singularity_generator_1k", SINGULARITY_GENERATOR_1K, SingularityGeneratorBlockEntity.SG1k.class, SingularityGeneratorBlockEntity.SG1k::new);

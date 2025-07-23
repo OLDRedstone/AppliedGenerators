@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import org.jetbrains.annotations.Nullable;
 
-public class FluxCellBlock extends BlockBaseGui<FluxCellBlockEntity> {
+public class FluxCellBlock<U extends FluxCellBlockEntity> extends BlockBaseGui<U> {
     public static final int MAX_FULLNESS = 4;
     public static final IntegerProperty FE_STORAGE = IntegerProperty.create("fullness", 0, MAX_FULLNESS);
 
@@ -38,5 +38,11 @@ public class FluxCellBlock extends BlockBaseGui<FluxCellBlockEntity> {
     @Override
     public void openGui(FluxCellBlockEntity tile, Player p) {
         MenuOpener.open(FluxCellMenu.TYPE, p, MenuLocators.forBlockEntity(tile));
+    }
+
+    public static class Standard extends FluxCellBlock<FluxCellBlockEntity.Standard> {
+    }
+
+    public static class Dense extends FluxCellBlock<FluxCellBlockEntity.Dense> {
     }
 }
