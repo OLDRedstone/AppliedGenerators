@@ -50,11 +50,17 @@ public class AGItemTagProvider extends ItemTagsProvider {
                 .addTag(AGTags.FLUX_GENERATORS);
         tag(AGTags.EMBER_DUST)
                 .add(AGSingletons.EMBER_DUST);
+        tag(AGTags.COPPER_DUST)
+                .add(AGSingletons.COPPER_DUST);
         tag(AGTags.GOLD_DUST)
                 .add(AGSingletons.GOLD_DUST);
+        tag(AGTags.NETHERITE_DUST)
+                .add(AGSingletons.NETHERITE_DUST);
         tag(Tags.Items.DUSTS)
                 .addTag(AGTags.EMBER_DUST)
-                .addTag(AGTags.GOLD_DUST);
+                .addTag(AGTags.COPPER_DUST)
+                .addTag(AGTags.GOLD_DUST)
+                .addTag(AGTags.NETHERITE_DUST);
         tag(AGTags.EMBER_BLOCK)
                 .add(AGSingletons.EMBER_BLOCK.asItem());
         tag(Tags.Items.STORAGE_BLOCKS)

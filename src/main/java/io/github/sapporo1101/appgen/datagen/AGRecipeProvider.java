@@ -3,29 +3,43 @@ package io.github.sapporo1101.appgen.datagen;
 import appeng.core.definitions.AEBlocks;
 import appeng.core.definitions.AEItems;
 import appeng.datagen.providers.tags.ConventionTags;
+import appeng.recipes.handlers.ChargerRecipeBuilder;
 import appeng.recipes.handlers.InscriberProcessType;
 import appeng.recipes.handlers.InscriberRecipeBuilder;
 import appeng.recipes.transform.TransformCircumstance;
 import appeng.recipes.transform.TransformRecipeBuilder;
 import com.glodblock.github.appflux.common.AFSingletons;
+import com.glodblock.github.extendedae.ExtendedAE;
+import com.glodblock.github.extendedae.recipe.CircuitCutterRecipeBuilder;
+import com.glodblock.github.extendedae.recipe.CrystalAssemblerRecipeBuilder;
+import com.glodblock.github.extendedae.recipe.CrystalFixerRecipeBuilder;
+import com.glodblock.github.glodium.util.GlodUtil;
 import io.github.sapporo1101.appgen.AppliedGenerators;
 import io.github.sapporo1101.appgen.common.AGSingletons;
 import io.github.sapporo1101.appgen.recipe.GenesisSynthesizerRecipeBuilder;
+import io.github.sapporo1101.appgen.util.AGTags;
+import io.github.sapporo1101.appgen.xmod.ModConstants;
+import mekanism.api.datagen.recipe.builder.ItemStackToItemStackRecipeBuilder;
+import mekanism.api.recipes.ingredients.ItemStackIngredient;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.RecipeCategory;
-import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.data.recipes.RecipeProvider;
-import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.data.recipes.*;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.material.Fluids;
+import net.neoforged.neoforge.common.conditions.ModLoadedCondition;
+import net.neoforged.neoforge.common.crafting.SizedIngredient;
+import net.pedroksl.advanced_ae.recipes.ReactionChamberRecipeBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
 
 public class AGRecipeProvider extends RecipeProvider {
+
+    private static final String HAS_ITEM = "has_item";
+
     public AGRecipeProvider(PackOutput out, CompletableFuture<HolderLookup.Provider> lookup) {
         super(out, lookup);
     }
@@ -34,7 +48,6 @@ public class AGRecipeProvider extends RecipeProvider {
     protected void buildRecipes(@NotNull RecipeOutput recipeOutput) {
 
         // Crafting Table Recipes
-
         // Pattern Buffer
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AGSingletons.PATTERN_BUFFER)
                 .pattern("IGI")
@@ -45,18 +58,445 @@ public class AGRecipeProvider extends RecipeProvider {
                 .define('A', AEItems.ANNIHILATION_CORE)
                 .define('P', AEItems.BLANK_PATTERN)
                 .define('F', AEItems.FORMATION_CORE)
-                .unlockedBy("has_blank_pattern", has(AEItems.BLANK_PATTERN))
+                .unlockedBy(HAS_ITEM, has(AEItems.BLANK_PATTERN))
                 .save(recipeOutput, AppliedGenerators.id("crafting/pattern_buffer"));
         // Ember Block
-        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, AGSingletons.EMBER_BLOCK)
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AGSingletons.EMBER_BLOCK)
                 .pattern("EE")
                 .pattern("EE")
                 .define('E', AGSingletons.EMBER_CRYSTAL)
-                .unlockedBy("has_ember_crystal", has(AGSingletons.EMBER_CRYSTAL))
+                .unlockedBy(HAS_ITEM, has(AGSingletons.EMBER_CRYSTAL))
                 .save(recipeOutput, AppliedGenerators.id("crafting/ember_block"));
+        // Ember Crystal
+        ShapelessRecipeBuilder
+                .shapeless(RecipeCategory.MISC, AGSingletons.EMBER_CRYSTAL, 4)
+                .requires(AGTags.EMBER_BLOCK)
+                .unlockedBy(HAS_ITEM, has(AGTags.EMBER_BLOCK))
+                .save(recipeOutput, ExtendedAE.id("crafting/ember_crystal"));
+        // Flux Cell
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AGSingletons.FLUX_CELL)
+                .pattern("EDE")
+                .pattern("DCD")
+                .pattern("EDE")
+                .define('E', AGSingletons.EMBER_CRYSTAL)
+                .define('D', AEItems.SKY_DUST)
+                .define('C', AFSingletons.CORE_1k)
+                .unlockedBy(HAS_ITEM, has(AEItems.CALCULATION_PROCESSOR))
+                .save(recipeOutput, AppliedGenerators.id("crafting/flux_cell"));
+        // 1k Generating Component
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AGSingletons.COMPONENT_1K)
+                .pattern("DED")
+                .pattern("ELE")
+                .pattern("DED")
+                .define('D', Items.GUNPOWDER)
+                .define('E', AGSingletons.EMBER_CRYSTAL)
+                .define('L', AEItems.LOGIC_PROCESSOR)
+                .unlockedBy(HAS_ITEM, has(AEItems.LOGIC_PROCESSOR))
+                .save(recipeOutput, AppliedGenerators.id("crafting/component_1k"));
+        // 4k Generating Component
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AGSingletons.COMPONENT_4K)
+                .pattern("DOD")
+                .pattern("CQC")
+                .pattern("DCD")
+                .define('D', Items.GUNPOWDER)
+                .define('C', AGSingletons.COMPONENT_1K)
+                .define('O', AGSingletons.ORIGINATION_PROCESSOR)
+                .define('Q', AEBlocks.QUARTZ_GLASS)
+                .unlockedBy(HAS_ITEM, has(AGSingletons.COMPONENT_1K))
+                .save(recipeOutput, AppliedGenerators.id("crafting/component_4k"));
+        // 16k Generating Component
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AGSingletons.COMPONENT_16K)
+                .pattern("DOD")
+                .pattern("CQC")
+                .pattern("DCD")
+                .define('D', AGTags.COPPER_DUST)
+                .define('C', AGSingletons.COMPONENT_4K)
+                .define('O', AGSingletons.ORIGINATION_PROCESSOR)
+                .define('Q', AEBlocks.QUARTZ_GLASS)
+                .unlockedBy(HAS_ITEM, has(AGSingletons.COMPONENT_4K))
+                .save(recipeOutput, AppliedGenerators.id("crafting/component_16k"));
+        // 64k Generating Component
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AGSingletons.COMPONENT_64K)
+                .pattern("DOD")
+                .pattern("CQC")
+                .pattern("DCD")
+                .define('D', AGTags.COPPER_DUST)
+                .define('C', AGSingletons.COMPONENT_16K)
+                .define('O', AGSingletons.ORIGINATION_PROCESSOR)
+                .define('Q', AEBlocks.QUARTZ_GLASS)
+                .unlockedBy(HAS_ITEM, has(AGSingletons.COMPONENT_16K))
+                .save(recipeOutput, AppliedGenerators.id("crafting/component_64k"));
+        // 256k Generating Component
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AGSingletons.COMPONENT_256K)
+                .pattern("DOD")
+                .pattern("CQC")
+                .pattern("DCD")
+                .define('D', AGTags.GOLD_DUST)
+                .define('C', AGSingletons.COMPONENT_64K)
+                .define('O', AGSingletons.ORIGINATION_PROCESSOR)
+                .define('Q', AEBlocks.QUARTZ_GLASS)
+                .unlockedBy(HAS_ITEM, has(AGSingletons.COMPONENT_64K))
+                .save(recipeOutput, AppliedGenerators.id("crafting/component_256k"));
+        // 1M Generating Component
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AGSingletons.COMPONENT_1M)
+                .pattern("DOD")
+                .pattern("CQC")
+                .pattern("DCD")
+                .define('D', AGTags.GOLD_DUST)
+                .define('C', AGSingletons.COMPONENT_256K)
+                .define('O', AGSingletons.ORIGINATION_PROCESSOR)
+                .define('Q', AEBlocks.QUARTZ_GLASS)
+                .unlockedBy(HAS_ITEM, has(AGSingletons.COMPONENT_256K))
+                .save(recipeOutput, AppliedGenerators.id("crafting/component_1m"));
+        // 4M Generating Component
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AGSingletons.COMPONENT_4M)
+                .pattern("DOD")
+                .pattern("CQC")
+                .pattern("DCD")
+                .define('D', AGTags.DIAMOND_DUST)
+                .define('C', AGSingletons.COMPONENT_1M)
+                .define('O', AGSingletons.ORIGINATION_PROCESSOR)
+                .define('Q', AEBlocks.QUARTZ_GLASS)
+                .unlockedBy(HAS_ITEM, has(AGSingletons.COMPONENT_1M))
+                .save(recipeOutput, AppliedGenerators.id("crafting/component_4m"));
+        // 16M Generating Component
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AGSingletons.COMPONENT_16M)
+                .pattern("DOD")
+                .pattern("CQC")
+                .pattern("DCD")
+                .define('D', AGTags.DIAMOND_DUST)
+                .define('C', AGSingletons.COMPONENT_4M)
+                .define('O', AGSingletons.ORIGINATION_PROCESSOR)
+                .define('Q', AEBlocks.QUARTZ_GLASS)
+                .unlockedBy(HAS_ITEM, has(AGSingletons.COMPONENT_4M))
+                .save(recipeOutput, AppliedGenerators.id("crafting/component_16m"));
+        // 64M Generating Component
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AGSingletons.COMPONENT_64M)
+                .pattern("DOD")
+                .pattern("CQC")
+                .pattern("DCD")
+                .define('D', AGTags.NETHERITE_DUST)
+                .define('C', AGSingletons.COMPONENT_16M)
+                .define('O', AGSingletons.ORIGINATION_PROCESSOR)
+                .define('Q', AEBlocks.QUARTZ_GLASS)
+                .unlockedBy(HAS_ITEM, has(AGSingletons.COMPONENT_16M))
+                .save(recipeOutput, AppliedGenerators.id("crafting/component_64m"));
+        // 256M Generating Component
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AGSingletons.COMPONENT_256M)
+                .pattern("DOD")
+                .pattern("CQC")
+                .pattern("DCD")
+                .define('D', AGTags.NETHERITE_DUST)
+                .define('C', AGSingletons.COMPONENT_64M)
+                .define('O', AGSingletons.ORIGINATION_PROCESSOR)
+                .define('Q', AEBlocks.QUARTZ_GLASS)
+                .unlockedBy(HAS_ITEM, has(AGSingletons.COMPONENT_64M))
+                .save(recipeOutput, AppliedGenerators.id("crafting/component_256m"));
+        // 1k Singularity Generator
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AGSingletons.SINGULARITY_GENERATOR_1K)
+                .pattern("IQI")
+                .pattern("GCG")
+                .pattern("IOI")
+                .define('I', Items.IRON_INGOT)
+                .define('G', AEBlocks.FLUIX_BLOCK)
+                .define('Q', AEBlocks.QUANTUM_RING)
+                .define('C', AGSingletons.COMPONENT_1K)
+                .define('O', AGSingletons.ORIGINATION_PROCESSOR)
+                .unlockedBy(HAS_ITEM, has(AGSingletons.COMPONENT_1K))
+                .save(recipeOutput, AppliedGenerators.id("crafting/singularity_generator_1k"));
+        // 4k Singularity Generator
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AGSingletons.SINGULARITY_GENERATOR_4K)
+                .pattern("IQI")
+                .pattern("GCG")
+                .pattern("IOI")
+                .define('I', Items.IRON_INGOT)
+                .define('G', AGSingletons.SINGULARITY_GENERATOR_1K)
+                .define('Q', AEBlocks.QUANTUM_RING)
+                .define('C', AGSingletons.COMPONENT_4K)
+                .define('O', AGSingletons.ORIGINATION_PROCESSOR)
+                .unlockedBy(HAS_ITEM, has(AGSingletons.COMPONENT_4K))
+                .save(recipeOutput, AppliedGenerators.id("crafting/singularity_generator_4k"));
+        // 16k Singularity Generator
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AGSingletons.SINGULARITY_GENERATOR_16K)
+                .pattern("IQI")
+                .pattern("GCG")
+                .pattern("IOI")
+                .define('I', Items.IRON_INGOT)
+                .define('G', AGSingletons.SINGULARITY_GENERATOR_4K)
+                .define('Q', AEBlocks.QUANTUM_RING)
+                .define('C', AGSingletons.COMPONENT_16K)
+                .define('O', AGSingletons.ORIGINATION_PROCESSOR)
+                .unlockedBy(HAS_ITEM, has(AGSingletons.COMPONENT_16K))
+                .save(recipeOutput, AppliedGenerators.id("crafting/singularity_generator_16k"));
+        // 64k Singularity Generator
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AGSingletons.SINGULARITY_GENERATOR_64K)
+                .pattern("IQI")
+                .pattern("GCG")
+                .pattern("IOI")
+                .define('I', Items.IRON_INGOT)
+                .define('G', AGSingletons.SINGULARITY_GENERATOR_16K)
+                .define('Q', AEBlocks.QUANTUM_RING)
+                .define('C', AGSingletons.COMPONENT_64K)
+                .define('O', AGSingletons.ORIGINATION_PROCESSOR)
+                .unlockedBy(HAS_ITEM, has(AGSingletons.COMPONENT_64K))
+                .save(recipeOutput, AppliedGenerators.id("crafting/singularity_generator_64k"));
+        // 256k Singularity Generator
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AGSingletons.SINGULARITY_GENERATOR_256K)
+                .pattern("IQI")
+                .pattern("GCG")
+                .pattern("IOI")
+                .define('I', Items.IRON_INGOT)
+                .define('G', AGSingletons.SINGULARITY_GENERATOR_64K)
+                .define('Q', AEBlocks.QUANTUM_RING)
+                .define('C', AGSingletons.COMPONENT_256K)
+                .define('O', AGSingletons.ORIGINATION_PROCESSOR)
+                .unlockedBy(HAS_ITEM, has(AGSingletons.COMPONENT_256K))
+                .save(recipeOutput, AppliedGenerators.id("crafting/singularity_generator_256k"));
+        // 1M Singularity Generator
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AGSingletons.SINGULARITY_GENERATOR_1M)
+                .pattern("IQI")
+                .pattern("GCG")
+                .pattern("IOI")
+                .define('I', Items.IRON_INGOT)
+                .define('G', AGSingletons.SINGULARITY_GENERATOR_256K)
+                .define('Q', AEBlocks.QUANTUM_RING)
+                .define('C', AGSingletons.COMPONENT_1M)
+                .define('O', AGSingletons.ORIGINATION_PROCESSOR)
+                .unlockedBy(HAS_ITEM, has(AGSingletons.COMPONENT_1M))
+                .save(recipeOutput, AppliedGenerators.id("crafting/singularity_generator_1m"));
+        // 4M Singularity Generator
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AGSingletons.SINGULARITY_GENERATOR_4M)
+                .pattern("IQI")
+                .pattern("GCG")
+                .pattern("IOI")
+                .define('I', Items.IRON_INGOT)
+                .define('G', AGSingletons.SINGULARITY_GENERATOR_1M)
+                .define('Q', AEBlocks.QUANTUM_RING)
+                .define('C', AGSingletons.COMPONENT_4M)
+                .define('O', AGSingletons.ORIGINATION_PROCESSOR)
+                .unlockedBy(HAS_ITEM, has(AGSingletons.COMPONENT_4M))
+                .save(recipeOutput, AppliedGenerators.id("crafting/singularity_generator_4m"));
+        // 16M Singularity Generator
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AGSingletons.SINGULARITY_GENERATOR_16M)
+                .pattern("IQI")
+                .pattern("GCG")
+                .pattern("IOI")
+                .define('I', Items.IRON_INGOT)
+                .define('G', AGSingletons.SINGULARITY_GENERATOR_4M)
+                .define('Q', AEBlocks.QUANTUM_RING)
+                .define('C', AGSingletons.COMPONENT_16M)
+                .define('O', AGSingletons.ORIGINATION_PROCESSOR)
+                .unlockedBy(HAS_ITEM, has(AGSingletons.COMPONENT_16M))
+                .save(recipeOutput, AppliedGenerators.id("crafting/singularity_generator_16m"));
+        // 64M Singularity Generator
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AGSingletons.SINGULARITY_GENERATOR_64M)
+                .pattern("IQI")
+                .pattern("GCG")
+                .pattern("IOI")
+                .define('I', Items.IRON_INGOT)
+                .define('G', AGSingletons.SINGULARITY_GENERATOR_16M)
+                .define('Q', AEBlocks.QUANTUM_RING)
+                .define('C', AGSingletons.COMPONENT_64M)
+                .define('O', AGSingletons.ORIGINATION_PROCESSOR)
+                .unlockedBy(HAS_ITEM, has(AGSingletons.COMPONENT_64M))
+                .save(recipeOutput, AppliedGenerators.id("crafting/singularity_generator_64m"));
+        // 256M Singularity Generator
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AGSingletons.SINGULARITY_GENERATOR_256M)
+                .pattern("IQI")
+                .pattern("GCG")
+                .pattern("IOI")
+                .define('I', Items.IRON_INGOT)
+                .define('G', AGSingletons.SINGULARITY_GENERATOR_64M)
+                .define('Q', AEBlocks.QUANTUM_RING)
+                .define('C', AGSingletons.COMPONENT_256M)
+                .define('O', AGSingletons.ORIGINATION_PROCESSOR)
+                .unlockedBy(HAS_ITEM, has(AGSingletons.COMPONENT_256M))
+                .save(recipeOutput, AppliedGenerators.id("crafting/singularity_generator_256m"));
+        // 1k Flux Generator
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AGSingletons.FLUX_GENERATOR_1K)
+                .pattern("IFI")
+                .pattern("GCG")
+                .pattern("IOI")
+                .define('I', Items.IRON_INGOT)
+                .define('G', AEBlocks.FLUIX_BLOCK)
+                .define('F', AGSingletons.FLUX_CELL)
+                .define('C', AGSingletons.COMPONENT_1K)
+                .define('O', AGSingletons.ORIGINATION_PROCESSOR)
+                .unlockedBy(HAS_ITEM, has(AGSingletons.COMPONENT_1K))
+                .save(recipeOutput, AppliedGenerators.id("crafting/flux_generator_1k"));
+        // 4k Flux Generator
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AGSingletons.FLUX_GENERATOR_4K)
+                .pattern("IFI")
+                .pattern("GCG")
+                .pattern("IOI")
+                .define('I', Items.IRON_INGOT)
+                .define('G', AGSingletons.FLUX_GENERATOR_1K)
+                .define('F', AGSingletons.FLUX_CELL)
+                .define('C', AGSingletons.COMPONENT_4K)
+                .define('O', AGSingletons.ORIGINATION_PROCESSOR)
+                .unlockedBy(HAS_ITEM, has(AGSingletons.COMPONENT_4K))
+                .save(recipeOutput, AppliedGenerators.id("crafting/flux_generator_4k"));
+        // 16k Flux Generator
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AGSingletons.FLUX_GENERATOR_16K)
+                .pattern("IFI")
+                .pattern("GCG")
+                .pattern("IOI")
+                .define('I', Items.IRON_INGOT)
+                .define('G', AGSingletons.FLUX_GENERATOR_4K)
+                .define('F', AGSingletons.FLUX_CELL)
+                .define('C', AGSingletons.COMPONENT_16K)
+                .define('O', AGSingletons.ORIGINATION_PROCESSOR)
+                .unlockedBy(HAS_ITEM, has(AGSingletons.COMPONENT_16K))
+                .save(recipeOutput, AppliedGenerators.id("crafting/flux_generator_16k"));
+        // 64k Flux Generator
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AGSingletons.FLUX_GENERATOR_64K)
+                .pattern("IFI")
+                .pattern("GCG")
+                .pattern("IOI")
+                .define('I', Items.IRON_INGOT)
+                .define('G', AGSingletons.FLUX_GENERATOR_16K)
+                .define('F', AGSingletons.FLUX_CELL)
+                .define('C', AGSingletons.COMPONENT_64K)
+                .define('O', AGSingletons.ORIGINATION_PROCESSOR)
+                .unlockedBy(HAS_ITEM, has(AGSingletons.COMPONENT_64K))
+                .save(recipeOutput, AppliedGenerators.id("crafting/flux_generator_64k"));
+        // 256k Flux Generator
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AGSingletons.FLUX_GENERATOR_256K)
+                .pattern("IFI")
+                .pattern("GCG")
+                .pattern("IOI")
+                .define('I', Items.IRON_INGOT)
+                .define('G', AGSingletons.FLUX_GENERATOR_64K)
+                .define('F', AGSingletons.FLUX_CELL)
+                .define('C', AGSingletons.COMPONENT_256K)
+                .define('O', AGSingletons.ORIGINATION_PROCESSOR)
+                .unlockedBy(HAS_ITEM, has(AGSingletons.COMPONENT_256K))
+                .save(recipeOutput, AppliedGenerators.id("crafting/flux_generator_256k"));
+        // 1M Flux Generator
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AGSingletons.FLUX_GENERATOR_1M)
+                .pattern("IFI")
+                .pattern("GCG")
+                .pattern("IOI")
+                .define('I', Items.IRON_INGOT)
+                .define('G', AGSingletons.FLUX_GENERATOR_256K)
+                .define('F', AGSingletons.FLUX_CELL)
+                .define('C', AGSingletons.COMPONENT_1M)
+                .define('O', AGSingletons.ORIGINATION_PROCESSOR)
+                .unlockedBy(HAS_ITEM, has(AGSingletons.COMPONENT_1M))
+                .save(recipeOutput, AppliedGenerators.id("crafting/flux_generator_1m"));
+        // 4M Flux Generator
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AGSingletons.FLUX_GENERATOR_4M)
+                .pattern("IFI")
+                .pattern("GCG")
+                .pattern("IOI")
+                .define('I', Items.IRON_INGOT)
+                .define('G', AGSingletons.FLUX_GENERATOR_1M)
+                .define('F', AGSingletons.FLUX_CELL)
+                .define('C', AGSingletons.COMPONENT_4M)
+                .define('O', AGSingletons.ORIGINATION_PROCESSOR)
+                .unlockedBy(HAS_ITEM, has(AGSingletons.COMPONENT_4M))
+                .save(recipeOutput, AppliedGenerators.id("crafting/flux_generator_4m"));
+        // 16M Flux Generator
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AGSingletons.FLUX_GENERATOR_16M)
+                .pattern("IFI")
+                .pattern("GCG")
+                .pattern("IOI")
+                .define('I', Items.IRON_INGOT)
+                .define('G', AGSingletons.FLUX_GENERATOR_4M)
+                .define('F', AGSingletons.FLUX_CELL)
+                .define('C', AGSingletons.COMPONENT_16M)
+                .define('O', AGSingletons.ORIGINATION_PROCESSOR)
+                .unlockedBy(HAS_ITEM, has(AGSingletons.COMPONENT_16M))
+                .save(recipeOutput, AppliedGenerators.id("crafting/flux_generator_16m"));
+        // 64M Flux Generator
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AGSingletons.FLUX_GENERATOR_64M)
+                .pattern("IFI")
+                .pattern("GCG")
+                .pattern("IOI")
+                .define('I', Items.IRON_INGOT)
+                .define('G', AGSingletons.FLUX_GENERATOR_16M)
+                .define('F', AGSingletons.FLUX_CELL)
+                .define('C', AGSingletons.COMPONENT_64M)
+                .define('O', AGSingletons.ORIGINATION_PROCESSOR)
+                .unlockedBy(HAS_ITEM, has(AGSingletons.COMPONENT_64M))
+                .save(recipeOutput, AppliedGenerators.id("crafting/flux_generator_64m"));
+        // 256M Flux Generator
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AGSingletons.FLUX_GENERATOR_256M)
+                .pattern("IFI")
+                .pattern("GCG")
+                .pattern("IOI")
+                .define('I', Items.IRON_INGOT)
+                .define('G', AGSingletons.FLUX_GENERATOR_64M)
+                .define('F', AGSingletons.FLUX_CELL)
+                .define('C', AGSingletons.COMPONENT_256M)
+                .define('O', AGSingletons.ORIGINATION_PROCESSOR)
+                .unlockedBy(HAS_ITEM, has(AGSingletons.COMPONENT_256M))
+                .save(recipeOutput, AppliedGenerators.id("crafting/flux_generator_256m"));
+
+        // Smelting Recipes
+        // Copper Ingot
+        SimpleCookingRecipeBuilder.smelting(
+                        Ingredient.of(AGSingletons.COPPER_DUST),
+                        RecipeCategory.MISC,
+                        new ItemStack(Items.COPPER_INGOT),
+                        0.35F, 200
+                )
+                .unlockedBy(HAS_ITEM, has(AGSingletons.COPPER_DUST))
+                .save(recipeOutput, ExtendedAE.id("smelting/copper_ingot"));
+        // Gold Ingot
+        SimpleCookingRecipeBuilder.smelting(
+                        Ingredient.of(AGSingletons.GOLD_DUST),
+                        RecipeCategory.MISC,
+                        new ItemStack(Items.GOLD_INGOT),
+                        0.5F, 200
+                )
+                .unlockedBy(HAS_ITEM, has(AGSingletons.GOLD_DUST))
+                .save(recipeOutput, ExtendedAE.id("smelting/gold_ingot"));
+        // Netherite Ingot
+        SimpleCookingRecipeBuilder.smelting(
+                        Ingredient.of(AGSingletons.NETHERITE_DUST),
+                        RecipeCategory.MISC,
+                        new ItemStack(Items.NETHERITE_INGOT),
+                        1F, 200
+                )
+                .unlockedBy(HAS_ITEM, has(AGSingletons.NETHERITE_DUST))
+                .save(recipeOutput, ExtendedAE.id("smelting/netherite_ingot"));
+
+        // Blasting Recipes
+        // Copper Ingot
+        SimpleCookingRecipeBuilder.blasting(
+                        Ingredient.of(AGSingletons.COPPER_DUST),
+                        RecipeCategory.MISC,
+                        new ItemStack(Items.COPPER_INGOT),
+                        0.35F, 100
+                )
+                .unlockedBy(HAS_ITEM, has(AGSingletons.COPPER_DUST))
+                .save(recipeOutput, ExtendedAE.id("blasting/copper_ingot"));
+        // Gold Ingot
+        SimpleCookingRecipeBuilder.blasting(
+                        Ingredient.of(AGSingletons.GOLD_DUST),
+                        RecipeCategory.MISC,
+                        new ItemStack(Items.GOLD_INGOT),
+                        0.5F, 100
+                )
+                .unlockedBy(HAS_ITEM, has(AGSingletons.GOLD_DUST))
+                .save(recipeOutput, ExtendedAE.id("blasting/gold_ingot"));
+        // Netherite Ingot
+        SimpleCookingRecipeBuilder.blasting(
+                        Ingredient.of(AGSingletons.NETHERITE_DUST),
+                        RecipeCategory.MISC,
+                        new ItemStack(Items.NETHERITE_INGOT),
+                        1F, 100
+                )
+                .unlockedBy(HAS_ITEM, has(AGSingletons.NETHERITE_DUST))
+                .save(recipeOutput, ExtendedAE.id("blasting/netherite_ingot"));
+
 
         // Inscriber Recipes
-
+        // Ember Dust
+        InscriberRecipeBuilder.inscribe(AGSingletons.EMBER_CRYSTAL, AGSingletons.EMBER_DUST, 1)
+                .setMode(InscriberProcessType.INSCRIBE)
+                .save(recipeOutput, AppliedGenerators.id("inscriber/ember_dust"));
         // Origination Circuit
         InscriberRecipeBuilder.inscribe(AGSingletons.EMBER_CRYSTAL, AGSingletons.ORIGINATION_PRINT, 1)
                 .setTop(Ingredient.of(AGSingletons.ORIGINATION_PRESS))
@@ -73,9 +513,82 @@ public class AGRecipeProvider extends RecipeProvider {
                 .setTop(Ingredient.of(AGSingletons.ORIGINATION_PRESS))
                 .setMode(InscriberProcessType.INSCRIBE)
                 .save(recipeOutput, AppliedGenerators.id("inscriber/origination_press_duplicate"));
+        // Gold Dust
+        InscriberRecipeBuilder.inscribe(Items.GOLD_INGOT, AGSingletons.GOLD_DUST, 1)
+                .setMode(InscriberProcessType.INSCRIBE)
+                .save(recipeOutput, AppliedGenerators.id("inscriber/gold_dust"));
+        // Copper Dust
+        InscriberRecipeBuilder.inscribe(Items.COPPER_INGOT, AGSingletons.COPPER_DUST, 1)
+                .setMode(InscriberProcessType.INSCRIBE)
+                .save(recipeOutput, AppliedGenerators.id("inscriber/copper_dust"));
+        // Netherite Dust
+        InscriberRecipeBuilder.inscribe(Items.NETHERITE_INGOT, AGSingletons.NETHERITE_DUST, 1)
+                .setMode(InscriberProcessType.INSCRIBE)
+                .save(recipeOutput, AppliedGenerators.id("inscriber/netherite_dust"));
+
+        // Charger Recipes
+        // Charged Ember Crystal
+        ChargerRecipeBuilder.charge(recipeOutput, AppliedGenerators.id("charger/charged_ember_crystal"), AGSingletons.EMBER_CRYSTAL, AGSingletons.EMBER_CRYSTAL_CHARGED);
+
+        // Crystal Assembler Recipes
+        // Ember Crystal
+        CrystalAssemblerRecipeBuilder.assemble(AGSingletons.EMBER_CRYSTAL, 8)
+                .input(AEItems.FLUIX_CRYSTAL, 4)
+                .input(Items.GUNPOWDER, 4)
+                .input(Items.BLAZE_POWDER, 4)
+                .fluid(Fluids.LAVA, 100)
+                .save(recipeOutput, AppliedGenerators.id("assembler/ember_crystal"));
+        // Origination Processor
+        CrystalAssemblerRecipeBuilder.assemble(AGSingletons.ORIGINATION_PROCESSOR, 4)
+                .input(AGSingletons.ORIGINATION_PRINT, 4)
+                .input(AEItems.SILICON_PRINT, 4)
+                .input(ConventionTags.REDSTONE, 4)
+                .save(recipeOutput, AppliedGenerators.id("assembler/origination_processor"));
+
+        // Circuit Slicer Recipes
+        // Printed Origination Circuit
+        CircuitCutterRecipeBuilder.cut(AGSingletons.ORIGINATION_PRINT, 4)
+                .input(AGSingletons.EMBER_BLOCK)
+                .save(recipeOutput, AppliedGenerators.id("cutter/printed_origination_processor"));
+
+        // Crystal Fixer Recipes
+        // Chipped Budding Ember
+        CrystalFixerRecipeBuilder.fixer(AGSingletons.BUDDING_EMBER_DAMAGED, AGSingletons.BUDDING_EMBER_CHIPPED)
+                .chance(0.4)
+                .fuel(AGSingletons.EMBER_CRYSTAL_CHARGED)
+                .save(recipeOutput, AppliedGenerators.id("fixer/chipped_budding_ember"));
+        // Flawed Budding Ember
+        CrystalFixerRecipeBuilder.fixer(AGSingletons.BUDDING_EMBER_CHIPPED, AGSingletons.BUDDING_EMBER_FLAWED)
+                .chance(0.4)
+                .fuel(AGSingletons.EMBER_CRYSTAL_CHARGED)
+                .save(recipeOutput, AppliedGenerators.id("fixer/flawed_budding_ember"));
+        // Flawless Budding Ember
+        CrystalFixerRecipeBuilder.fixer(AGSingletons.BUDDING_EMBER_FLAWED, AGSingletons.BUDDING_EMBER_FLAWLESS)
+                .chance(0.01)
+                .fuel(AGSingletons.EMBER_CRYSTAL_CHARGED)
+                .save(recipeOutput, AppliedGenerators.id("fixer/flawless_budding_ember"));
+
+        // Reaction Chamber Recipes
+        // Ember Crystal
+        ReactionChamberRecipeBuilder.react(AGSingletons.EMBER_CRYSTAL, 64, 200000)
+                .input(AEItems.FLUIX_CRYSTAL, 16)
+                .input(Items.GUNPOWDER, 16)
+                .input(Items.BLAZE_POWDER, 16)
+                .fluid(Fluids.LAVA, 500)
+                .save(recipeOutput, AppliedGenerators.id("reaction/ember_crystal"));
+        // Ember Crystal (Duplicate)
+        ReactionChamberRecipeBuilder.react(AGSingletons.EMBER_CRYSTAL, 64, 1000000)
+                .input(AEItems.FLUIX_CRYSTAL, 32)
+                .input(AGSingletons.EMBER_DUST, 32)
+                .fluid(Fluids.LAVA, 500)
+                .save(recipeOutput, AppliedGenerators.id("reaction/ember_crystal_duplicate"));
+        // Charged Ember Crystal
+        ReactionChamberRecipeBuilder.react(AGSingletons.EMBER_CRYSTAL_CHARGED, 64, 1300000)
+                .input(AGSingletons.EMBER_CRYSTAL, 64)
+                .fluid(Fluids.LAVA, 1000)
+                .save(recipeOutput, AppliedGenerators.id("reaction/charged_ember_crystal"));
 
         // Genesis Synthesizer Recipes
-
         // Inscriber Origination Press
         GenesisSynthesizerRecipeBuilder.synthesize(AGSingletons.ORIGINATION_PRESS, 1, 1000000)
                 .input(AGSingletons.EMBER_CRYSTAL_CHARGED, 4)
@@ -122,15 +635,14 @@ public class AGRecipeProvider extends RecipeProvider {
                 .save(recipeOutput, AppliedGenerators.id("synthesizer/insulating_resin"));
 
         // World Transformation Recipes
-
         // Ember Crystal (Duplicate)
         TransformRecipeBuilder.transform(
                 recipeOutput,
                 AppliedGenerators.id("transform/ember_crystal_duplicate"),
                 AGSingletons.EMBER_CRYSTAL, 1,
                 TransformCircumstance.fluid(FluidTags.LAVA),
-                Ingredient.of(AGSingletons.EMBER_DUST),
-                Ingredient.of(AEItems.FLUIX_CRYSTAL)
+                Ingredient.of(AEItems.FLUIX_CRYSTAL),
+                Ingredient.of(AGSingletons.EMBER_DUST)
         );
         // Ember Crystal
         TransformRecipeBuilder.transform(
@@ -142,5 +654,13 @@ public class AGRecipeProvider extends RecipeProvider {
                 Ingredient.of(Items.GUNPOWDER),
                 Ingredient.of(Items.BLAZE_POWDER)
         );
+
+        // Mekanism Recipes
+        if (GlodUtil.checkMod(ModConstants.MEK)) {
+            // Crushing Recipes
+            // Ember Dust
+            ItemStackToItemStackRecipeBuilder.crushing(ItemStackIngredient.of(SizedIngredient.of(AGSingletons.EMBER_CRYSTAL, 1)), new ItemStack(AGSingletons.EMBER_DUST))
+                    .build(recipeOutput.withConditions(new ModLoadedCondition(ModConstants.MEK)), AppliedGenerators.id("mekanism/crushing/ember_dust"));
+        }
     }
 }

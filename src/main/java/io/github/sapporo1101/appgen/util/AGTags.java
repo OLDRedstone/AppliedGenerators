@@ -13,6 +13,9 @@ public class AGTags {
     public static final TagKey<Item> FLUX_GENERATORS = TagKey.create(Registries.ITEM, AppliedGenerators.id("generators/flux"));
     public static final TagKey<Item> EMBER_DUST = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", "dusts/ember"));
     public static final TagKey<Item> GOLD_DUST = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", "dusts/gold"));
+    public static final TagKey<Item> COPPER_DUST = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", "dusts/copper"));
+    public static final TagKey<Item> DIAMOND_DUST = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", "dusts/diamond"));
+    public static final TagKey<Item> NETHERITE_DUST = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", "dusts/netherite"));
     public static final TagKey<Item> EMBER_BLOCK = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", "storage_blocks/ember"));
     public static final TagKey<Item> EMBER_CRYSTAL = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", "gems/ember"));
 

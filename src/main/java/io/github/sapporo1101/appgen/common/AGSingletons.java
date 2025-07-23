@@ -1,8 +1,10 @@
 package io.github.sapporo1101.appgen.common;
 
+import appeng.items.materials.MaterialItem;
 import com.glodblock.github.extendedae.common.items.CommonItem;
 import io.github.sapporo1101.appgen.common.blockentities.*;
 import io.github.sapporo1101.appgen.common.blocks.*;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
 import static appeng.block.AEBaseBlock.stoneProps;
@@ -48,7 +50,9 @@ public class AGSingletons {
     public static CommonItem ORIGINATION_PRINT;
     public static CommonItem ORIGINATION_PROCESSOR;
     public static CommonItem ORIGINATION_PRESS;
+    public static CommonItem COPPER_DUST;
     public static CommonItem GOLD_DUST;
+    public static MaterialItem NETHERITE_DUST;
     public static CommonItem COMPONENT_1K;
     public static CommonItem COMPONENT_4K;
     public static CommonItem COMPONENT_16K;
@@ -101,7 +105,9 @@ public class AGSingletons {
         ORIGINATION_PRINT = new CommonItem();
         ORIGINATION_PROCESSOR = new CommonItem();
         ORIGINATION_PRESS = new CommonItem();
+        COPPER_DUST = new CommonItem();
         GOLD_DUST = new CommonItem();
+        NETHERITE_DUST = new MaterialItem(new Item.Properties().fireResistant());
         COMPONENT_1K = new CommonItem();
         COMPONENT_4K = new CommonItem();
         COMPONENT_16K = new CommonItem();
@@ -153,7 +159,9 @@ public class AGSingletons {
         regHandler.item("printed_origination_processor", ORIGINATION_PRINT);
         regHandler.item("origination_processor", ORIGINATION_PROCESSOR);
         regHandler.item("origination_processor_press", ORIGINATION_PRESS);
+        regHandler.item("copper_dust", COPPER_DUST);
         regHandler.item("gold_dust", GOLD_DUST);
+        regHandler.item("netherite_dust", NETHERITE_DUST);
         regHandler.item("generating_component_1k", COMPONENT_1K);
         regHandler.item("generating_component_4k", COMPONENT_4K);
         regHandler.item("generating_component_16k", COMPONENT_16K);
