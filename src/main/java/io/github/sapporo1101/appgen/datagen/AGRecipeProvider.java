@@ -84,34 +84,34 @@ public class AGRecipeProvider extends RecipeProvider {
                 .input(AGSingletons.EMBER_CRYSTAL, 4)
                 .fluid(Fluids.LAVA, 4000)
                 .save(recipeOutput, AppliedGenerators.id("synthesizer/origination_press"));
-        // Damaged Ember Budding
-        GenesisSynthesizerRecipeBuilder.synthesize(AGSingletons.EMBER_BUDDING_DAMAGED, 1, 100000)
+        // Damaged Budding Ember
+        GenesisSynthesizerRecipeBuilder.synthesize(AGSingletons.BUDDING_EMBER_DAMAGED, 1, 100000)
                 .input(AGSingletons.EMBER_CRYSTAL_CHARGED, 2)
                 .input(AGSingletons.EMBER_BLOCK)
                 .input(AGSingletons.EMBER_CRYSTAL)
                 .fluid(Fluids.LAVA, 1000)
-                .save(recipeOutput, AppliedGenerators.id("synthesizer/ember_budding_damaged"));
-        // Chipped Ember Budding
-        GenesisSynthesizerRecipeBuilder.synthesize(AGSingletons.EMBER_BUDDING_CHIPPED, 1, 100000)
+                .save(recipeOutput, AppliedGenerators.id("synthesizer/budding_ember_damaged"));
+        // Chipped Budding Ember
+        GenesisSynthesizerRecipeBuilder.synthesize(AGSingletons.BUDDING_EMBER_CHIPPED, 1, 100000)
                 .input(AGSingletons.EMBER_CRYSTAL_CHARGED, 2)
-                .input(AGSingletons.EMBER_BUDDING_DAMAGED)
+                .input(AGSingletons.BUDDING_EMBER_DAMAGED)
                 .input(AGSingletons.EMBER_CRYSTAL)
                 .fluid(Fluids.LAVA, 1000)
-                .save(recipeOutput, AppliedGenerators.id("synthesizer/ember_budding_chipped"));
-        // Flawed Ember Budding
-        GenesisSynthesizerRecipeBuilder.synthesize(AGSingletons.EMBER_BUDDING_FLAWED, 1, 100000)
+                .save(recipeOutput, AppliedGenerators.id("synthesizer/budding_ember_chipped"));
+        // Flawed Budding Ember
+        GenesisSynthesizerRecipeBuilder.synthesize(AGSingletons.BUDDING_EMBER_FLAWED, 1, 100000)
                 .input(AGSingletons.EMBER_CRYSTAL_CHARGED, 2)
-                .input(AGSingletons.EMBER_BUDDING_CHIPPED)
+                .input(AGSingletons.BUDDING_EMBER_CHIPPED)
                 .input(AGSingletons.EMBER_CRYSTAL)
                 .fluid(Fluids.LAVA, 1000)
-                .save(recipeOutput, AppliedGenerators.id("synthesizer/ember_budding_flawed"));
-        // Flawless Ember Budding
-        GenesisSynthesizerRecipeBuilder.synthesize(AGSingletons.EMBER_BUDDING_FLAWLESS, 1, 1000000)
+                .save(recipeOutput, AppliedGenerators.id("synthesizer/budding_ember_flawed"));
+        // Flawless Budding Ember
+        GenesisSynthesizerRecipeBuilder.synthesize(AGSingletons.BUDDING_EMBER_FLAWLESS, 1, 1000000)
                 .input(AGSingletons.EMBER_CRYSTAL_CHARGED, 100)
-                .input(AGSingletons.EMBER_BUDDING_FLAWED)
+                .input(AGSingletons.BUDDING_EMBER_FLAWED)
                 .input(AGSingletons.EMBER_CRYSTAL)
                 .fluid(Fluids.LAVA, 10000)
-                .save(recipeOutput, AppliedGenerators.id("synthesizer/ember_budding_flawless"));
+                .save(recipeOutput, AppliedGenerators.id("synthesizer/budding_ember_flawless"));
         // Insulating Resin
         GenesisSynthesizerRecipeBuilder.synthesize(AFSingletons.INSULATING_RESIN, 1, 10000)
                 .input(AGSingletons.EMBER_CRYSTAL_CHARGED, 1)

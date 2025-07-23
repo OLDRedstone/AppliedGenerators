@@ -57,10 +57,10 @@ public class AGLootTableProvider extends LootTableProvider {
                             .apply(ApplyBonusCount.addUniformBonusCount(getEnchantment(Enchantments.FORTUNE)))
                             .apply(ApplyExplosionDecay.explosionDecay()))
             );
-            add(AGSingletons.EMBER_BUDDING_DAMAGED, createSingleItemTableWithSilkTouch(AGSingletons.EMBER_BUDDING_DAMAGED, AGSingletons.EMBER_BLOCK));
-            add(AGSingletons.EMBER_BUDDING_CHIPPED, createSingleItemTableWithSilkTouch(AGSingletons.EMBER_BUDDING_CHIPPED, AGSingletons.EMBER_BUDDING_DAMAGED));
-            add(AGSingletons.EMBER_BUDDING_FLAWED, createSingleItemTableWithSilkTouch(AGSingletons.EMBER_BUDDING_FLAWED, AGSingletons.EMBER_BUDDING_CHIPPED));
-            add(AGSingletons.EMBER_BUDDING_FLAWLESS, createSingleItemTable(AGSingletons.EMBER_BUDDING_FLAWED));
+            add(AGSingletons.BUDDING_EMBER_DAMAGED, createSingleItemTableWithSilkTouch(AGSingletons.BUDDING_EMBER_DAMAGED, AGSingletons.EMBER_BLOCK));
+            add(AGSingletons.BUDDING_EMBER_CHIPPED, createSingleItemTableWithSilkTouch(AGSingletons.BUDDING_EMBER_CHIPPED, AGSingletons.BUDDING_EMBER_DAMAGED));
+            add(AGSingletons.BUDDING_EMBER_FLAWED, createSingleItemTableWithSilkTouch(AGSingletons.BUDDING_EMBER_FLAWED, AGSingletons.BUDDING_EMBER_CHIPPED));
+            add(AGSingletons.BUDDING_EMBER_FLAWLESS, createSingleItemTable(AGSingletons.BUDDING_EMBER_FLAWED));
         }
 
         @Override

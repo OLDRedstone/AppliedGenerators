@@ -31,10 +31,10 @@ public class AGBlockTagProvider extends BlockTagsProvider {
         tag(Tags.Blocks.STORAGE_BLOCKS)
                 .addTag(AGTags.EMBER_BLOCK_BLOCK);
         tag(ConventionTags.BUDDING_BLOCKS_BLOCKS)
-                .add(AGSingletons.EMBER_BUDDING_DAMAGED)
-                .add(AGSingletons.EMBER_BUDDING_CHIPPED)
-                .add(AGSingletons.EMBER_BUDDING_FLAWED)
-                .add(AGSingletons.EMBER_BUDDING_FLAWLESS);
+                .add(AGSingletons.BUDDING_EMBER_DAMAGED)
+                .add(AGSingletons.BUDDING_EMBER_CHIPPED)
+                .add(AGSingletons.BUDDING_EMBER_FLAWED)
+                .add(AGSingletons.BUDDING_EMBER_FLAWLESS);
         tag(ConventionTags.BUDS_BLOCKS)
                 .add(AGSingletons.EMBER_BUD_SMALL)
                 .add(AGSingletons.EMBER_BUD_MEDIUM)

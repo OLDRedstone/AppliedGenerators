@@ -36,10 +36,10 @@ public class AGSingletons {
     public static EmberClusterBlock EMBER_BUD_MEDIUM;
     public static EmberClusterBlock EMBER_BUD_LARGE;
     public static EmberClusterBlock EMBER_CLUSTER;
-    public static EmberBuddingBlock EMBER_BUDDING_FLAWLESS;
-    public static EmberBuddingBlock EMBER_BUDDING_FLAWED;
-    public static EmberBuddingBlock EMBER_BUDDING_CHIPPED;
-    public static EmberBuddingBlock EMBER_BUDDING_DAMAGED;
+    public static BuddingEmberBlock BUDDING_EMBER_FLAWLESS;
+    public static BuddingEmberBlock BUDDING_EMBER_FLAWED;
+    public static BuddingEmberBlock BUDDING_EMBER_CHIPPED;
+    public static BuddingEmberBlock BUDDING_EMBER_DAMAGED;
     public static Block EMBER_BLOCK;
 
     public static CommonItem EMBER_CRYSTAL;
@@ -89,10 +89,10 @@ public class AGSingletons {
         EMBER_BUD_MEDIUM = new EmberClusterBlock(1, 4, 3);
         EMBER_BUD_LARGE = new EmberClusterBlock(2, 5, 3);
         EMBER_CLUSTER = new EmberClusterBlock(3, 7, 3);
-        EMBER_BUDDING_FLAWLESS = new EmberBuddingBlock();
-        EMBER_BUDDING_FLAWED = new EmberBuddingBlock();
-        EMBER_BUDDING_CHIPPED = new EmberBuddingBlock();
-        EMBER_BUDDING_DAMAGED = new EmberBuddingBlock();
+        BUDDING_EMBER_FLAWLESS = new BuddingEmberBlock();
+        BUDDING_EMBER_FLAWED = new BuddingEmberBlock();
+        BUDDING_EMBER_CHIPPED = new BuddingEmberBlock();
+        BUDDING_EMBER_DAMAGED = new BuddingEmberBlock();
         EMBER_BLOCK = new Block(stoneProps().strength(3, 8).requiresCorrectToolForDrops());
 
         EMBER_CRYSTAL = new CommonItem();
@@ -141,10 +141,10 @@ public class AGSingletons {
         regHandler.block("ember_bud_medium", EMBER_BUD_MEDIUM);
         regHandler.block("ember_bud_large", EMBER_BUD_LARGE);
         regHandler.block("ember_cluster", EMBER_CLUSTER);
-        regHandler.block("ember_budding_flawless", EMBER_BUDDING_FLAWLESS);
-        regHandler.block("ember_budding_flawed", EMBER_BUDDING_FLAWED);
-        regHandler.block("ember_budding_chipped", EMBER_BUDDING_CHIPPED);
-        regHandler.block("ember_budding_damaged", EMBER_BUDDING_DAMAGED);
+        regHandler.block("budding_ember_flawless", BUDDING_EMBER_FLAWLESS);
+        regHandler.block("budding_ember_flawed", BUDDING_EMBER_FLAWED);
+        regHandler.block("budding_ember_chipped", BUDDING_EMBER_CHIPPED);
+        regHandler.block("budding_ember_damaged", BUDDING_EMBER_DAMAGED);
         regHandler.block("ember_block", EMBER_BLOCK);
 
         regHandler.item("ember_crystal", EMBER_CRYSTAL);

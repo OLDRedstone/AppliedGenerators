@@ -17,13 +17,13 @@ import net.minecraft.world.level.material.PushReaction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class EmberBuddingBlock extends AEBaseBlock implements ISpecialDrop {
+public class BuddingEmberBlock extends AEBaseBlock implements ISpecialDrop {
 
     public static final int GROWTH_CHANCE = 3;
     public static final int DECAY_CHANCE = 10;
     private static final Direction[] DIRECTIONS = Direction.values();
 
-    public EmberBuddingBlock() {
+    public BuddingEmberBlock() {
         super(stoneProps()
                 .strength(3, 8)
                 .requiresCorrectToolForDrops()
@@ -77,9 +77,9 @@ public class EmberBuddingBlock extends AEBaseBlock implements ISpecialDrop {
     }
 
     public Block degradeBudding() {
-        if (this == AGSingletons.EMBER_BUDDING_FLAWLESS) return AGSingletons.EMBER_BUDDING_FLAWLESS;
-        if (this == AGSingletons.EMBER_BUDDING_FLAWED) return AGSingletons.EMBER_BUDDING_CHIPPED;
-        if (this == AGSingletons.EMBER_BUDDING_CHIPPED) return AGSingletons.EMBER_BUDDING_DAMAGED;
+        if (this == AGSingletons.BUDDING_EMBER_FLAWLESS) return AGSingletons.BUDDING_EMBER_FLAWLESS;
+        if (this == AGSingletons.BUDDING_EMBER_FLAWED) return AGSingletons.BUDDING_EMBER_CHIPPED;
+        if (this == AGSingletons.BUDDING_EMBER_CHIPPED) return AGSingletons.BUDDING_EMBER_DAMAGED;
         return AGSingletons.EMBER_BLOCK;
     }
 

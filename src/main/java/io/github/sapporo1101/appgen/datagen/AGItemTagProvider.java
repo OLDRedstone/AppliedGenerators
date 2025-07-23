@@ -64,10 +64,10 @@ public class AGItemTagProvider extends ItemTagsProvider {
         tag(Tags.Items.GEMS)
                 .addTag(AGTags.EMBER_CRYSTAL);
         tag(ConventionTags.BUDDING_BLOCKS)
-                .add(AGSingletons.EMBER_BUDDING_DAMAGED.asItem())
-                .add(AGSingletons.EMBER_BUDDING_CHIPPED.asItem())
-                .add(AGSingletons.EMBER_BUDDING_FLAWED.asItem())
-                .add(AGSingletons.EMBER_BUDDING_FLAWLESS.asItem());
+                .add(AGSingletons.BUDDING_EMBER_DAMAGED.asItem())
+                .add(AGSingletons.BUDDING_EMBER_CHIPPED.asItem())
+                .add(AGSingletons.BUDDING_EMBER_FLAWED.asItem())
+                .add(AGSingletons.BUDDING_EMBER_FLAWLESS.asItem());
         tag(ConventionTags.BUDS)
                 .add(AGSingletons.EMBER_BUD_SMALL.asItem())
                 .add(AGSingletons.EMBER_BUD_MEDIUM.asItem())
