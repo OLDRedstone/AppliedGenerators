@@ -14,3 +14,9 @@ various methods.
 ## Forge Energy Generators
 
 <CategoryIndex category="generators"></CategoryIndex>
+
+## Other Devices
+
+<CategoryIndex category="featured_blocks"></CategoryIndex>
+
+## Items

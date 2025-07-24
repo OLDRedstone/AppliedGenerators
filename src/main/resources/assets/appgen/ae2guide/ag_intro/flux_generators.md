@@ -4,6 +4,7 @@ navigation:
   title: Flux Generators
   icon: appgen:flux_generator_1k
 categories:
+  - blocks
   - generators
 item_ids:
   - appgen:flux_generator_1k

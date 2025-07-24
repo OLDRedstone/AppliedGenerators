@@ -4,6 +4,7 @@ navigation:
   title: Singularity Generators
   icon: appgen:singularity_generator_1k
 categories:
+  - blocks
   - generators
 item_ids:
   - appgen:singularity_generator_1k
