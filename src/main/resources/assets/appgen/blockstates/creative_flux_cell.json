@@ -1,0 +1,7 @@
+{
+    "variants": {
+        "": {
+            "model": "appgen:block/flux_cells/creative"
+        }
+    }
+}

@@ -10,7 +10,7 @@ import com.glodblock.github.extendedae.container.helper.DirectionSet;
 import com.glodblock.github.glodium.network.packet.sync.ActionMap;
 import com.glodblock.github.glodium.network.packet.sync.IActionHolder;
 import io.github.sapporo1101.appgen.AppliedGenerators;
-import io.github.sapporo1101.appgen.common.blockentities.FluxCellBlockEntity;
+import io.github.sapporo1101.appgen.common.blockentities.FluxCellBaseBlockEntity;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
@@ -24,14 +24,14 @@ public class FluxCellMenu extends AEBaseMenu implements IActionHolder {
     @GuiSync(9)
     public DirectionSet outputSides = new DirectionSet(new ArrayList<>());
 
-    private final FluxCellBlockEntity host;
+    private final FluxCellBaseBlockEntity host;
     private final ActionMap actions = ActionMap.create();
 
     public static final MenuType<FluxCellMenu> TYPE = MenuTypeBuilder
-            .create(FluxCellMenu::new, FluxCellBlockEntity.class)
+            .create(FluxCellMenu::new, FluxCellBaseBlockEntity.class)
             .buildUnregistered(AppliedGenerators.id("flux_cell"));
 
-    public FluxCellMenu(int id, Inventory playerInventory, FluxCellBlockEntity host) {
+    public FluxCellMenu(int id, Inventory playerInventory, FluxCellBaseBlockEntity host) {
         super(TYPE, id, playerInventory, host);
         this.host = host;
         for (int index = 0; index < host.getGenericInv().size(); index++) {
@@ -61,8 +61,8 @@ public class FluxCellMenu extends AEBaseMenu implements IActionHolder {
         return outputSides.sides();
     }
 
-    public FluxCellBlockEntity getHost() {
-        return host;
+    public FluxCellBaseBlockEntity getHost() {
+        return this.host;
     }
 
     @Override
