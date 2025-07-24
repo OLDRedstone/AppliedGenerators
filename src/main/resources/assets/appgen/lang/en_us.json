@@ -2,6 +2,7 @@
     "itemGroup.appgen": "Applied Generators",
     "block.appgen.flux_cell": "Flux Cell",
     "block.appgen.dense_flux_cell": "Dense Flux Cell",
+    "block.appgen.creative_flux_cell": "Creative Flux Cell",
     "block.appgen.pattern_buffer": "Pattern Buffer",
     "block.appgen.singularity_generator_1k": "1k Singularity Generator",
     "block.appgen.singularity_generator_4k": "4k Singularity Generator",
