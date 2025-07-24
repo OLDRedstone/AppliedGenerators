@@ -83,6 +83,15 @@ public class AGRecipeProvider extends RecipeProvider {
                 .define('C', AFSingletons.CORE_1k)
                 .unlockedBy(HAS_ITEM, has(AEItems.CALCULATION_PROCESSOR))
                 .save(recipeOutput, AppliedGenerators.id("crafting/flux_cell"));
+        // Dense Flux Cell
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AGSingletons.DENSE_FLUX_CELL)
+                .pattern("CCC")
+                .pattern("COC")
+                .pattern("CCC")
+                .define('C', AGSingletons.FLUX_CELL)
+                .define('O', AGSingletons.ORIGINATION_PROCESSOR)
+                .unlockedBy(HAS_ITEM, has(AGSingletons.FLUX_CELL))
+                .save(recipeOutput, AppliedGenerators.id("crafting/dense_flux_cell"));
         // 1k Generating Component
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AGSingletons.COMPONENT_1K)
                 .pattern("DED")
