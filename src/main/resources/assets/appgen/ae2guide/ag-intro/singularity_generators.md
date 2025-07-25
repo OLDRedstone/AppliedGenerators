@@ -1,6 +1,6 @@
 ---
 navigation:
-  parent: ag_intro/ag-index.md
+  parent: ag-intro/ag-index.md
   title: Singularity Generators
   icon: appgen:singularity_generator_1k
 categories:
@@ -21,20 +21,20 @@ item_ids:
 
 # Singularity Generators
 
-<Column>
-  <Row>
-    <ItemImage id="appgen:singularity_generator_1k" scale="4" />
-    <ItemImage id="appgen:singularity_generator_4k" scale="4" />
-    <ItemImage id="appgen:singularity_generator_16k" scale="4" />
-    <ItemImage id="appgen:singularity_generator_64k" scale="4" />
-    <ItemImage id="appgen:singularity_generator_256k" scale="4" />
+<Column gap="1">
+  <Row gap="1">
+    <BlockImage id="appgen:singularity_generator_1k" scale="4" p:active="true"/>
+    <BlockImage id="appgen:singularity_generator_4k" scale="4" p:active="true" />
+    <BlockImage id="appgen:singularity_generator_16k" scale="4" p:active="true" />
+    <BlockImage id="appgen:singularity_generator_64k" scale="4" p:active="true" />
+    <BlockImage id="appgen:singularity_generator_256k" scale="4" p:active="true" />
   </Row>
-  <Row>
-    <ItemImage id="appgen:singularity_generator_1m" scale="4" />
-    <ItemImage id="appgen:singularity_generator_4m" scale="4" />
-    <ItemImage id="appgen:singularity_generator_16m" scale="4" />
-    <ItemImage id="appgen:singularity_generator_64m" scale="4" />
-    <ItemImage id="appgen:singularity_generator_256m" scale="4" />
+  <Row gap="1">
+    <BlockImage id="appgen:singularity_generator_1m" scale="4" p:active="true" />
+    <BlockImage id="appgen:singularity_generator_4m" scale="4" p:active="true" />
+    <BlockImage id="appgen:singularity_generator_16m" scale="4" p:active="true" />
+    <BlockImage id="appgen:singularity_generator_64m" scale="4" p:active="true" />
+    <BlockImage id="appgen:singularity_generator_256m" scale="4" p:active="true" />
   </Row>
 </Column>
 

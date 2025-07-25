@@ -1,6 +1,6 @@
 ---
 navigation:
-  parent: ag_intro/ag-index.md
+  parent: ag-intro/ag-index.md
   title: Gold Dust
   icon: appgen:gold_dust
 categories:

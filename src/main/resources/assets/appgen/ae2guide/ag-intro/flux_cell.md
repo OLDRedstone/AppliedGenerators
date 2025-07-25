@@ -1,6 +1,6 @@
 ---
 navigation:
-  parent: ag_intro/ag-index.md
+  parent: ag-intro/ag-index.md
   title: Flux Cells
   icon: appgen:flux_cell
 categories:
@@ -14,7 +14,7 @@ item_ids:
 
 # Flux Cells
 
-<Row gap="20">
+<Row gap="10">
   <BlockImage id="appgen:flux_cell" scale="8" p:fullness="4" />
   <BlockImage id="appgen:dense_flux_cell" scale="8" p:fullness="4" />
   <BlockImage id="appgen:creative_flux_cell" scale="8" />

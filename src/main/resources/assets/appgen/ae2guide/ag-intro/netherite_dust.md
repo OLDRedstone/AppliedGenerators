@@ -1,6 +1,6 @@
 ---
 navigation:
-  parent: ag_intro/ag-index.md
+  parent: ag-intro/ag-index.md
   title: Netherite Dust
   icon: appgen:netherite_dust
 categories:

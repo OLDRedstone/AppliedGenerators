@@ -355,16 +355,16 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
 
                 final int speedFactor =
                         switch (this.upgrades.getInstalledUpgrades(AEItems.SPEED_CARD)) {
-                            case 1 -> 3; // 83 ticks
-                            case 2 -> 5; // 56 ticks
-                            case 3 -> 10; // 36 ticks
-                            case 4 -> 50; // 20 ticks
-                            default -> 2; // 116 ticks
+                            case 1 -> 4; // 50 ticks
+                            case 2 -> 8; // 25 ticks
+                            case 3 -> 16; // 12 ticks
+                            case 4 -> 32; // 6 ticks
+                            default -> 2; // 100 ticks
                         };
 
                 final int progressReq = MAX_PROGRESS - this.getProgress();
                 final float powerRatio = progressReq < speedFactor ? (float) progressReq / speedFactor : 1;
-                final int requiredTicks = Mth.ceil((float) MAX_PROGRESS / speedFactor) + 16;
+                final int requiredTicks = Mth.ceil((float) MAX_PROGRESS / speedFactor);
                 final int powerConsumption = Mth.floor(((float) Objects.requireNonNull(getTask()).getEnergy() / requiredTicks) * powerRatio);
                 final double powerThreshold = powerConsumption - 0.01;
 

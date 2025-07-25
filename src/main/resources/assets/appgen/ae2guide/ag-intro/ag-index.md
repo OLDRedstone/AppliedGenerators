@@ -11,12 +11,10 @@ various methods.
 
 [Applied Generators GitHub](https://github.com/sapporo1101/AppliedGenerators)
 
-## Forge Energy Generators
+## Blocks
 
-<CategoryIndex category="generators"></CategoryIndex>
-
-## Other Devices
-
-<CategoryIndex category="featured_blocks"></CategoryIndex>
+<CategoryIndex category="blocks"></CategoryIndex>
 
 ## Items
+
+<CategoryIndex category="items"></CategoryIndex>
