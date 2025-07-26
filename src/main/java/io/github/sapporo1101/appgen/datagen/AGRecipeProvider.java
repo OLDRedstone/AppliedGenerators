@@ -78,10 +78,10 @@ public class AGRecipeProvider extends RecipeProvider {
                 .save(recipeOutput, ExtendedAE.id("crafting/ember_crystal"));
         // Flux Cell
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AGSingletons.FLUX_CELL)
-                .pattern("EDE")
+                .pattern("RDR")
                 .pattern("DCD")
-                .pattern("EDE")
-                .define('E', AGSingletons.EMBER_CRYSTAL)
+                .pattern("RDR")
+                .define('R', AFSingletons.HARDEN_INSULATING_RESIN)
                 .define('D', AEItems.SKY_DUST)
                 .define('C', AFSingletons.CORE_1k)
                 .unlockedBy(HAS_ITEM, has(AEItems.CALCULATION_PROCESSOR))
