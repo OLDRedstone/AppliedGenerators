@@ -1,7 +1,10 @@
 package io.github.sapporo1101.appgen.datagen;
 
+import appeng.api.ids.AETags;
+import appeng.api.util.AEColor;
 import appeng.core.definitions.AEBlocks;
 import appeng.core.definitions.AEItems;
+import appeng.core.definitions.AEParts;
 import appeng.datagen.providers.tags.ConventionTags;
 import appeng.recipes.handlers.ChargerRecipeBuilder;
 import appeng.recipes.handlers.InscriberProcessType;
@@ -642,6 +645,28 @@ public class AGRecipeProvider extends RecipeProvider {
                 .input(Items.SLIME_BALL)
                 .fluid(Fluids.WATER, 1000)
                 .save(recipeOutput, AppliedGenerators.id("synthesizer/insulating_resin"));
+        // Fluix ME Covered Cable
+        GenesisSynthesizerRecipeBuilder.synthesize(AEParts.COVERED_CABLE.item(AEColor.TRANSPARENT), 16, 10000)
+                .input(AGSingletons.EMBER_CRYSTAL_CHARGED, 1)
+                .input(AEParts.GLASS_CABLE.item(AEColor.TRANSPARENT), 16)
+                .input(AEItems.SILICON, 8)
+                .fluid(Fluids.WATER, 200)
+                .save(recipeOutput, AppliedGenerators.id("synthesizer/covered_cable"));
+        // Fluix ME Smart Cable
+        GenesisSynthesizerRecipeBuilder.synthesize(AEParts.SMART_CABLE.item(AEColor.TRANSPARENT), 16, 10000)
+                .input(AGSingletons.EMBER_CRYSTAL_CHARGED, 1)
+                .input(AEParts.COVERED_CABLE.item(AEColor.TRANSPARENT), 16)
+                .input(AEItems.CERTUS_QUARTZ_CRYSTAL_CHARGED, 8)
+                .fluid(Fluids.WATER, 200)
+                .save(recipeOutput, AppliedGenerators.id("synthesizer/smart_cable"));
+        // Cable Anchor
+        GenesisSynthesizerRecipeBuilder.synthesize(AEParts.CABLE_ANCHOR.asItem(), 32, 1000)
+                .input(AGSingletons.EMBER_CRYSTAL_CHARGED, 1)
+                .input(AETags.METAL_INGOTS, 4)
+                .input(AEItems.CERTUS_QUARTZ_CRYSTAL, 2)
+                .fluid(Fluids.WATER, 100)
+                .save(recipeOutput, AppliedGenerators.id("synthesizer/cable_anchor"));
+
 
         // World Transformation Recipes
         // Ember Crystal (Duplicate)
