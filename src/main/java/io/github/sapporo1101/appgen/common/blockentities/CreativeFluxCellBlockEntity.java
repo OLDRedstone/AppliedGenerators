@@ -43,10 +43,8 @@ public class CreativeFluxCellBlockEntity extends FluxCellBaseBlockEntity {
         }
 
         @Override
-        public boolean canInsert() {
-            return false;
+        public long insert(int slot, AEKey what, long amount, Actionable mode) {
+            return 0;
         }
-
-
     }
 }

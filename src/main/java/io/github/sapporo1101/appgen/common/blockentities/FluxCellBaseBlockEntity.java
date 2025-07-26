@@ -194,7 +194,7 @@ public abstract class FluxCellBaseBlockEntity extends AEBaseBlockEntity implemen
 
         @Override
         public int getMaxEnergyStored() {
-            return Math.toIntExact(this.inv.getCapacity(ExternalTypes.FLUX) * this.inv.size());
+            return Math.toIntExact(Math.min(this.inv.getCapacity(ExternalTypes.FLUX) * this.inv.size(), Integer.MAX_VALUE));
         }
 
         @Override

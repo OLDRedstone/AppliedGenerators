@@ -18,7 +18,7 @@ import appeng.items.tools.powered.powersink.PoweredItemCapabilities;
 import com.glodblock.github.glodium.registry.RegistryHandler;
 import com.glodblock.github.glodium.util.GlodUtil;
 import io.github.sapporo1101.appgen.AppliedGenerators;
-import io.github.sapporo1101.appgen.common.blockentities.FluxCellBlockEntity;
+import io.github.sapporo1101.appgen.common.blockentities.FluxCellBaseBlockEntity;
 import io.github.sapporo1101.appgen.common.blockentities.GenesisSynthesizerBlockEntity;
 import io.github.sapporo1101.appgen.common.blockentities.PatternBufferBlockEntity;
 import io.github.sapporo1101.appgen.menu.*;
@@ -52,7 +52,7 @@ public class AGRegistryHandler extends RegistryHandler {
         this.cap(IInWorldGridNodeHost.class, AECapabilities.IN_WORLD_GRID_NODE_HOST, (object, context) -> object);
         this.cap(IAEItemPowerStorage.class, Capabilities.EnergyStorage.ITEM, (object, context) -> new PoweredItemCapabilities(object, (IAEItemPowerStorage) object.getItem()));
         this.cap(ICraftingMachine.class, AECapabilities.CRAFTING_MACHINE, (object, context) -> object);
-        this.cap(FluxCellBlockEntity.class, Capabilities.EnergyStorage.BLOCK, FluxCellBlockEntity::getEnergyStorage);
+        this.cap(FluxCellBaseBlockEntity.class, Capabilities.EnergyStorage.BLOCK, FluxCellBaseBlockEntity::getEnergyStorage);
         this.cap(GenesisSynthesizerBlockEntity.class, AECapabilities.GENERIC_INTERNAL_INV, (object, context) -> object.getTank());
         this.cap(PatternBufferBlockEntity.class, AECapabilities.GENERIC_INTERNAL_INV, (object, context) -> object.getStorageInv());
     }
