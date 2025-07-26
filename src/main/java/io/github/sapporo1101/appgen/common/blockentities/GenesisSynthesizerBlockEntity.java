@@ -191,6 +191,10 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
                 stack.what().addDrops(stack.amount(), drops, level, pos);
             }
         }
+        var crystalStack = this.crystalTank.getStack(0);
+        if (crystalStack != null) {
+            crystalStack.what().addDrops(crystalStack.amount(), drops, level, pos);
+        }
         for (var upgrade : upgrades) {
             drops.add(upgrade);
         }
