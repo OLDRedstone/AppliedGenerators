@@ -63,5 +63,5 @@
     "gui.appgen.genesis_synthesizer": "Genesis Synthesizer",
     "gui.appgen.genesis_synthesizer.crystal_info": "Charged Ember Crystal: %s / %s",
     "emi.category.appgen.genesis_synthesizer": "Genesis Synthesizer",
-    "emi.text.appgen.genesis_synthesizer.energy": "Used Power: %s FE"
+    "emi.text.appgen.genesis_synthesizer.energy": "Used Power: %s AE"
 }

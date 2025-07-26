@@ -365,15 +365,15 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
                 final int progressReq = MAX_PROGRESS - this.getProgress();
                 final float powerRatio = progressReq < speedFactor ? (float) progressReq / speedFactor : 1;
                 final int requiredTicks = Mth.ceil((float) MAX_PROGRESS / speedFactor);
-                final int powerConsumption = Mth.floor(((float) Objects.requireNonNull(getTask()).getEnergy() / requiredTicks) * powerRatio);
-                final double powerThreshold = powerConsumption - 0.01;
+                final int aeConsumption = Mth.floor(((float) Objects.requireNonNull(getTask()).getEnergy() / requiredTicks) * powerRatio);
+                final double powerThreshold = aeConsumption - 0.01;
 
-                double powerReq = this.extractAEPower(powerConsumption, Actionable.SIMULATE, PowerMultiplier.CONFIG);
+                double powerReq = this.extractAEPower(aeConsumption, Actionable.SIMULATE, PowerMultiplier.CONFIG);
 
                 if (powerReq <= powerThreshold) {
                     src = eg;
                     var oldPowerReq = powerReq;
-                    powerReq = eg.extractAEPower(powerConsumption, Actionable.SIMULATE, PowerMultiplier.CONFIG);
+                    powerReq = eg.extractAEPower(aeConsumption, Actionable.SIMULATE, PowerMultiplier.CONFIG);
                     if (oldPowerReq > powerReq) {
                         src = this;
                         powerReq = oldPowerReq;
@@ -381,22 +381,22 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
                 }
 
                 if (powerReq > powerThreshold) {
-                    src.extractAEPower(powerConsumption, Actionable.MODULATE, PowerMultiplier.CONFIG);
-                    System.out.println("GenesisSynthesizer extracted power: " + powerConsumption);
+                    src.extractAEPower(aeConsumption, Actionable.MODULATE, PowerMultiplier.CONFIG);
+                    System.out.println("GenesisSynthesizer extracted power: " + aeConsumption);
                     this.addProgress(speedFactor);
                     this.showWarning = false;
                 } else if (powerReq != 0) {
                     var progressRatio = src == this
-                            ? powerReq / powerConsumption
-                            : (powerReq - 10 * eg.getIdlePowerUsage()) / powerConsumption;
+                            ? powerReq / aeConsumption
+                            : (powerReq - 10 * eg.getIdlePowerUsage()) / aeConsumption;
                     var factor = Mth.floor(progressRatio * speedFactor);
 
                     if (factor > 1) {
                         var extracted = src.extractAEPower(
-                                (double) (powerConsumption * factor) / speedFactor,
+                                (double) (aeConsumption * factor) / speedFactor,
                                 Actionable.MODULATE,
                                 PowerMultiplier.CONFIG);
-                        var actualFactor = (int) Math.floor(extracted / powerConsumption * speedFactor);
+                        var actualFactor = (int) Math.floor(extracted / aeConsumption * speedFactor);
                         System.out.println("GenesisSynthesizer extracted power: " + extracted + ", actual factor: " + actualFactor);
                         this.addProgress(actualFactor);
                     }

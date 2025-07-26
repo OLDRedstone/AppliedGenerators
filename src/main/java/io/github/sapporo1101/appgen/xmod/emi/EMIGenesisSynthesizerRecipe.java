@@ -42,10 +42,10 @@ public class EMIGenesisSynthesizerRecipe extends BasicEmiRecipe {
 
     public void addWidgets(WidgetHolder widgets) {
         ResourceLocation background = AppEng.makeId("textures/guis/genesis_synthesizer.png");
-        ResourceLocation fe = AppliedGenerators.id("textures/gui/emi_fe.png");
+        ResourceLocation fe = AppliedGenerators.id("textures/gui/emi_ae.png");
         widgets.addTexture(background, 0, 0, 168, 80, 4, 13);
         widgets.addAnimatedTexture(background, 136, 28, 6, 18, 176, 0, 2000, false, true, false);
-        //noinspection DataFlowIssue
+        // noinspection DataFlowIssue
         TextWidget energyLabel = widgets.addText(Component.translatable("emi.text.appgen.genesis_synthesizer.energy", CommaSeparator.FORMATTER.format(this.recipe.getEnergy())), this.width / 2 + 4, 70, ChatFormatting.DARK_GRAY.getColor(), false).horizontalAlign(TextWidget.Alignment.CENTER);
         int energyLabelX = energyLabel.getBounds().x();
         int energyLabelY = 72 + energyLabel.getBounds().height() / 2;
