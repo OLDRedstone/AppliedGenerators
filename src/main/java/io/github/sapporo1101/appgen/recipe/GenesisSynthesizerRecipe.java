@@ -24,7 +24,7 @@ import java.util.List;
 public class GenesisSynthesizerRecipe implements Recipe<RecipeInput> {
 
     public static final ResourceLocation ID = AppliedGenerators.id("synthesizing");
-    public static final RecipeType<GenesisSynthesizerRecipe> TYPE = InitRecipeTypes.register(ID.toString());
+    public static final RecipeType<GenesisSynthesizerRecipe> TYPE = RecipeType.simple(ResourceLocation.parse(ID.toString()));
 
     protected final List<IngredientStack.Item> inputs;
     protected final IngredientStack.Fluid fluid;
