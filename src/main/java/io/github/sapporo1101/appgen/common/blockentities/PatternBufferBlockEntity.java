@@ -139,19 +139,22 @@ public class PatternBufferBlockEntity extends AEBaseBlockEntity implements Inter
 
     private void updatePattern() {
         System.out.println("PatternBuffer updatePattern called.");
-        this.patternInput.setInputs(new ArrayList<>());
         ItemStack patternStack = patternInv.getStackInSlot(0);
+        List<List<GenericStack>> newInputs = new ArrayList<>();
+        setPattern:
         if (patternStack != null) {
             IPatternDetails patternDetails = PatternDetailsHelper.decodePattern(patternStack, this.level);
             System.out.println("PatternBuffer found pattern: " + patternDetails);
-            if (patternDetails == null) return;
+
+            if (patternDetails == null) break setPattern;
             for (IPatternDetails.IInput input : patternDetails.getInputs()) {
                 System.out.println("PatternBuffer found input: " + input);
                 List<GenericStack> inputStack = Arrays.stream(input.getPossibleInputs()).map(s -> new GenericStack(s.what(), s.amount() * input.getMultiplier())).toList();
                 System.out.println("PatternBuffer found inputStack: " + inputStack + ", amount:" + inputStack.stream().mapToLong(GenericStack::amount));
-                this.patternInput.getInputs().add(inputStack);
+                newInputs.add(inputStack);
             }
         }
+        this.patternInput.setInputs(newInputs);
         System.out.println("PatternBuffer updated: " + this.patternInput.getInputs().size() + " inputs found.");
     }
 
@@ -169,7 +172,6 @@ public class PatternBufferBlockEntity extends AEBaseBlockEntity implements Inter
 
     private void updateCapacity() {
         for (int i = 0; i < storageInv.size(); i++) {
-            System.out.println("updateCapacity called for slot " + i);
             GenericStackInv inv = storageInv.getInv(i);
             inv.setCapacity(AEKeyType.items(), 0);
             inv.setCapacity(AEKeyType.fluids(), 0);
@@ -219,6 +221,15 @@ public class PatternBufferBlockEntity extends AEBaseBlockEntity implements Inter
     @Override
     public void saveChangedInventory(AppEngInternalInventory inv) {
         this.saveChanges();
+    }
+
+    @Nullable
+    public AEKey getPrimaryOutputKey() {
+        ItemStack patternStack = patternInv.getStackInSlot(0);
+        if (patternStack.isEmpty()) return null;
+        IPatternDetails patternDetails = PatternDetailsHelper.decodePattern(patternStack, this.level);
+        if (patternDetails == null || patternDetails.getOutputs().isEmpty()) return null;
+        return patternDetails.getPrimaryOutput().what();
     }
 
     @SuppressWarnings("UnstableApiUsage")
@@ -369,7 +380,7 @@ public class PatternBufferBlockEntity extends AEBaseBlockEntity implements Inter
 
         @Override
         public boolean isAllowedIn(int slot, AEKey what) {
-            System.out.println("PatternBufferSlotInv isAllowedIn called for slot: " + slot + ", key: " + what);
+            System.out.println("PatternBufferSlotInv isAllowedIn called for slot: " + slot + ", key: " + what + ", valid: " + isValidKey(this.index, what));
             return isValidKey(this.index, what);
         }
     }
@@ -468,7 +479,7 @@ public class PatternBufferBlockEntity extends AEBaseBlockEntity implements Inter
             super(null, slots, 1);
             this.item = item;
             this.setHost(this);
-            this.setFilter(new UpgradeInventory.UpgradeInvFilter());
+            this.setFilter(new UpgradeInvFilter());
         }
 
         @Override
