@@ -34,6 +34,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -577,5 +578,18 @@ public class PatternBufferBlockEntity extends AEBaseBlockEntity implements Inter
             if (upgradeCard == AFSingletons.INDUCTION_CARD) return true;
             return super.isInstalled(upgradeCard);
         }
+    }
+
+    @Override
+    public @NotNull CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        CompoundTag data = super.getUpdateTag(registries);
+        InternalInventory pattern = this.getPatternInv();
+        if (pattern != InternalInventory.empty()) {
+            final CompoundTag opt = new CompoundTag();
+            ItemStack patternStack = pattern.getStackInSlot(0);
+            opt.put("item", patternStack.saveOptional(registries));
+            data.put("inv", opt);
+        }
+        return data;
     }
 }
