@@ -5,7 +5,7 @@
     "textures": {
         "top": "appgen:block/generators/top_opened",
         "bottom": "ae2:block/generics/bottom",
-        "fe": "appflux:energy/fe",
+        "flux": "#flux",
         "front": "appgen:block/generators/front",
         "side": "ae2:block/generics/side",
         "back": "ae2:block/generics/back",
@@ -76,7 +76,7 @@
             }
         },
         {
-            "name": "fe",
+            "name": "flux",
             "from": [3, 14, 3],
             "to": [13, 15, 13],
             "rotation": {
@@ -87,7 +87,7 @@
             "faces": {
                 "up": {
                     "uv": [3, 3, 13, 13],
-                    "texture": "#fe",
+                    "texture": "#flux",
                     "cullface": "up"
                 }
             }
