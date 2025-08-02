@@ -1,6 +1,7 @@
 {
     "parent": "appgen:block/singularity_generators/template",
     "textures": {
+        "quantum_light": "appgen:block/utils/transparent",
         "overlay": "appgen:block/generators/16m_front_overlay",
         "overlay_on": "appgen:block/utils/transparent"
     }

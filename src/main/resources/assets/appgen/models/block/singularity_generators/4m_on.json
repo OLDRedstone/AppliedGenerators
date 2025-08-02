@@ -1,6 +1,7 @@
 {
     "parent": "appgen:block/singularity_generators/template",
     "textures": {
+        "quantum_light": "ae2:block/quantum_ring_light",
         "overlay": "appgen:block/generators/4m_front_overlay",
         "overlay_on": "appgen:block/generators/4m_front_overlay_on"
     }

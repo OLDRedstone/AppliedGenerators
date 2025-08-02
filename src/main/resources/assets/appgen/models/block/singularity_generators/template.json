@@ -8,7 +8,7 @@
         "front": "appgen:block/generators/front",
         "side": "ae2:block/generics/side",
         "back": "ae2:block/generics/back",
-        "quantum_light": "ae2:block/quantum_ring_light",
+        "quantum_light": "#quantum_light",
         "overlay": "#overlay",
         "overlay_on": "#overlay_on",
         "particle": "appgen:block/generators/front"
