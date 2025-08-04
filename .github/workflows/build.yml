@@ -8,11 +8,20 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - run: |
-          chmod +x ./gradlew
-          ./gradlew build
-      - run: |
-          gh release create ${{ github.ref }} \
-          --title "${{ github.ref }}" \
-          --files build/libs/*.jar
+    - name: Checkout sources
+      uses: actions/checkout@v4
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: 21
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v4
+      with:
+        gradle-version: '8.8' 
+    - name: Build with Gradle
+      run: ./gradlew build
+    - run: |
+        gh release create ${{ github.ref }} \
+        --title "${{ github.ref }}" \
+        --files build/libs/*.jar
