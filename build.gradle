@@ -13,6 +13,7 @@ repositories {
     maven { url "https://cursemaven.com" }
     maven { url 'https://modmaven.dev/' }
     maven { url "https://api.modrinth.com/maven" }
+    maven { url "https://maven.shedaniel.me/" }
     maven {
         name = "TerraformersMC"
         url = "https://maven.terraformersmc.com/"
@@ -135,7 +136,21 @@ dependencies {
     implementation "mekanism:Mekanism:1.21.1-10.7.14.79"
     implementation "maven.modrinth:jade:15.10.0+neoforge"
     compileOnly "dev.emi:emi-neoforge:1.1.22+1.21.1:api"
-    runtimeOnly "dev.emi:emi-neoforge:1.1.22+1.21.1"
+    compileOnly "me.shedaniel:RoughlyEnoughItems-neoforge:16.0.729"
+
+    switch (use_Xei) {
+        case "emi":
+            runtimeOnly "curse.maven:emi-580555:5704405"
+            break
+        case "rei":
+            runtimeOnly "me.shedaniel:RoughlyEnoughItems-neoforge:16.0.729"
+            runtimeOnly "dev.architectury:architectury-neoforge:13.0.6"
+            runtimeOnly "curse.maven:cloth-config-348521:5424576"
+            break
+        case "jei":
+            runtimeOnly "curse.maven:jei-238222:5846880"
+            runtimeOnly "dev.architectury:architectury-neoforge:13.0.6"
+    }
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
