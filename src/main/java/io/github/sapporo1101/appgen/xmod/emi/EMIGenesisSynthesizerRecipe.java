@@ -68,7 +68,7 @@ public class EMIGenesisSynthesizerRecipe extends BasicEmiRecipe {
         }
 
         int crystalHeight = 18 * crystalAmount / GenesisSynthesizerBlockEntity.MAX_CRYSTAL_TANK;
-        widgets.addTexture(background, 89, 10, 6, 18, 182, Math.max(18 - crystalHeight, 0));
+        widgets.addTexture(background, 89, 10 + Math.max(18 - crystalHeight, 0), 6, 18, 182, Math.max(18 - crystalHeight, 0));
 
         if (this.recipe.getFluid() != null) {
             widgets.addTank(EMIPlugin.stackOf(this.recipe.getFluid()), 60, 46, 18, 18, 16000).drawBack(false);

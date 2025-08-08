@@ -24,7 +24,7 @@ import java.util.List;
 
 public class REIGenesisSynthesizerCategory implements DisplayCategory<REIGenesisSynthesizerDisplay> {
 
-    private static final int PADDING = 5;
+    private static final int PADDING = 4;
 
     @Override
     public Renderer getIcon() {
@@ -54,7 +54,9 @@ public class REIGenesisSynthesizerCategory implements DisplayCategory<REIGenesis
                 new Point(bounds.x + bounds.width / 2 + 4 + PADDING, bounds.y + 70 + PADDING),
                 Component.translatable("emi.text.appgen.genesis_synthesizer.energy", CommaSeparator.FORMATTER.format(recipeDisplay.getEnergy())));
         widgets.add(energyLabel);
-        widgets.add(Widgets.createTexturedWidget(ae, bounds.x + 32 + PADDING, bounds.y + 69 + PADDING, 0, 0, 10, 12, 32, 32));
+        var energyLabelX = energyLabel.getBounds().getX();
+        var energyLabelY = 72 + (energyLabel.getBounds().getHeight() - PADDING) / 2 + bounds.y + PADDING;
+        widgets.add(Widgets.createTexturedWidget(ae, energyLabelX - 16, energyLabelY - 9, 0, 0, 10, 12, 32, 32));
 
         int index = 0;
 
