@@ -444,6 +444,18 @@ public class AGRecipeProvider extends RecipeProvider {
                 .define('O', AGSingletons.ORIGINATION_PROCESSOR)
                 .unlockedBy(HAS_ITEM, has(AGSingletons.COMPONENT_256M))
                 .save(recipeOutput, AppliedGenerators.id("crafting/flux_generator_256m"));
+        // Genesis Synthesizer
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AGSingletons.GENESIS_SYNTHESIZER)
+                .pattern("IEI")
+                .pattern("OMO")
+                .pattern("ITI")
+                .define('I', Items.IRON_INGOT)
+                .define('E', AGSingletons.EMBER_CRYSTAL_CHARGED)
+                .define('O', AGSingletons.ORIGINATION_PROCESSOR)
+                .define('M', AEBlocks.NOT_SO_MYSTERIOUS_CUBE)
+                .define('T', AEBlocks.SKY_STONE_TANK)
+                .unlockedBy(HAS_ITEM, has(AEBlocks.NOT_SO_MYSTERIOUS_CUBE))
+                .save(recipeOutput, AppliedGenerators.id("crafting/genesis_synthesizer"));
 
         // Smelting Recipes
         // Copper Ingot
