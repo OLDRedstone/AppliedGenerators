@@ -8,11 +8,11 @@ import appeng.menu.implementations.MenuTypeBuilder;
 import appeng.menu.implementations.UpgradeableMenu;
 import appeng.menu.interfaces.IProgressProvider;
 import appeng.menu.slot.AppEngSlot;
-import com.glodblock.github.extendedae.container.helper.DirectionSet;
 import com.glodblock.github.glodium.network.packet.sync.ActionMap;
 import com.glodblock.github.glodium.network.packet.sync.IActionHolder;
 import io.github.sapporo1101.appgen.AppliedGenerators;
 import io.github.sapporo1101.appgen.common.blockentities.SingularityGeneratorBlockEntity;
+import io.github.sapporo1101.appgen.menu.helper.DirectionSet;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
@@ -75,7 +75,6 @@ public class SingularityGeneratorMenu extends UpgradeableMenu<SingularityGenerat
 
     @Override
     public int getCurrentProgress() {
-        System.out.println("progress: " + this.generatableFE + " / " + this.getHost().getFEPerSingularity() + ": " + (int) Math.ceil((double) this.generatableFE / this.getHost().getFEPerSingularity() * this.getMaxProgress()));
         return (int) Math.ceil((double) this.generatableFE / this.getHost().getFEPerSingularity() * this.getMaxProgress());
     }
 

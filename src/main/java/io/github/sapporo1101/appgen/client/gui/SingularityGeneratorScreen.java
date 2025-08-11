@@ -4,13 +4,13 @@ import appeng.api.config.YesNo;
 import appeng.client.gui.implementations.UpgradeableScreen;
 import appeng.client.gui.style.ScreenStyle;
 import appeng.client.gui.widgets.ProgressBar;
-import com.glodblock.github.extendedae.client.button.ActionEPPButton;
-import com.glodblock.github.extendedae.client.button.EPPIcon;
-import com.glodblock.github.extendedae.client.gui.subgui.OutputSideConfig;
-import com.glodblock.github.extendedae.network.EAENetworkHandler;
-import com.glodblock.github.extendedae.network.packet.CEAEGenericPacket;
+import io.github.sapporo1101.appgen.client.button.ActionEPPButton;
+import io.github.sapporo1101.appgen.client.button.EAEIcon;
+import io.github.sapporo1101.appgen.client.gui.subgui.OutputSideConfig;
 import io.github.sapporo1101.appgen.common.AGSingletons;
 import io.github.sapporo1101.appgen.menu.SingularityGeneratorMenu;
+import io.github.sapporo1101.appgen.network.AGNetworkHandler;
+import io.github.sapporo1101.appgen.network.packet.CAGGenericPacket;
 import io.github.sapporo1101.appgen.util.CommaSeparator;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
@@ -29,8 +29,8 @@ public class SingularityGeneratorScreen extends UpgradeableScreen<SingularityGen
         widgets.add("progressBar", pb);
         this.meExportBtn = new AAEServerSettingToggleButton<>(AAESettings.ME_EXPORT, YesNo.NO);
         this.addToLeftToolbar(meExportBtn);
-        this.outputSideBtn = new ActionEPPButton(b -> this.openOutputConfig(), EPPIcon.OUTPUT_SIDES);
-        this.outputSideBtn.setMessage(Component.translatable("gui.extendedae.set_output_sides.open"));
+        this.outputSideBtn = new ActionEPPButton(b -> this.openOutputConfig(), EAEIcon.OUTPUT_SIDES);
+        this.outputSideBtn.setMessage(Component.translatable("gui.appgen.set_output_sides.open"));
         this.addToLeftToolbar(this.outputSideBtn);
     }
 
@@ -41,7 +41,7 @@ public class SingularityGeneratorScreen extends UpgradeableScreen<SingularityGen
                     new ItemStack(AGSingletons.SINGULARITY_GENERATOR_1K),
                     this.getMenu().getHost(),
                     this.getMenu().getOutputSides(),
-                    (side, value) -> EAENetworkHandler.INSTANCE.sendToServer(new CEAEGenericPacket("set_side", side.getName(), value)))
+                    (side, value) -> AGNetworkHandler.INSTANCE.sendToServer(new CAGGenericPacket("set_side", side.getName(), value)))
             );
         }
     }

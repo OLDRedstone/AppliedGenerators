@@ -9,14 +9,14 @@ import appeng.client.gui.widgets.ProgressBar;
 import appeng.client.gui.widgets.ServerSettingToggleButton;
 import appeng.client.gui.widgets.SettingToggleButton;
 import appeng.core.localization.Tooltips;
-import com.glodblock.github.extendedae.client.button.ActionEPPButton;
-import com.glodblock.github.extendedae.client.button.EPPIcon;
-import com.glodblock.github.extendedae.client.gui.subgui.OutputSideConfig;
-import com.glodblock.github.extendedae.network.EAENetworkHandler;
-import com.glodblock.github.extendedae.network.packet.CEAEGenericPacket;
+import io.github.sapporo1101.appgen.client.button.ActionEPPButton;
+import io.github.sapporo1101.appgen.client.button.EAEIcon;
+import io.github.sapporo1101.appgen.client.gui.subgui.OutputSideConfig;
 import io.github.sapporo1101.appgen.client.gui.widget.SubProgressBar;
 import io.github.sapporo1101.appgen.common.AGSingletons;
 import io.github.sapporo1101.appgen.menu.GenesisSynthesizerMenu;
+import io.github.sapporo1101.appgen.network.AGNetworkHandler;
+import io.github.sapporo1101.appgen.network.packet.CAGGenericPacket;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Tooltip;
@@ -43,8 +43,8 @@ public class GenesisSynthesizerScreen extends UpgradeableScreen<GenesisSynthesiz
         widgets.add("crystalBar", this.crystalBar);
         this.autoExportBtn = new ServerSettingToggleButton<>(Settings.AUTO_EXPORT, YesNo.NO);
         this.addToLeftToolbar(autoExportBtn);
-        this.outputSideBtn = new ActionEPPButton(b -> this.openOutputConfig(), EPPIcon.OUTPUT_SIDES);
-        this.outputSideBtn.setMessage(Component.translatable("gui.extendedae.set_output_sides.open"));
+        this.outputSideBtn = new ActionEPPButton(b -> this.openOutputConfig(), EAEIcon.OUTPUT_SIDES);
+        this.outputSideBtn.setMessage(Component.translatable("gui.appgen.set_output_sides.open"));
         this.addToLeftToolbar(this.outputSideBtn);
         this.powerAlert = new AlertWidget(style.getImage("powerAlert"));
         this.powerAlert.setTooltip(Tooltip.create(Tooltips.of(AAEText.InsufficientPower.text().withStyle(Tooltips.RED), Component.literal("\n").append(AAEText.InsufficientPowerDetails.text()).withStyle(Tooltips.NORMAL_TOOLTIP_TEXT))));
@@ -58,7 +58,7 @@ public class GenesisSynthesizerScreen extends UpgradeableScreen<GenesisSynthesiz
                     new ItemStack(AGSingletons.GENESIS_SYNTHESIZER),
                     this.getMenu().getHost(),
                     this.getMenu().getOutputSides(),
-                    (side, value) -> EAENetworkHandler.INSTANCE.sendToServer(new CEAEGenericPacket("set_side", side.getName(), value)))
+                    (side, value) -> AGNetworkHandler.INSTANCE.sendToServer(new CAGGenericPacket("set_side", side.getName(), value)))
             );
         }
     }

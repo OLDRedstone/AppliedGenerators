@@ -4,6 +4,7 @@ import appeng.init.InitCapabilityProviders;
 import io.github.sapporo1101.appgen.client.ClientRegistryHandler;
 import io.github.sapporo1101.appgen.common.AGRegistryHandler;
 import io.github.sapporo1101.appgen.common.AGSingletons;
+import io.github.sapporo1101.appgen.network.AGNetworkHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -47,6 +48,7 @@ public class AppliedGenerators {
 
         bus.addListener(this::commonSetup);
         bus.addListener(InitCapabilityProviders::register);
+        bus.addListener(AGNetworkHandler.INSTANCE::onRegister);
 
         bus.register(AGRegistryHandler.INSTANCE);
     }
