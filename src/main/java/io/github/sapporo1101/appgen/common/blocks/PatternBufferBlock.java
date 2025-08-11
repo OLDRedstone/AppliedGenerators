@@ -53,7 +53,6 @@ public class PatternBufferBlock extends BlockBaseGui<PatternBufferBlockEntity> {
             int offsetX = i >> 2 & 1;
             int offsetY = i >> 1 & 1;
             int offsetZ = i & 1;
-            System.out.println("[" + i + "] offsetX: " + offsetX + ", offsetY: " + offsetY + ", offsetZ: " + offsetZ);
             level.addParticle(new DustParticleOptions(DustParticleOptions.REDSTONE_PARTICLE_COLOR, 0.5F), pos.getX() + offsetX, pos.getY() + offsetY, pos.getZ() + offsetZ, 0.0, 0.0, 0.0);
         }
     }

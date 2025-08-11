@@ -222,7 +222,6 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
     }
 
     private void onChangeInventory() {
-        System.out.println("GenesisSynthesizerBlockEntity onChangeInventory called, hasAutoExportWork: " + this.hasAutoExportWork() + ", hasCraftWork: " + this.hasCraftWork());
         this.hasInventoryChanged = true;
         this.chargeCrystalTank();
         getMainNode().ifPresent((grid, node) -> grid.getTickManager().wakeDevice(node));
@@ -327,17 +326,14 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
 
     @Override
     public TickingRequest getTickingRequest(IGridNode node) {
-        System.out.println("GenesisSynthesizer getTickingRequest called, hasAutoExportWork: " + this.hasAutoExportWork() + ", hasCraftWork: " + this.hasCraftWork());
         return new TickingRequest(TickRates.Inscriber, !this.hasAutoExportWork() && !this.hasCraftWork());
     }
 
     @Override
     public TickRateModulation tickingRequest(IGridNode node, int ticksSinceLastCall) {
-        System.out.println("GenesisSynthesizer tickingRequest called, hasAutoExportWork: " + this.hasAutoExportWork() + ", hasCraftWork: " + this.hasCraftWork());
         if (this.hasInventoryChanged) {
             if (this.level != null) {
                 GenesisSynthesizerRecipe recipe = this.findRecipe(this.level);
-                System.out.println("GenesisSynthesizer found recipe: " + (recipe != null ? recipe : "null"));
                 if (recipe == null) {
                     this.setProgress(0);
                     this.setWorking(false);
@@ -350,8 +346,6 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
         }
 
         if (this.hasCraftWork() && this.getGridNode() != null && this.getGridNode().isOnline()) {
-            System.out.println("GenesisSynthesizer has craft work, processing...");
-            System.out.println("GenesisSynthesizer processing time: " + this.getProgress() + ", task: " + this.getTask());
             this.setWorking(true);
             getMainNode().ifPresent(grid -> {
                 IEnergyService eg = grid.getEnergyService();
@@ -386,7 +380,6 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
 
                 if (powerReq > powerThreshold) {
                     src.extractAEPower(aeConsumption, Actionable.MODULATE, PowerMultiplier.CONFIG);
-                    System.out.println("GenesisSynthesizer extracted power: " + aeConsumption);
                     this.addProgress(speedFactor);
                     this.showWarning = false;
                 } else if (powerReq != 0) {
@@ -401,7 +394,6 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
                                 Actionable.MODULATE,
                                 PowerMultiplier.CONFIG);
                         var actualFactor = (int) Math.floor(extracted / aeConsumption * speedFactor);
-                        System.out.println("GenesisSynthesizer extracted power: " + extracted + ", actual factor: " + actualFactor);
                         this.addProgress(actualFactor);
                     }
 
@@ -410,11 +402,9 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
             });
 
             if (this.getProgress() >= MAX_PROGRESS) {
-                System.out.println("GenesisSynthesizer processing complete, resetting progress and checking output.");
                 this.setProgress(0);
                 final GenesisSynthesizerRecipe out = this.getTask();
                 if (out != null) {
-                    System.out.println("GenesisSynthesizer found output: " + out);
                     final ItemStack output = out.getResultItem();
                     final FluidStack fluidOut = out.getResultFluid();
 
@@ -425,7 +415,6 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
                             || (!out.isItemOutput()
                             && this.tankInv.add(1, AEFluidKey.of(fluidOut), fluidOut.getAmount())
                             >= fluidOut.getAmount() - 0.01)) {
-                        System.out.println("GenesisSynthesizer output accepted, updating inventories.");
                         this.setProgress(0);
 
                         GenericStack fluid = this.tankInv.getStack(0);
@@ -520,7 +509,6 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
         if (!this.hasAutoExportWork() || this.level == null) {
             return false;
         }
-        System.out.println("GenesisSynthesizerBlockEntity pushOutResult called, outputSides: " + this.outputSides);
 
         for (Direction dir : outputSides) {
             BlockPos targetPos = this.getBlockPos().relative(dir);
@@ -531,12 +519,10 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
             if (itemStorage != null) {
                 if (this.outputInv.getStackInSlot(0) != null && !this.outputInv.getStackInSlot(0).isEmpty()) {
                     ItemStack remainingStack = this.outputInv.extractItem(0, 64, false);
-                    System.out.println("GenesisSynthesizerBlockEntity extractedStack: " + remainingStack);
                     for (int i = 0; i < itemStorage.getSlots(); i++) {
                         if (remainingStack.getCount() <= 0) break;
                         remainingStack = itemStorage.insertItem(i, remainingStack, false);
                     }
-                    System.out.println("GenesisSynthesizerBlockEntity extractedStack after insert: " + remainingStack);
                     this.outputInv.insertItem(0, remainingStack, false);
                     movedStacks |= !remainingStack.isEmpty();
                 }
@@ -576,7 +562,6 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
     }
 
     private GenesisSynthesizerRecipe findRecipe(Level level) {
-        System.out.println("Finding recipe in GenesisSynthesizerBlockEntity");
         List<ItemStack> inputs = new ArrayList<>();
         for (var x = 0; x < this.inputInv.size(); x++) {
             inputs.add(this.inputInv.getStackInSlot(x));
@@ -606,13 +591,10 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
             if (crystalInvStack != null && crystalInvStack.is(AGSingletons.EMBER_CRYSTAL_CHARGED)) {
                 if (this.getCrystalCount() < MAX_CRYSTAL_TANK) {
                     ItemStack extracted = this.crystalInv.extractItem(0, MAX_CRYSTAL_TANK - this.getCrystalCount(), false);
-                    System.out.println("GenesisSynthesizerBlockEntity extracted crystal: " + extracted);
                     GenericStack crystalTankStack = this.crystalTank.getStack(0);
                     ItemStack crystalTankItemStack = crystalTankStack != null ? ((AEItemKey) crystalTankStack.what()).toStack((int) crystalTankStack.amount()) : ItemStack.EMPTY;
-                    System.out.println("GenesisSynthesizerBlockEntity crystalTankStack: " + crystalTankItemStack);
                     extracted.setCount(extracted.getCount() + crystalTankItemStack.getCount());
                     this.crystalTank.setStack(0, GenericStack.fromItemStack(extracted));
-                    System.out.println("GenesisSynthesizerBlockEntity charged crystal tank, set count: " + extracted.getCount() + " new count: " + this.crystalTank.getAmount(0) + " / " + this.crystalTank.getCapacity(AEKeyType.items()));
                 }
             }
         }

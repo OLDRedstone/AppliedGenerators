@@ -37,7 +37,6 @@ public class FluxGeneratorBlock<T extends FluxGeneratorBlockEntity> extends Bloc
     @ParametersAreNonnullByDefault
     @Override
     public void neighborChanged(BlockState state, Level level, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
-        System.out.println("Neighbor changed for FluxGeneratorBlock at " + pos);
         final FluxGeneratorBlockEntity be = this.getBlockEntity(level, pos);
         if (be != null) be.updateRedstoneState();
     }
