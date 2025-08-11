@@ -18,6 +18,10 @@ repositories {
         name = "TerraformersMC"
         url = "https://maven.terraformersmc.com/"
     }
+    maven {
+        name = "Jared's maven"
+        url = "https://maven.blamejared.com/"
+    }
     mavenCentral()
 }
 
@@ -137,6 +141,7 @@ dependencies {
     implementation "maven.modrinth:jade:15.10.0+neoforge"
     compileOnly "dev.emi:emi-neoforge:1.1.22+1.21.1:api"
     compileOnly "me.shedaniel:RoughlyEnoughItems-neoforge:16.0.729"
+    compileOnly "mezz.jei:jei-1.21.1-neoforge-api:19.22.1.316"
 
     switch (use_Xei) {
         case "emi":
@@ -148,7 +153,7 @@ dependencies {
             runtimeOnly "curse.maven:cloth-config-348521:5424576"
             break
         case "jei":
-            runtimeOnly "curse.maven:jei-238222:5846880"
+            runtimeOnly "mezz.jei:jei-1.21.1-neoforge:19.22.1.316"
             runtimeOnly "dev.architectury:architectury-neoforge:13.0.6"
     }
 }
