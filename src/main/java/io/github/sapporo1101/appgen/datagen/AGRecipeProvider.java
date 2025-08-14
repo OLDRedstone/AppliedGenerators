@@ -517,6 +517,12 @@ public class AGRecipeProvider extends RecipeProvider {
 
 
         // Inscriber Recipes
+        // Inscriber Origination Press
+        InscriberRecipeBuilder.inscribe(AEItems.FORMATION_CORE, AGSingletons.ORIGINATION_PRESS, 1)
+                .setTop(Ingredient.of(AEItems.CALCULATION_PROCESSOR_PRESS))
+                .setBottom(Ingredient.of(AEItems.ENGINEERING_PROCESSOR_PRESS))
+                .setMode(InscriberProcessType.PRESS)
+                .save(recipeOutput, AppliedGenerators.id("inscriber/origination_press"));
         // Ember Dust
         InscriberRecipeBuilder.inscribe(AGSingletons.EMBER_CRYSTAL, AGSingletons.EMBER_DUST, 1)
                 .setMode(InscriberProcessType.INSCRIBE)
@@ -613,14 +619,6 @@ public class AGRecipeProvider extends RecipeProvider {
                 .save(recipeOutput, AppliedGenerators.id("reaction/charged_ember_crystal"));
 
         // Genesis Synthesizer Recipes
-        // Inscriber Origination Press
-        GenesisSynthesizerRecipeBuilder.synthesize(AGSingletons.ORIGINATION_PRESS, 1, 1000000)
-                .input(AGSingletons.EMBER_CRYSTAL_CHARGED, 4)
-                .input(AEItems.CALCULATION_PROCESSOR_PRESS)
-                .input(Items.MAGMA_CREAM, 4)
-                .input(AGSingletons.EMBER_CRYSTAL, 4)
-                .fluid(Fluids.LAVA, 4000)
-                .save(recipeOutput, AppliedGenerators.id("synthesizer/origination_press"));
         // Damaged Budding Ember
         GenesisSynthesizerRecipeBuilder.synthesize(AGSingletons.BUDDING_EMBER_DAMAGED, 1, 100000)
                 .input(AGSingletons.EMBER_CRYSTAL_CHARGED, 2)
