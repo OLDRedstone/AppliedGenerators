@@ -48,16 +48,16 @@ at the following rates.
 
 | Singularity Generator                               | FE Generation Per Singularity (Default) | FE Generation Per Tick (Default) |
 |-----------------------------------------------------|----------------------------------------:|---------------------------------:|
-| <ItemLink id="appgen:singularity_generator_1k" />   |                               1,000,000 |                            2,000 |
-| <ItemLink id="appgen:singularity_generator_4k" />   |                               2,000,000 |                            4,000 |
-| <ItemLink id="appgen:singularity_generator_16k" />  |                               4,000,000 |                            8,000 |
-| <ItemLink id="appgen:singularity_generator_64k" />  |                               8,000,000 |                           16,000 |
-| <ItemLink id="appgen:singularity_generator_256k" /> |                              16,000,000 |                           32,000 |
-| <ItemLink id="appgen:singularity_generator_1m" />   |                              32,000,000 |                           64,000 |
-| <ItemLink id="appgen:singularity_generator_4m" />   |                              64,000,000 |                          128,000 |
-| <ItemLink id="appgen:singularity_generator_16m" />  |                             128,000,000 |                          256,000 |
-| <ItemLink id="appgen:singularity_generator_64m" />  |                             256,000,000 |                          512,000 |
-| <ItemLink id="appgen:singularity_generator_256m" /> |                             512,000,000 |                        1,024,000 |
+| <ItemLink id="appgen:singularity_generator_1k" />   |                               1,000,000 |                              200 |
+| <ItemLink id="appgen:singularity_generator_4k" />   |                               4,000,000 |                              800 |
+| <ItemLink id="appgen:singularity_generator_16k" />  |                              16,000,000 |                            3,200 |
+| <ItemLink id="appgen:singularity_generator_64k" />  |                              64,000,000 |                           12,800 |
+| <ItemLink id="appgen:singularity_generator_256k" /> |                             256,000,000 |                           51,200 |
+| <ItemLink id="appgen:singularity_generator_1m" />   |                           1,024,000,000 |                          204,800 |
+| <ItemLink id="appgen:singularity_generator_4m" />   |                           4,096,000,000 |                          819,200 |
+| <ItemLink id="appgen:singularity_generator_16m" />  |                          16,384,000,000 |                        3,276,800 |
+| <ItemLink id="appgen:singularity_generator_64m" />  |                          65,536,000,000 |                       13,107,200 |
+| <ItemLink id="appgen:singularity_generator_256m" /> |                         262,144,000,000 |                       52,428,800 |
 
 ## Settings
 

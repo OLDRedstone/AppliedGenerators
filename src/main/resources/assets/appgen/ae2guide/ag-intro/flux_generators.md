@@ -47,16 +47,16 @@ The Flux Generators generate FE at the following rates.
 
 | Flux Generator                               | FE Generation Per Tick (Default) |
 |----------------------------------------------|---------------------------------:|
-| <ItemLink id="appgen:flux_generator_1k" />   |                               50 |
-| <ItemLink id="appgen:flux_generator_4k" />   |                              100 |
-| <ItemLink id="appgen:flux_generator_16k" />  |                              200 |
-| <ItemLink id="appgen:flux_generator_64k" />  |                              400 |
-| <ItemLink id="appgen:flux_generator_256k" /> |                              800 |
-| <ItemLink id="appgen:flux_generator_1m" />   |                            1,600 |
-| <ItemLink id="appgen:flux_generator_4m" />   |                            3,200 |
-| <ItemLink id="appgen:flux_generator_16m" />  |                            6,400 |
-| <ItemLink id="appgen:flux_generator_64m" />  |                           12,800 |
-| <ItemLink id="appgen:flux_generator_256m" /> |                           25,600 |
+| <ItemLink id="appgen:flux_generator_1k" />   |                               20 |
+| <ItemLink id="appgen:flux_generator_4k" />   |                               80 |
+| <ItemLink id="appgen:flux_generator_16k" />  |                              320 |
+| <ItemLink id="appgen:flux_generator_64k" />  |                            1,280 |
+| <ItemLink id="appgen:flux_generator_256k" /> |                            5,120 |
+| <ItemLink id="appgen:flux_generator_1m" />   |                           20,480 |
+| <ItemLink id="appgen:flux_generator_4m" />   |                           81,920 |
+| <ItemLink id="appgen:flux_generator_16m" />  |                          327,680 |
+| <ItemLink id="appgen:flux_generator_64m" />  |                        1,310,720 |
+| <ItemLink id="appgen:flux_generator_256m" /> |                        5,242,880 |
 
 ## Settings
 

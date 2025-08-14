@@ -227,15 +227,16 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
     public TickRateModulation tickingRequest(IGridNode node, int ticksSinceLastCall) {
         if (this.getGeneratableFE() <= 0) {
             this.charge();
+            this.lastGeneratePerTick = 0;
             if (this.getGeneratableFE() > 0) {
                 return TickRateModulation.URGENT;
             } else {
                 return TickRateModulation.SLEEP;
             }
         } else {
-            int newFE = Math.toIntExact(Math.min((long) ticksSinceLastCall * this.getGeneratePerTick(), this.getGeneratableFE()));
-            final int sent = this.configManager.getSetting(AAESettings.ME_EXPORT) == YesNo.YES ? this.sendFEToNetwork(newFE) : this.sendFEToAdjacentBlock(newFE);
-            this.lastGeneratePerTick = (double) sent / ticksSinceLastCall;
+            long newFE = Math.min((long) ticksSinceLastCall * this.getGeneratePerTick(), this.getGeneratableFE());
+            long sent = this.configManager.getSetting(AAESettings.ME_EXPORT) == YesNo.YES ? this.sendFEToNetwork(newFE) : this.sendFEToAdjacentBlock(newFE);
+            this.lastGeneratePerTick = sent / (double) ticksSinceLastCall;
             return sent > 0 ? TickRateModulation.FASTER : TickRateModulation.SLOWER;
         }
     }
@@ -299,32 +300,36 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
         return (long) (getBaseFEPerSingularity() * upgradeMultiplier);
     }
 
-    public int sendFEToNetwork(int amount) {
+    public long sendFEToNetwork(long amount) {
         if (this.getGridNode() == null) return 0;
 
         IGrid grid = this.getGridNode().getGrid();
         IStorageService storage = grid.getStorageService();
 
-        int inserted = Math.toIntExact(storage.getInventory().insert(FE_KEY, amount, Actionable.MODULATE, this.source));
+        long inserted = storage.getInventory().insert(FE_KEY, amount, Actionable.MODULATE, this.source);
         this.setGeneratableFE(Math.max(0, this.getGeneratableFE() - inserted));
 
         return inserted;
     }
 
-    private int sendFEToAdjacentBlock(int amount) {
+    private long sendFEToAdjacentBlock(long amount) {
         if (this.level == null) return 0;
 
-        int remaining = amount;
+        long remaining = amount;
+        forDir:
         for (Direction dir : this.outputSides) {
             if (remaining <= 0) break;
             BlockPos targetPos = this.getBlockPos().relative(dir);
             IEnergyStorage storage = this.level.getCapability(Capabilities.EnergyStorage.BLOCK, targetPos, dir.getOpposite());
             if (storage != null && storage.canReceive()) {
-                int canInsert = storage.receiveEnergy(remaining, true);
-                if (canInsert <= 0) continue;
-                int inserted = storage.receiveEnergy(remaining, false);
-                this.setGeneratableFE(Math.max(0, this.getGeneratableFE() - inserted));
-                remaining -= inserted;
+                for (int i = 0; i < remaining / Integer.MAX_VALUE + 1; i++) {
+                    int batch = (int) Math.min(remaining, Integer.MAX_VALUE);
+                    int canInsert = storage.receiveEnergy(batch, true);
+                    if (canInsert <= 0) continue forDir;
+                    int inserted = storage.receiveEnergy(batch, false);
+                    this.setGeneratableFE(Math.max(0, this.getGeneratableFE() - inserted));
+                    remaining -= inserted;
+                }
             }
         }
         return amount - remaining;
@@ -364,7 +369,7 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
 
         @Override
         int getBaseGeneratePerTick() {
-            return 2_000;
+            return 200;
         }
 
         @Override
@@ -381,12 +386,12 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
 
         @Override
         int getBaseGeneratePerTick() {
-            return 4_000;
+            return 800;
         }
 
         @Override
         long getBaseFEPerSingularity() {
-            return 2_000_000;
+            return 4_000_000;
         }
     }
 
@@ -398,12 +403,12 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
 
         @Override
         int getBaseGeneratePerTick() {
-            return 8_000;
+            return 3_200;
         }
 
         @Override
         long getBaseFEPerSingularity() {
-            return 4_000_000;
+            return 16_000_000;
         }
     }
 
@@ -415,12 +420,12 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
 
         @Override
         int getBaseGeneratePerTick() {
-            return 16_000;
+            return 12_800;
         }
 
         @Override
         long getBaseFEPerSingularity() {
-            return 8_000_000;
+            return 64_000_000;
         }
     }
 
@@ -432,12 +437,12 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
 
         @Override
         int getBaseGeneratePerTick() {
-            return 32_000;
+            return 51_200;
         }
 
         @Override
         long getBaseFEPerSingularity() {
-            return 16_000_000;
+            return 256_000_000;
         }
     }
 
@@ -449,12 +454,12 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
 
         @Override
         int getBaseGeneratePerTick() {
-            return 64_000;
+            return 204_800;
         }
 
         @Override
         long getBaseFEPerSingularity() {
-            return 32_000_000;
+            return 1_024_000_000;
         }
     }
 
@@ -466,12 +471,12 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
 
         @Override
         int getBaseGeneratePerTick() {
-            return 128_000;
+            return 819_200;
         }
 
         @Override
         long getBaseFEPerSingularity() {
-            return 64_000_000;
+            return 4_096_000_000L;
         }
     }
 
@@ -483,12 +488,12 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
 
         @Override
         int getBaseGeneratePerTick() {
-            return 256_000;
+            return 3_276_800;
         }
 
         @Override
         long getBaseFEPerSingularity() {
-            return 128_000_000;
+            return 16_384_000_000L;
         }
     }
 
@@ -500,12 +505,12 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
 
         @Override
         int getBaseGeneratePerTick() {
-            return 512_000;
+            return 13_107_200;
         }
 
         @Override
         long getBaseFEPerSingularity() {
-            return 256_000_000;
+            return 65_536_000_000L;
         }
     }
 
@@ -517,12 +522,12 @@ public abstract class SingularityGeneratorBlockEntity extends AENetworkedInvBloc
 
         @Override
         int getBaseGeneratePerTick() {
-            return 1_024_000;
+            return 52_428_800;
         }
 
         @Override
         long getBaseFEPerSingularity() {
-            return 512_000_000;
+            return 262_144_000_000L;
         }
     }
 }

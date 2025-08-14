@@ -308,7 +308,7 @@ public abstract class FluxGeneratorBlockEntity extends AENetworkedBlockEntity im
 
         @Override
         int getBaseGeneratePerTick() {
-            return 50;
+            return 20;
         }
     }
 
@@ -320,7 +320,7 @@ public abstract class FluxGeneratorBlockEntity extends AENetworkedBlockEntity im
 
         @Override
         int getBaseGeneratePerTick() {
-            return 100;
+            return 80;
         }
     }
 
@@ -332,7 +332,7 @@ public abstract class FluxGeneratorBlockEntity extends AENetworkedBlockEntity im
 
         @Override
         int getBaseGeneratePerTick() {
-            return 200;
+            return 320;
         }
     }
 
@@ -344,7 +344,7 @@ public abstract class FluxGeneratorBlockEntity extends AENetworkedBlockEntity im
 
         @Override
         int getBaseGeneratePerTick() {
-            return 400;
+            return 1_280;
         }
     }
 
@@ -356,7 +356,7 @@ public abstract class FluxGeneratorBlockEntity extends AENetworkedBlockEntity im
 
         @Override
         int getBaseGeneratePerTick() {
-            return 800;
+            return 5_120;
         }
     }
 
@@ -368,7 +368,7 @@ public abstract class FluxGeneratorBlockEntity extends AENetworkedBlockEntity im
 
         @Override
         int getBaseGeneratePerTick() {
-            return 1600;
+            return 20_480;
         }
     }
 
@@ -380,7 +380,7 @@ public abstract class FluxGeneratorBlockEntity extends AENetworkedBlockEntity im
 
         @Override
         int getBaseGeneratePerTick() {
-            return 3200;
+            return 81_920;
         }
     }
 
@@ -392,7 +392,7 @@ public abstract class FluxGeneratorBlockEntity extends AENetworkedBlockEntity im
 
         @Override
         int getBaseGeneratePerTick() {
-            return 6400;
+            return 327_680;
         }
     }
 
@@ -404,7 +404,7 @@ public abstract class FluxGeneratorBlockEntity extends AENetworkedBlockEntity im
 
         @Override
         int getBaseGeneratePerTick() {
-            return 12800;
+            return 1_310_720;
         }
     }
 
@@ -416,7 +416,7 @@ public abstract class FluxGeneratorBlockEntity extends AENetworkedBlockEntity im
 
         @Override
         int getBaseGeneratePerTick() {
-            return 25600;
+            return 5_242_880;
         }
     }
 }
