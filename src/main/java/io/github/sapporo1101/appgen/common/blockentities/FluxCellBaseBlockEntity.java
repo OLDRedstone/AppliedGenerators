@@ -17,7 +17,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -75,17 +74,6 @@ public abstract class FluxCellBaseBlockEntity extends AEBaseBlockEntity implemen
             }
             nbt.put("output_side", sides);
             output.set(EAESingletons.EXTRA_SETTING, nbt);
-        }
-    }
-
-    @Override
-    public void addAdditionalDrops(Level level, BlockPos pos, List<ItemStack> drops) {
-        super.addAdditionalDrops(level, pos, drops);
-        for (int index = 0; index < this.feInv.size(); index++) {
-            var stack = this.feInv.getStack(index);
-            if (stack != null) {
-                stack.what().addDrops(stack.amount(), drops, level, pos);
-            }
         }
     }
 
