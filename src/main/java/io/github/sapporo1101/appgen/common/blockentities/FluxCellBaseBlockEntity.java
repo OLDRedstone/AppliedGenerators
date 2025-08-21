@@ -117,6 +117,14 @@ public abstract class FluxCellBaseBlockEntity extends AEBaseBlockEntity implemen
         return this.feInv;
     }
 
+    public long getStoredFE() {
+        long total = 0;
+        for (int i = 0; i < this.feInv.size(); i++) {
+            total += this.feInv.getAmount(i);
+        }
+        return total;
+    }
+
     @Override
     public void tick(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, @NotNull FluxCellBaseBlockEntity be) {
         if (!this.feInv.isEmpty() && !this.outputSides.isEmpty()) this.sendFEToAdjacentBlock();

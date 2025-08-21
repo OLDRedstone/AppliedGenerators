@@ -8,6 +8,7 @@ import com.glodblock.github.appflux.common.me.key.FluxKey;
 import com.glodblock.github.appflux.common.me.key.type.EnergyType;
 import com.glodblock.github.glodium.util.GlodUtil;
 import io.github.sapporo1101.appgen.common.AGSingletons;
+import io.github.sapporo1101.appgen.common.blocks.CreativeFluxCellBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
@@ -25,7 +26,7 @@ public class CreativeFluxCellBlockEntity extends FluxCellBaseBlockEntity {
 
     @Override
     protected long getFluxCapacity() {
-        return Integer.MAX_VALUE;
+        return CreativeFluxCellBlock.MAX_CAPACITY;
     }
 
     private static class CreativeFEInv extends GenericStackInv {

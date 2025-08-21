@@ -4,6 +4,7 @@ import appeng.items.materials.MaterialItem;
 import com.glodblock.github.extendedae.common.items.CommonItem;
 import io.github.sapporo1101.appgen.common.blockentities.*;
 import io.github.sapporo1101.appgen.common.blocks.*;
+import io.github.sapporo1101.appgen.common.blocks.networking.FluxCellBlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
@@ -121,9 +122,9 @@ public class AGSingletons {
         COMPONENT_64M = new CommonItem();
         COMPONENT_256M = new CommonItem();
 
-        regHandler.block("flux_cell", FLUX_CELL, FluxCellBlockEntity.Standard.class, FluxCellBlockEntity.Standard::new);
-        regHandler.block("dense_flux_cell", DENSE_FLUX_CELL, FluxCellBlockEntity.Dense.class, FluxCellBlockEntity.Dense::new);
-        regHandler.block("creative_flux_cell", CREATIVE_FLUX_CELL, CreativeFluxCellBlockEntity.class, CreativeFluxCellBlockEntity::new);
+        regHandler.block("flux_cell", FLUX_CELL, FluxCellBlockEntity.Standard.class, FluxCellBlockEntity.Standard::new, b -> new FluxCellBlockItem(b, new Item.Properties()));
+        regHandler.block("dense_flux_cell", DENSE_FLUX_CELL, FluxCellBlockEntity.Dense.class, FluxCellBlockEntity.Dense::new, b -> new FluxCellBlockItem(b, new Item.Properties()));
+        regHandler.block("creative_flux_cell", CREATIVE_FLUX_CELL, CreativeFluxCellBlockEntity.class, CreativeFluxCellBlockEntity::new, b -> new FluxCellBlockItem(b, new Item.Properties()));
         regHandler.block("pattern_buffer", PATTERN_BUFFER, PatternBufferBlockEntity.class, PatternBufferBlockEntity::new);
         regHandler.block("genesis_synthesizer", GENESIS_SYNTHESIZER, GenesisSynthesizerBlockEntity.class, GenesisSynthesizerBlockEntity::new);
         regHandler.block("singularity_generator_1k", SINGULARITY_GENERATOR_1K, SingularityGeneratorBlockEntity.SG1k.class, SingularityGeneratorBlockEntity.SG1k::new);

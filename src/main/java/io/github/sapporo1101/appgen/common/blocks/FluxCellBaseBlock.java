@@ -3,6 +3,7 @@ package io.github.sapporo1101.appgen.common.blocks;
 import appeng.menu.MenuOpener;
 import appeng.menu.locator.MenuLocators;
 import appeng.util.InteractionUtil;
+import io.github.sapporo1101.appgen.api.AGComponents;
 import io.github.sapporo1101.appgen.common.blockentities.FluxCellBaseBlockEntity;
 import io.github.sapporo1101.appgen.menu.FluxCellMenu;
 import net.minecraft.core.BlockPos;
@@ -69,6 +70,8 @@ public abstract class FluxCellBaseBlock<U extends FluxCellBaseBlockEntity> exten
                 CompoundTag blockEntityTag = fluxBe.saveWithId(fluxBe.getLevel().registryAccess());
                 blockEntityTag.remove("output_side");
                 drop.set(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(blockEntityTag));
+
+                drop.set(AGComponents.STORED_ENERGY, (double) fluxBe.getStoredFE());
             }
             return Collections.singletonList(drop);
         }

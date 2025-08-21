@@ -2,6 +2,7 @@ package io.github.sapporo1101.appgen.common.blockentities;
 
 import com.glodblock.github.glodium.util.GlodUtil;
 import io.github.sapporo1101.appgen.common.AGSingletons;
+import io.github.sapporo1101.appgen.common.blocks.FluxCellBlock;
 import io.github.sapporo1101.appgen.xmod.ExternalTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -53,7 +54,7 @@ public abstract class FluxCellBlockEntity extends FluxCellBaseBlockEntity {
 
         @Override
         protected long getFluxCapacity() {
-            return 1048576;
+            return FluxCellBlock.Standard.MAX_CAPACITY;
         }
     }
 
@@ -64,7 +65,7 @@ public abstract class FluxCellBlockEntity extends FluxCellBaseBlockEntity {
 
         @Override
         protected long getFluxCapacity() {
-            return 16777216;
+            return FluxCellBlock.Dense.MAX_CAPACITY;
         }
     }
 }

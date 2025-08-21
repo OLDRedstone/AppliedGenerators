@@ -22,8 +22,10 @@ public class FluxCellBlock<U extends FluxCellBlockEntity> extends FluxCellBaseBl
     }
 
     public static class Standard extends FluxCellBlock<FluxCellBlockEntity.Standard> {
+        public static final long MAX_CAPACITY = 1048576;
     }
 
     public static class Dense extends FluxCellBlock<FluxCellBlockEntity.Dense> {
+        public static final long MAX_CAPACITY = 16777216;
     }
 }

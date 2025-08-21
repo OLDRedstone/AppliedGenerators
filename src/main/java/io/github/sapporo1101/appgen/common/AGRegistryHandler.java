@@ -39,6 +39,7 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Collection;
+import java.util.function.Function;
 
 public class AGRegistryHandler extends RegistryHandler {
 
@@ -57,10 +58,14 @@ public class AGRegistryHandler extends RegistryHandler {
         this.cap(PatternBufferBlockEntity.class, AECapabilities.GENERIC_INTERNAL_INV, (object, context) -> object.getStorageInv());
     }
 
-    public <T extends AEBaseBlockEntity> void block(String name, AEBaseEntityBlock<T> block, Class<T> clazz, BlockEntityType.BlockEntitySupplier<? extends T> supplier) {
+    public <T extends AEBaseBlockEntity> void block(String name, AEBaseEntityBlock<T> block, Class<T> clazz, BlockEntityType.BlockEntitySupplier<? extends T> supplier, Function<Block, Item> function) {
         bindTileEntity(clazz, block, supplier);
-        block(name, block, b -> new AEBaseBlockItem(b, new Item.Properties()));
+        block(name, block, function);
         tile(name, block.getBlockEntityType());
+    }
+
+    public <T extends AEBaseBlockEntity> void block(String name, AEBaseEntityBlock<T> block, Class<T> clazz, BlockEntityType.BlockEntitySupplier<? extends T> supplier) {
+        this.block(name, block, clazz, supplier, b -> new AEBaseBlockItem(b, new Item.Properties()));
     }
 
     public Collection<Block> getBlocks() {

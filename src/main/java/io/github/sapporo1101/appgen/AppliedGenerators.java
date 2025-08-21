@@ -1,6 +1,7 @@
 package io.github.sapporo1101.appgen;
 
 import appeng.init.InitCapabilityProviders;
+import io.github.sapporo1101.appgen.api.AGComponents;
 import io.github.sapporo1101.appgen.client.ClientRegistryHandler;
 import io.github.sapporo1101.appgen.common.AGRegistryHandler;
 import io.github.sapporo1101.appgen.common.AGSingletons;
@@ -51,6 +52,7 @@ public class AppliedGenerators {
         bus.addListener(AGNetworkHandler.INSTANCE::onRegister);
 
         bus.register(AGRegistryHandler.INSTANCE);
+        AGComponents.DR.register(bus);
     }
 
     public void commonSetup(FMLCommonSetupEvent event) {
