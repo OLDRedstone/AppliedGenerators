@@ -7,7 +7,7 @@ import appeng.helpers.externalstorage.GenericStackInv;
 import appeng.util.SettingsFrom;
 import com.glodblock.github.appflux.common.me.key.FluxKey;
 import com.glodblock.github.appflux.common.me.key.type.EnergyType;
-import com.glodblock.github.extendedae.common.EAESingletons;
+import io.github.sapporo1101.appgen.common.AGSingletons;
 import io.github.sapporo1101.appgen.xmod.ExternalTypes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -54,7 +54,7 @@ public abstract class FluxCellBaseBlockEntity extends AEBaseBlockEntity implemen
     @Override
     public void importSettings(SettingsFrom mode, DataComponentMap input, @Nullable Player player) {
         super.importSettings(mode, input, player);
-        var nbt = input.get(EAESingletons.EXTRA_SETTING);
+        var nbt = input.get(AGSingletons.EXTRA_SETTING);
         if (nbt != null) {
             this.outputSides.clear();
             for (var side : nbt.getList("output_side", CompoundTag.TAG_STRING)) {
@@ -73,7 +73,7 @@ public abstract class FluxCellBaseBlockEntity extends AEBaseBlockEntity implemen
                 sides.add(StringTag.valueOf(side.getName()));
             }
             nbt.put("output_side", sides);
-            output.set(EAESingletons.EXTRA_SETTING, nbt);
+            output.set(AGSingletons.EXTRA_SETTING, nbt);
         }
     }
 

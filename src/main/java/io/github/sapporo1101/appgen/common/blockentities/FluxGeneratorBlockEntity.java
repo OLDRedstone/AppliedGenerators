@@ -29,7 +29,6 @@ import appeng.util.Platform;
 import appeng.util.SettingsFrom;
 import com.glodblock.github.appflux.common.me.key.FluxKey;
 import com.glodblock.github.appflux.common.me.key.type.EnergyType;
-import com.glodblock.github.extendedae.common.EAESingletons;
 import com.glodblock.github.glodium.util.GlodUtil;
 import io.github.sapporo1101.appgen.api.AAESettings;
 import io.github.sapporo1101.appgen.common.AGSingletons;
@@ -86,7 +85,7 @@ public abstract class FluxGeneratorBlockEntity extends AENetworkedBlockEntity im
     @Override
     public void importSettings(SettingsFrom mode, DataComponentMap input, @Nullable Player player) {
         super.importSettings(mode, input, player);
-        var nbt = input.get(EAESingletons.EXTRA_SETTING);
+        var nbt = input.get(AGSingletons.EXTRA_SETTING);
         if (nbt != null) {
             this.outputSides.clear();
             for (var side : nbt.getList("output_side", CompoundTag.TAG_STRING)) {
@@ -105,7 +104,7 @@ public abstract class FluxGeneratorBlockEntity extends AENetworkedBlockEntity im
                 sides.add(StringTag.valueOf(side.getName()));
             }
             nbt.put("output_side", sides);
-            output.set(EAESingletons.EXTRA_SETTING, nbt);
+            output.set(AGSingletons.EXTRA_SETTING, nbt);
         }
     }
 

@@ -1,10 +1,14 @@
 package io.github.sapporo1101.appgen.common;
 
 import appeng.items.materials.MaterialItem;
-import com.glodblock.github.extendedae.common.items.CommonItem;
+import com.glodblock.github.glodium.util.GlodCodecs;
+import com.glodblock.github.glodium.util.GlodUtil;
 import io.github.sapporo1101.appgen.common.blockentities.*;
 import io.github.sapporo1101.appgen.common.blocks.*;
 import io.github.sapporo1101.appgen.common.blocks.networking.FluxCellBlockItem;
+import io.github.sapporo1101.appgen.common.items.CommonItem;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
@@ -66,6 +70,8 @@ public class AGSingletons {
     public static CommonItem COMPONENT_64M;
     public static CommonItem COMPONENT_256M;
 
+    public static DataComponentType<CompoundTag> EXTRA_SETTING;
+
     public static void init(AGRegistryHandler regHandler) {
         FLUX_CELL = new FluxCellBlock.Standard();
         DENSE_FLUX_CELL = new FluxCellBlock.Dense();
@@ -122,6 +128,8 @@ public class AGSingletons {
         COMPONENT_64M = new CommonItem();
         COMPONENT_256M = new CommonItem();
 
+        EXTRA_SETTING = GlodUtil.getComponentType(CompoundTag.CODEC, GlodCodecs.NBT_STREAM_CODEC);
+
         regHandler.block("flux_cell", FLUX_CELL, FluxCellBlockEntity.Standard.class, FluxCellBlockEntity.Standard::new, b -> new FluxCellBlockItem(b, new Item.Properties()));
         regHandler.block("dense_flux_cell", DENSE_FLUX_CELL, FluxCellBlockEntity.Dense.class, FluxCellBlockEntity.Dense::new, b -> new FluxCellBlockItem(b, new Item.Properties()));
         regHandler.block("creative_flux_cell", CREATIVE_FLUX_CELL, CreativeFluxCellBlockEntity.class, CreativeFluxCellBlockEntity::new, b -> new FluxCellBlockItem(b, new Item.Properties()));
@@ -176,5 +184,7 @@ public class AGSingletons {
         regHandler.item("generating_component_16m", COMPONENT_16M);
         regHandler.item("generating_component_64m", COMPONENT_64M);
         regHandler.item("generating_component_256m", COMPONENT_256M);
+
+        regHandler.comp("extra_setting", EXTRA_SETTING);
     }
 }

@@ -29,9 +29,6 @@ import appeng.util.inv.CombinedInternalInventory;
 import appeng.util.inv.FilteredInternalInventory;
 import appeng.util.inv.filter.AEItemFilters;
 import appeng.util.inv.filter.IAEItemFilter;
-import com.glodblock.github.extendedae.api.IRecipeMachine;
-import com.glodblock.github.extendedae.common.EAESingletons;
-import com.glodblock.github.glodium.recipe.RecipeSearchContext;
 import com.glodblock.github.glodium.util.GlodUtil;
 import io.github.sapporo1101.appgen.common.AGSingletons;
 import io.github.sapporo1101.appgen.common.blocks.GenesisSynthesizerBlock;
@@ -50,7 +47,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.Capabilities;
@@ -61,7 +57,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity implements IGridTickable, IUpgradeableObject, IConfigurableObject, IRecipeMachine<RecipeInput, GenesisSynthesizerRecipe> {
+public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity implements IGridTickable, IUpgradeableObject, IConfigurableObject {
 
     public static final long POWER_MAXIMUM_AMOUNT = 10_000_000;
     public static final int MAX_PROGRESS = 200;
@@ -127,7 +123,7 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
     @Override
     public void importSettings(SettingsFrom mode, DataComponentMap input, @Nullable Player player) {
         super.importSettings(mode, input, player);
-        var nbt = input.get(EAESingletons.EXTRA_SETTING);
+        var nbt = input.get(AGSingletons.EXTRA_SETTING);
         if (nbt != null) {
             this.outputSides.clear();
             for (var side : nbt.getList("output_side", CompoundTag.TAG_STRING)) {
@@ -146,7 +142,7 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
                 sides.add(StringTag.valueOf(side.getName()));
             }
             nbt.put("output_side", sides);
-            output.set(EAESingletons.EXTRA_SETTING, nbt);
+            output.set(AGSingletons.EXTRA_SETTING, nbt);
         }
     }
 
@@ -268,31 +264,22 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
         return this.outputSides;
     }
 
-    @Override
     public int getProgress() {
         return this.progress;
     }
 
-    @Override
     public void addProgress(int delta) {
         this.progress += delta;
     }
 
-    @Override
     public void setProgress(int progress) {
         this.progress = progress;
-    }
-
-    @Override
-    public RecipeSearchContext<RecipeInput, GenesisSynthesizerRecipe> getContext() {
-        return null;
     }
 
     public boolean isWorking() {
         return this.isWorking;
     }
 
-    @Override
     public void setWorking(boolean work) {
         if (work != this.isWorking) {
             this.updateBlockState(work);
@@ -302,7 +289,6 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
         this.isWorking = work;
     }
 
-    @Override
     public InternalInventory getOutput() {
         return this.outputInv;
     }

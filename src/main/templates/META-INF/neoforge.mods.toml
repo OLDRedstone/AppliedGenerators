@@ -80,13 +80,6 @@ ordering = "AFTER"
 side = "BOTH"
 
 [[dependencies."${mod_id}"]]
-modId = "extendedae"
-type = "required"
-versionRange = "${extendedae_version_range}"
-ordering = "AFTER"
-side = "BOTH"
-
-[[dependencies."${mod_id}"]]
 modId = "appflux"
 type = "required"
 versionRange = "${appflux_version_range}"

@@ -12,7 +12,6 @@ import appeng.recipes.handlers.InscriberRecipeBuilder;
 import appeng.recipes.transform.TransformCircumstance;
 import appeng.recipes.transform.TransformRecipeBuilder;
 import com.glodblock.github.appflux.common.AFSingletons;
-import com.glodblock.github.extendedae.ExtendedAE;
 import com.glodblock.github.extendedae.recipe.CircuitCutterRecipeBuilder;
 import com.glodblock.github.extendedae.recipe.CrystalAssemblerRecipeBuilder;
 import com.glodblock.github.extendedae.recipe.CrystalFixerRecipeBuilder;
@@ -75,7 +74,7 @@ public class AGRecipeProvider extends RecipeProvider {
                 .shapeless(RecipeCategory.MISC, AGSingletons.EMBER_CRYSTAL, 4)
                 .requires(AGTags.EMBER_BLOCK)
                 .unlockedBy(HAS_ITEM, has(AGTags.EMBER_BLOCK))
-                .save(recipeOutput, ExtendedAE.id("crafting/ember_crystal"));
+                .save(recipeOutput, AppliedGenerators.id("crafting/ember_crystal"));
         // Flux Cell
         ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AGSingletons.FLUX_CELL)
                 .pattern("RDR")
@@ -466,7 +465,7 @@ public class AGRecipeProvider extends RecipeProvider {
                         0.35F, 200
                 )
                 .unlockedBy(HAS_ITEM, has(AGSingletons.COPPER_DUST))
-                .save(recipeOutput, ExtendedAE.id("smelting/copper_ingot"));
+                .save(recipeOutput, AppliedGenerators.id("smelting/copper_ingot"));
         // Gold Ingot
         SimpleCookingRecipeBuilder.smelting(
                         Ingredient.of(AGSingletons.GOLD_DUST),
@@ -475,7 +474,7 @@ public class AGRecipeProvider extends RecipeProvider {
                         0.5F, 200
                 )
                 .unlockedBy(HAS_ITEM, has(AGSingletons.GOLD_DUST))
-                .save(recipeOutput, ExtendedAE.id("smelting/gold_ingot"));
+                .save(recipeOutput, AppliedGenerators.id("smelting/gold_ingot"));
         // Netherite Ingot
         SimpleCookingRecipeBuilder.smelting(
                         Ingredient.of(AGSingletons.NETHERITE_DUST),
@@ -484,7 +483,7 @@ public class AGRecipeProvider extends RecipeProvider {
                         1F, 200
                 )
                 .unlockedBy(HAS_ITEM, has(AGSingletons.NETHERITE_DUST))
-                .save(recipeOutput, ExtendedAE.id("smelting/netherite_ingot"));
+                .save(recipeOutput, AppliedGenerators.id("smelting/netherite_ingot"));
 
         // Blasting Recipes
         // Copper Ingot
@@ -495,7 +494,7 @@ public class AGRecipeProvider extends RecipeProvider {
                         0.35F, 100
                 )
                 .unlockedBy(HAS_ITEM, has(AGSingletons.COPPER_DUST))
-                .save(recipeOutput, ExtendedAE.id("blasting/copper_ingot"));
+                .save(recipeOutput, AppliedGenerators.id("blasting/copper_ingot"));
         // Gold Ingot
         SimpleCookingRecipeBuilder.blasting(
                         Ingredient.of(AGSingletons.GOLD_DUST),
@@ -504,7 +503,7 @@ public class AGRecipeProvider extends RecipeProvider {
                         0.5F, 100
                 )
                 .unlockedBy(HAS_ITEM, has(AGSingletons.GOLD_DUST))
-                .save(recipeOutput, ExtendedAE.id("blasting/gold_ingot"));
+                .save(recipeOutput, AppliedGenerators.id("blasting/gold_ingot"));
         // Netherite Ingot
         SimpleCookingRecipeBuilder.blasting(
                         Ingredient.of(AGSingletons.NETHERITE_DUST),
@@ -513,7 +512,7 @@ public class AGRecipeProvider extends RecipeProvider {
                         1F, 100
                 )
                 .unlockedBy(HAS_ITEM, has(AGSingletons.NETHERITE_DUST))
-                .save(recipeOutput, ExtendedAE.id("blasting/netherite_ingot"));
+                .save(recipeOutput, AppliedGenerators.id("blasting/netherite_ingot"));
 
 
         // Inscriber Recipes

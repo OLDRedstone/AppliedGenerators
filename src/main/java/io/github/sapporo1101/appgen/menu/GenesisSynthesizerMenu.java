@@ -76,7 +76,7 @@ public class GenesisSynthesizerMenu extends UpgradeableMenu<GenesisSynthesizerBl
 
     @Override
     protected void loadSettingsFromHost(IConfigManager cm) {
-        this.autoExport = cm.getSetting(Settings.AUTO_EXPORT);
+        this.autoExport = this.getHost().getConfigManager().getSetting(Settings.AUTO_EXPORT);
         this.outputSides.clear();
         this.outputSides.addAll(this.getHost().getOutputSides());
     }
