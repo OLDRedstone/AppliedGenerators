@@ -24,7 +24,6 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.pedroksl.advanced_ae.common.definitions.AAEText;
 import org.jetbrains.annotations.NotNull;
 
 public class GenesisSynthesizerScreen extends UpgradeableScreen<GenesisSynthesizerMenu> {
@@ -47,7 +46,7 @@ public class GenesisSynthesizerScreen extends UpgradeableScreen<GenesisSynthesiz
         this.outputSideBtn.setMessage(Component.translatable("gui.appgen.set_output_sides.open"));
         this.addToLeftToolbar(this.outputSideBtn);
         this.powerAlert = new AlertWidget(style.getImage("powerAlert"));
-        this.powerAlert.setTooltip(Tooltip.create(Tooltips.of(AAEText.InsufficientPower.text().withStyle(Tooltips.RED), Component.literal("\n").append(AAEText.InsufficientPowerDetails.text()).withStyle(Tooltips.NORMAL_TOOLTIP_TEXT))));
+        this.powerAlert.setTooltip(Tooltip.create(Tooltips.of(Component.translatable("gui.appgen.insufficient_power").withStyle(Tooltips.RED), Component.literal("\n").append(Component.translatable("gui.appgen.insufficient_power.details")).withStyle(Tooltips.NORMAL_TOOLTIP_TEXT))));
         this.widgets.add("powerAlert", this.powerAlert);
     }
 

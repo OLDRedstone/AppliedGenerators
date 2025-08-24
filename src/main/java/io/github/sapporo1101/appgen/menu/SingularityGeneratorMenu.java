@@ -11,12 +11,12 @@ import appeng.menu.slot.AppEngSlot;
 import com.glodblock.github.glodium.network.packet.sync.ActionMap;
 import com.glodblock.github.glodium.network.packet.sync.IActionHolder;
 import io.github.sapporo1101.appgen.AppliedGenerators;
+import io.github.sapporo1101.appgen.api.AAESettings;
 import io.github.sapporo1101.appgen.common.blockentities.SingularityGeneratorBlockEntity;
 import io.github.sapporo1101.appgen.menu.helper.DirectionSet;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
-import net.pedroksl.advanced_ae.api.AAESettings;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

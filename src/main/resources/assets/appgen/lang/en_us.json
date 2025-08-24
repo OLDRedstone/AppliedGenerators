@@ -67,6 +67,11 @@
     "gui.appgen.set_output_sides.off": "Disabled",
     "gui.appgen.set_output_sides.open": "Open Output Config",
     "gui.appgen.set_output_sides.clear": "Clear All Sides",
+    "gui.appgen.me_export": "ME Export",
+    "gui.appgen.me_export.on": "Produced items will be exported to the ME System.",
+    "gui.appgen.me_export.off": "Produced items will be exported to allowed nearby containers.",
+    "gui.appgen.insufficient_power": "Insufficient Power",
+    "gui.appgen.insufficient_power.details": "Unable to extract enough power for full speed progress.",
     "emi.category.appgen.genesis_synthesizer": "Genesis Synthesizer",
     "emi.text.appgen.genesis_synthesizer.energy": "Used Power: %s AE"
 }

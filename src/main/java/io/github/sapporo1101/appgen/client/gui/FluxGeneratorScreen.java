@@ -7,6 +7,8 @@ import appeng.client.gui.implementations.UpgradeableScreen;
 import appeng.client.gui.style.ScreenStyle;
 import appeng.client.gui.widgets.ServerSettingToggleButton;
 import appeng.core.definitions.AEItems;
+import io.github.sapporo1101.appgen.api.AAESettings;
+import io.github.sapporo1101.appgen.client.button.AAEServerSettingToggleButton;
 import io.github.sapporo1101.appgen.client.button.ActionEPPButton;
 import io.github.sapporo1101.appgen.client.button.EAEIcon;
 import io.github.sapporo1101.appgen.client.gui.subgui.OutputSideConfig;
@@ -19,8 +21,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.pedroksl.advanced_ae.api.AAESettings;
-import net.pedroksl.advanced_ae.client.gui.widgets.AAEServerSettingToggleButton;
 
 public class FluxGeneratorScreen extends UpgradeableScreen<FluxGeneratorMenu> {
     private final ServerSettingToggleButton<RedstoneMode> redstoneMode;

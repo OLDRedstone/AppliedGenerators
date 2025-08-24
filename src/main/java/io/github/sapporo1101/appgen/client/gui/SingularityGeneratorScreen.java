@@ -4,6 +4,8 @@ import appeng.api.config.YesNo;
 import appeng.client.gui.implementations.UpgradeableScreen;
 import appeng.client.gui.style.ScreenStyle;
 import appeng.client.gui.widgets.ProgressBar;
+import io.github.sapporo1101.appgen.api.AAESettings;
+import io.github.sapporo1101.appgen.client.button.AAEServerSettingToggleButton;
 import io.github.sapporo1101.appgen.client.button.ActionEPPButton;
 import io.github.sapporo1101.appgen.client.button.EAEIcon;
 import io.github.sapporo1101.appgen.client.gui.subgui.OutputSideConfig;
@@ -15,8 +17,6 @@ import io.github.sapporo1101.appgen.util.CommaSeparator;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.pedroksl.advanced_ae.api.AAESettings;
-import net.pedroksl.advanced_ae.client.gui.widgets.AAEServerSettingToggleButton;
 
 public class SingularityGeneratorScreen extends UpgradeableScreen<SingularityGeneratorMenu> {
     private final ProgressBar pb;

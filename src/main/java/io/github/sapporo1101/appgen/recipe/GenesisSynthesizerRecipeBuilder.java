@@ -12,7 +12,6 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.crafting.FluidIngredient;
-import net.pedroksl.advanced_ae.AdvancedAE;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -98,9 +97,5 @@ public class GenesisSynthesizerRecipeBuilder {
     public void save(RecipeOutput consumer, ResourceLocation id) {
         var recipe = new GenesisSynthesizerRecipe(this.output, this.inputs, this.fluid, this.energy);
         consumer.accept(id, recipe, null);
-    }
-
-    public void save(RecipeOutput consumer, String id) {
-        this.save(consumer, AdvancedAE.makeId(id));
     }
 }
