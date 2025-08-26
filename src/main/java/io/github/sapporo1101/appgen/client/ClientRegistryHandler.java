@@ -21,6 +21,7 @@ public class ClientRegistryHandler {
         InitScreens.register(event, SingularityGeneratorMenu.TYPE, SingularityGeneratorScreen::new, "/screens/singularity_generator.json");
         InitScreens.register(event, FluxGeneratorMenu.TYPE, FluxGeneratorScreen::new, "/screens/flux_generator.json");
         InitScreens.register(event, PatternBufferMenu.TYPE, PatternBufferScreen::new, "/screens/pattern_buffer.json");
+        InitScreens.register(event, SmelterMenu.TYPE, SmelterScreen::new, "/screens/smelter.json");
     }
 
     @SubscribeEvent

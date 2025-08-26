@@ -49,6 +49,7 @@ public class AGSingletons {
     public static BuddingEmberBlock BUDDING_EMBER_CHIPPED;
     public static BuddingEmberBlock BUDDING_EMBER_DAMAGED;
     public static Block EMBER_BLOCK;
+    public static SmelterBlock SMELTER;
 
     public static CommonItem EMBER_CRYSTAL;
     public static CommonItem EMBER_CRYSTAL_CHARGED;
@@ -107,6 +108,7 @@ public class AGSingletons {
         BUDDING_EMBER_CHIPPED = new BuddingEmberBlock();
         BUDDING_EMBER_DAMAGED = new BuddingEmberBlock();
         EMBER_BLOCK = new Block(stoneProps().strength(3, 8).requiresCorrectToolForDrops());
+        SMELTER = new SmelterBlock();
 
         EMBER_CRYSTAL = new CommonItem();
         EMBER_CRYSTAL_CHARGED = new CommonItem();
@@ -164,6 +166,7 @@ public class AGSingletons {
         regHandler.block("budding_ember_chipped", BUDDING_EMBER_CHIPPED);
         regHandler.block("budding_ember_damaged", BUDDING_EMBER_DAMAGED);
         regHandler.block("ember_block", EMBER_BLOCK);
+        regHandler.block("smelter", SMELTER, SmelterBlockEntity.class, SmelterBlockEntity::new);
 
         regHandler.item("ember_crystal", EMBER_CRYSTAL);
         regHandler.item("ember_crystal_charged", EMBER_CRYSTAL_CHARGED);

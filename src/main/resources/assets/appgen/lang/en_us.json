@@ -34,6 +34,7 @@
     "block.appgen.ember_bud_large": "Large Ember Bud",
     "block.appgen.ember_bud_medium": "Medium Ember Bud",
     "block.appgen.ember_bud_small": "Small Ember Bud",
+    "block.appgen.smelter": "Smelter",
     "item.appgen.ember_crystal": "Ember Crystal",
     "item.appgen.ember_crystal_charged": "Charged Ember Crystal",
     "item.appgen.ember_dust": "Ember Dust",
@@ -72,6 +73,8 @@
     "gui.appgen.me_export.off": "Produced items will be exported to allowed nearby containers.",
     "gui.appgen.insufficient_power": "Insufficient Power",
     "gui.appgen.insufficient_power.details": "Unable to extract enough power for full speed progress.",
+    "gui.appgen.smelter": "Smelter",
+    "gui.appgen.smelter.progress": "Smelting: %s / %s",
     "emi.category.appgen.genesis_synthesizer": "Genesis Synthesizer",
     "emi.text.appgen.genesis_synthesizer.energy": "Used Power: %s AE"
 }

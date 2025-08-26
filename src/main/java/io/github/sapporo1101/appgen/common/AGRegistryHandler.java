@@ -95,6 +95,7 @@ public class AGRegistryHandler extends RegistryHandler {
         Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("genesis_synthesizer"), GenesisSynthesizerMenu.TYPE);
         Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("singularity_generator"), SingularityGeneratorMenu.TYPE);
         Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("flux_generator"), FluxGeneratorMenu.TYPE);
+        Registry.register(BuiltInRegistries.MENU, AppliedGenerators.id("smelter"), SmelterMenu.TYPE);
     }
 
     private <T extends AEBaseBlockEntity> void bindTileEntity(Class<T> clazz, AEBaseEntityBlock<T> block, BlockEntityType.BlockEntitySupplier<? extends T> supplier) {
