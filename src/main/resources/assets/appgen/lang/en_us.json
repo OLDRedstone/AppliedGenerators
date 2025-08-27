@@ -75,6 +75,8 @@
     "gui.appgen.insufficient_power.details": "Unable to extract enough power for full speed progress.",
     "gui.appgen.smelter": "Smelter",
     "gui.appgen.smelter.progress": "Smelting: %s / %s",
+    "upgrade.appgen.singularity_generator": "Singularity Generator",
+    "upgrade.appgen.flux_generator": "Flux Generator",
     "emi.category.appgen.genesis_synthesizer": "Genesis Synthesizer",
     "emi.text.appgen.genesis_synthesizer.energy": "Used Power: %s AE"
 }
