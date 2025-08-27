@@ -2,6 +2,7 @@ package io.github.sapporo1101.appgen.common.blockentities;
 
 import appeng.api.config.Actionable;
 import appeng.api.config.PowerMultiplier;
+import appeng.api.inventories.ISegmentedInventory;
 import appeng.api.inventories.InternalInventory;
 import appeng.api.networking.IGrid;
 import appeng.api.networking.IGridNode;
@@ -10,7 +11,11 @@ import appeng.api.networking.energy.IEnergySource;
 import appeng.api.networking.ticking.IGridTickable;
 import appeng.api.networking.ticking.TickRateModulation;
 import appeng.api.networking.ticking.TickingRequest;
+import appeng.api.upgrades.IUpgradeInventory;
+import appeng.api.upgrades.IUpgradeableObject;
+import appeng.api.upgrades.UpgradeInventories;
 import appeng.blockentity.grid.AENetworkedPoweredBlockEntity;
+import appeng.core.definitions.AEItems;
 import appeng.core.settings.TickRates;
 import appeng.util.inv.AppEngInternalInventory;
 import appeng.util.inv.CombinedInternalInventory;
@@ -23,6 +28,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.inventory.RecipeCraftingHolder;
 import net.minecraft.world.item.ItemStack;
@@ -33,7 +39,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class SmelterBlockEntity extends AENetworkedPoweredBlockEntity implements RecipeCraftingHolder, IGridTickable {
+public class SmelterBlockEntity extends AENetworkedPoweredBlockEntity implements RecipeCraftingHolder, IGridTickable, IUpgradeableObject {
 
     private static final int POWER_MAXIMUM_AMOUNT = 10_000;
     private static final int AE_PER_OPERATION = 4000;
@@ -47,6 +53,7 @@ public class SmelterBlockEntity extends AENetworkedPoweredBlockEntity implements
     private final FilteredInternalInventory inputExposed = new FilteredInternalInventory(this.inputInv, AEItemFilters.INSERT_ONLY);
     private final FilteredInternalInventory outputExposed = new FilteredInternalInventory(this.outputInv, AEItemFilters.EXTRACT_ONLY);
     private final InternalInventory invExposed = new CombinedInternalInventory(this.inputExposed, this.outputExposed);
+    private final IUpgradeInventory upgrades = UpgradeInventories.forMachine(AGSingletons.SMELTER, 4, this::saveChanges);
 
     private boolean hasWork = false;
     private int maxProgress = 0;
@@ -65,6 +72,7 @@ public class SmelterBlockEntity extends AENetworkedPoweredBlockEntity implements
         data.putInt("max_smelting_progress", maxProgress);
         data.putInt("smelting_progress", progress);
         data.putBoolean("has_smelting_work", hasWork);
+        this.upgrades.writeToNBT(data, "upgrades", registries);
     }
 
     @Override
@@ -73,6 +81,7 @@ public class SmelterBlockEntity extends AENetworkedPoweredBlockEntity implements
         this.maxProgress = data.getInt("max_smelting_progress");
         this.setProgress(data.getInt("smelting_progress"));
         this.hasWork = data.getBoolean("has_smelting_work");
+        this.upgrades.readFromNBT(data, "upgrades", registries);
     }
 
     @Override
@@ -80,6 +89,15 @@ public class SmelterBlockEntity extends AENetworkedPoweredBlockEntity implements
         super.addAdditionalDrops(level, pos, drops);
         drops.add(this.inputInv.getStackInSlot(0));
         drops.add(this.outputInv.getStackInSlot(0));
+        for (var upgrade : upgrades) {
+            drops.add(upgrade);
+        }
+    }
+
+    @Override
+    public void clearContent() {
+        super.clearContent();
+        this.upgrades.clear();
     }
 
     @Override
@@ -191,15 +209,14 @@ public class SmelterBlockEntity extends AENetworkedPoweredBlockEntity implements
         IEnergyService eg = grid.getEnergyService();
         IEnergySource src = smelter;
 
-        final int speedFactor = 1; // 200 ticks
-//        final int speedFactor =
-//                switch (smelter.upgrades.getInstalledUpgrades(AEItems.SPEED_CARD)) {
-//                    case 1 -> 4; // 50 ticks
-//                    case 2 -> 8; // 25 ticks
-//                    case 3 -> 16; // 12 ticks
-//                    case 4 -> 32; // 6 ticks
-//                    default -> 2; // 100 ticks
-//                };
+        final int speedFactor =
+                switch (smelter.upgrades.getInstalledUpgrades(AEItems.SPEED_CARD)) {
+                    case 1 -> 2; // 100 ticks
+                    case 2 -> 4; // 50 ticks
+                    case 3 -> 8; // 25 ticks
+                    case 4 -> 16; // 12 ticks
+                    default -> 1; // 200 ticks
+                };
 
         final int progressReq = smelter.maxProgress - smelter.getProgress();
         final float powerRatio = progressReq < speedFactor ? (float) progressReq / speedFactor : 1;
@@ -264,6 +281,23 @@ public class SmelterBlockEntity extends AENetworkedPoweredBlockEntity implements
 
     public InternalInventory getOutputExposed() {
         return this.outputExposed;
+    }
+
+    @Override
+    public IUpgradeInventory getUpgrades() {
+        return this.upgrades;
+    }
+
+    @Nullable
+    @Override
+    public InternalInventory getSubInventory(ResourceLocation id) {
+        if (id.equals(ISegmentedInventory.STORAGE)) {
+            return this.getInternalInventory();
+        } else if (id.equals(ISegmentedInventory.UPGRADES)) {
+            return this.upgrades;
+        }
+
+        return super.getSubInventory(id);
     }
 
     @Override

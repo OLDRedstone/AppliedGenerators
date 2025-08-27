@@ -1,9 +1,9 @@
 package io.github.sapporo1101.appgen.menu;
 
-import appeng.menu.AEBaseMenu;
 import appeng.menu.SlotSemantics;
 import appeng.menu.guisync.GuiSync;
 import appeng.menu.implementations.MenuTypeBuilder;
+import appeng.menu.implementations.UpgradeableMenu;
 import appeng.menu.interfaces.IProgressProvider;
 import appeng.menu.slot.AppEngSlot;
 import io.github.sapporo1101.appgen.AppliedGenerators;
@@ -11,7 +11,7 @@ import io.github.sapporo1101.appgen.common.blockentities.SmelterBlockEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.MenuType;
 
-public class SmelterMenu extends AEBaseMenu implements IProgressProvider {
+public class SmelterMenu extends UpgradeableMenu<SmelterBlockEntity> implements IProgressProvider {
 
     private final SmelterBlockEntity host;
 
@@ -30,7 +30,6 @@ public class SmelterMenu extends AEBaseMenu implements IProgressProvider {
         this.host = host;
         this.addSlot(new AppEngSlot(host.getInputInv(), 0), SlotSemantics.MACHINE_INPUT);
         this.addSlot(new AppEngSlot(host.getOutputExposed(), 0), SlotSemantics.MACHINE_OUTPUT);
-        this.createPlayerInventorySlots(playerInventory);
     }
 
     @Override
