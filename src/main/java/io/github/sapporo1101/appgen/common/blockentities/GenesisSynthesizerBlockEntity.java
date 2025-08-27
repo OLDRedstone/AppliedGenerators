@@ -224,9 +224,10 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
     }
 
     private void onConfigChanged(IConfigManager manager, Setting<?> setting) {
-        if (setting == Settings.AUTO_EXPORT) {
+        if (setting == Settings.AUTO_EXPORT && configManager.getSetting(Settings.AUTO_EXPORT) == YesNo.YES) {
             getMainNode().ifPresent((grid, node) -> grid.getTickManager().wakeDevice(node));
         }
+        saveChanges();
     }
 
     @Override
@@ -472,7 +473,8 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
         return (!this.outputInv.getStackInSlot(0).isEmpty()
                 || this.tankInv.getStack(1) != null
                 || this.tankInv.getAmount(1) > 0)
-                && configManager.getSetting(Settings.AUTO_EXPORT) == YesNo.YES;
+                && configManager.getSetting(Settings.AUTO_EXPORT) == YesNo.YES
+                && !this.outputSides.isEmpty();
     }
 
     private boolean hasCraftWork() {

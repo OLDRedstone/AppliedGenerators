@@ -30,12 +30,20 @@
         "progressBar": {
             "texture": "guis/smelter.png",
             "srcRect": [176, 0, 6, 18]
+        },
+        "powerAlert": {
+            "texture": "guis/genesis_synthesizer.png",
+            "srcRect": [188, 0, 18, 18]
         }
     },
     "widgets": {
         "progressBar": {
             "left": 131,
             "top": 36
+        },
+        "powerAlert": {
+            "left": 108,
+            "top": 62
         }
     }
 }

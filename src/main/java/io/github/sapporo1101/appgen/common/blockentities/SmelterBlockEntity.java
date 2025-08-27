@@ -1,7 +1,6 @@
 package io.github.sapporo1101.appgen.common.blockentities;
 
-import appeng.api.config.Actionable;
-import appeng.api.config.PowerMultiplier;
+import appeng.api.config.*;
 import appeng.api.inventories.ISegmentedInventory;
 import appeng.api.inventories.InternalInventory;
 import appeng.api.networking.IGrid;
@@ -14,9 +13,13 @@ import appeng.api.networking.ticking.TickingRequest;
 import appeng.api.upgrades.IUpgradeInventory;
 import appeng.api.upgrades.IUpgradeableObject;
 import appeng.api.upgrades.UpgradeInventories;
+import appeng.api.util.IConfigManager;
+import appeng.api.util.IConfigurableObject;
 import appeng.blockentity.grid.AENetworkedPoweredBlockEntity;
 import appeng.core.definitions.AEItems;
 import appeng.core.settings.TickRates;
+import appeng.util.ConfigManager;
+import appeng.util.SettingsFrom;
 import appeng.util.inv.AppEngInternalInventory;
 import appeng.util.inv.CombinedInternalInventory;
 import appeng.util.inv.FilteredInternalInventory;
@@ -27,22 +30,30 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.RecipeCraftingHolder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
-public class SmelterBlockEntity extends AENetworkedPoweredBlockEntity implements RecipeCraftingHolder, IGridTickable, IUpgradeableObject {
+public class SmelterBlockEntity extends AENetworkedPoweredBlockEntity implements RecipeCraftingHolder, IGridTickable, IUpgradeableObject, IConfigurableObject {
 
     private static final int POWER_MAXIMUM_AMOUNT = 10_000;
-    private static final int AE_PER_OPERATION = 4000;
+    private static final int AE_PER_OPERATION = 4096;
 
     private final RecipeType<SmeltingRecipe> recipeType = RecipeType.SMELTING;
     private final RecipeManager.CachedCheck<SingleRecipeInput, ? extends AbstractCookingRecipe> quickCheck = RecipeManager.createCheck(recipeType);
@@ -54,6 +65,9 @@ public class SmelterBlockEntity extends AENetworkedPoweredBlockEntity implements
     private final FilteredInternalInventory outputExposed = new FilteredInternalInventory(this.outputInv, AEItemFilters.EXTRACT_ONLY);
     private final InternalInventory invExposed = new CombinedInternalInventory(this.inputExposed, this.outputExposed);
     private final IUpgradeInventory upgrades = UpgradeInventories.forMachine(AGSingletons.SMELTER, 4, this::saveChanges);
+    private final ConfigManager configManager = new ConfigManager(this::onConfigChanged);
+
+    private final Set<Direction> outputSides = EnumSet.noneOf(Direction.class);
 
     private boolean hasWork = false;
     private int maxProgress = 0;
@@ -64,6 +78,33 @@ public class SmelterBlockEntity extends AENetworkedPoweredBlockEntity implements
         super(GlodUtil.getTileType(SmelterBlockEntity.class, SmelterBlockEntity::new, AGSingletons.SMELTER), pos, blockState);
         this.getMainNode().setIdlePowerUsage(0).addService(IGridTickable.class, this);
         this.setInternalMaxPower(POWER_MAXIMUM_AMOUNT);
+        this.configManager.registerSetting(Settings.AUTO_EXPORT, YesNo.NO);
+    }
+
+    @Override
+    public void importSettings(SettingsFrom mode, DataComponentMap input, @Nullable Player player) {
+        super.importSettings(mode, input, player);
+        var nbt = input.get(AGSingletons.EXTRA_SETTING);
+        if (nbt != null) {
+            this.outputSides.clear();
+            for (var side : nbt.getList("output_side", CompoundTag.TAG_STRING)) {
+                this.outputSides.add(Direction.byName(side.getAsString()));
+            }
+        }
+    }
+
+    @Override
+    public void exportSettings(SettingsFrom mode, DataComponentMap.Builder output, @Nullable Player player) {
+        super.exportSettings(mode, output, player);
+        if (mode == SettingsFrom.MEMORY_CARD) {
+            var nbt = new CompoundTag();
+            var sides = new ListTag();
+            for (var side : this.outputSides) {
+                sides.add(StringTag.valueOf(side.getName()));
+            }
+            nbt.put("output_side", sides);
+            output.set(AGSingletons.EXTRA_SETTING, nbt);
+        }
     }
 
     @Override
@@ -73,6 +114,12 @@ public class SmelterBlockEntity extends AENetworkedPoweredBlockEntity implements
         data.putInt("smelting_progress", progress);
         data.putBoolean("has_smelting_work", hasWork);
         this.upgrades.writeToNBT(data, "upgrades", registries);
+        this.configManager.writeToNBT(data, registries);
+        var sides = new ListTag();
+        for (var side : this.outputSides) {
+            sides.add(StringTag.valueOf(side.getName()));
+        }
+        data.put("output_side", sides);
     }
 
     @Override
@@ -82,6 +129,16 @@ public class SmelterBlockEntity extends AENetworkedPoweredBlockEntity implements
         this.setProgress(data.getInt("smelting_progress"));
         this.hasWork = data.getBoolean("has_smelting_work");
         this.upgrades.readFromNBT(data, "upgrades", registries);
+        this.configManager.readFromNBT(data, registries);
+        this.outputSides.clear();
+        if (data.contains("output_side")) {
+            var list = data.getList("output_side", CompoundTag.TAG_STRING);
+            for (var name : list) {
+                this.outputSides.add(Direction.byName(name.getAsString()));
+            }
+        } else {
+            this.outputSides.addAll(List.of(Direction.values()));
+        }
     }
 
     @Override
@@ -111,6 +168,13 @@ public class SmelterBlockEntity extends AENetworkedPoweredBlockEntity implements
         }
     }
 
+    private void onConfigChanged(IConfigManager manager, Setting<?> setting) {
+        if (setting == Settings.AUTO_EXPORT && configManager.getSetting(Settings.AUTO_EXPORT) == YesNo.YES) {
+            getMainNode().ifPresent((grid, node) -> grid.getTickManager().wakeDevice(node));
+        }
+        this.saveChanges();
+    }
+
     @Override
     public TickingRequest getTickingRequest(IGridNode node) {
         return new TickingRequest(TickRates.Inscriber, false);
@@ -125,7 +189,7 @@ public class SmelterBlockEntity extends AENetworkedPoweredBlockEntity implements
         ItemStack outputStack = this.outputInv.getStackInSlot(0);
         System.out.println("Smelter: tickingRequest with input " + inputStack + " and output " + outputStack);
         if (this.level == null) return TickRateModulation.SAME;
-        if (!this.hasWork && inputStack.isEmpty()) return TickRateModulation.SLEEP;
+        if (!this.hasAutoExportWork() && !this.hasWork && inputStack.isEmpty()) return TickRateModulation.SLEEP;
         System.out.println("Smelter: has input or is working");
         RecipeHolder<?> recipeholder = getRecipeHolder(this.level, inputStack, this);
 
@@ -153,7 +217,8 @@ public class SmelterBlockEntity extends AENetworkedPoweredBlockEntity implements
         if (oldMaxProgress != this.maxProgress || oldProgress != this.progress || oldHasWork != this.hasWork) {
             this.saveChanges();
         }
-        return canSmelt(level.registryAccess(), recipeholder, inputStack, outputStack, 64, this) ? TickRateModulation.URGENT : TickRateModulation.SLEEP;
+        if (this.pushOutResult()) return TickRateModulation.URGENT;
+        return canSmelt(level.registryAccess(), recipeholder, inputStack, outputStack, 64, this) ? TickRateModulation.URGENT : (this.hasAutoExportWork() ? TickRateModulation.SLOWER : TickRateModulation.SLEEP);
     }
 
     private static RecipeHolder<?> getRecipeHolder(Level level, ItemStack inputStack, SmelterBlockEntity smelter) {
@@ -260,6 +325,10 @@ public class SmelterBlockEntity extends AENetworkedPoweredBlockEntity implements
 
     }
 
+    private boolean hasAutoExportWork() {
+        return !this.outputInv.getStackInSlot(0).isEmpty() && configManager.getSetting(Settings.AUTO_EXPORT) == YesNo.YES && !this.outputSides.isEmpty();
+    }
+
     private static int getMaxProgress(Level level, SmelterBlockEntity smelter) {
         SingleRecipeInput singlerecipeinput = new SingleRecipeInput(smelter.inputInv.getStackInSlot(0));
         return smelter.quickCheck.getRecipeFor(singlerecipeinput, level).map((recipeHolder) -> recipeHolder.value().getCookingTime()).orElse(200);
@@ -323,5 +392,42 @@ public class SmelterBlockEntity extends AENetworkedPoweredBlockEntity implements
 
     private void setProgress(int progress) {
         this.progress = progress;
+    }
+
+    public Set<Direction> getOutputSides() {
+        return this.outputSides;
+    }
+
+    private boolean pushOutResult() {
+        if (!this.hasAutoExportWork() || this.level == null) {
+            return false;
+        }
+
+        for (Direction dir : outputSides) {
+            BlockPos targetPos = this.getBlockPos().relative(dir);
+            IItemHandler itemStorage = this.level.getCapability(Capabilities.ItemHandler.BLOCK, targetPos, dir.getOpposite());
+
+            boolean movedStacks = false;
+            if (itemStorage != null) {
+                if (this.outputInv.getStackInSlot(0) != null && !this.outputInv.getStackInSlot(0).isEmpty()) {
+                    ItemStack remainingStack = this.outputInv.extractItem(0, 64, false);
+                    for (int i = 0; i < itemStorage.getSlots(); i++) {
+                        if (remainingStack.getCount() <= 0) break;
+                        remainingStack = itemStorage.insertItem(i, remainingStack, false);
+                    }
+                    this.outputInv.insertItem(0, remainingStack, false);
+                    movedStacks = !remainingStack.isEmpty();
+                }
+            }
+
+            if (movedStacks) return true;
+
+        }
+        return false;
+    }
+
+    @Override
+    public IConfigManager getConfigManager() {
+        return this.configManager;
     }
 }

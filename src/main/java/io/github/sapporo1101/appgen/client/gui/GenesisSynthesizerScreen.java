@@ -3,7 +3,6 @@ package io.github.sapporo1101.appgen.client.gui;
 import appeng.api.config.Settings;
 import appeng.api.config.YesNo;
 import appeng.client.gui.implementations.UpgradeableScreen;
-import appeng.client.gui.style.Blitter;
 import appeng.client.gui.style.ScreenStyle;
 import appeng.client.gui.widgets.ProgressBar;
 import appeng.client.gui.widgets.ServerSettingToggleButton;
@@ -12,19 +11,16 @@ import appeng.core.localization.Tooltips;
 import io.github.sapporo1101.appgen.client.button.ActionEPPButton;
 import io.github.sapporo1101.appgen.client.button.EAEIcon;
 import io.github.sapporo1101.appgen.client.gui.subgui.OutputSideConfig;
+import io.github.sapporo1101.appgen.client.gui.widget.AlertWidget;
 import io.github.sapporo1101.appgen.client.gui.widget.SubProgressBar;
 import io.github.sapporo1101.appgen.common.AGSingletons;
 import io.github.sapporo1101.appgen.menu.GenesisSynthesizerMenu;
 import io.github.sapporo1101.appgen.network.AGNetworkHandler;
 import io.github.sapporo1101.appgen.network.packet.CAGGenericPacket;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 public class GenesisSynthesizerScreen extends UpgradeableScreen<GenesisSynthesizerMenu> {
 
@@ -71,21 +67,5 @@ public class GenesisSynthesizerScreen extends UpgradeableScreen<GenesisSynthesiz
         this.autoExportBtn.set(getMenu().getAutoExport());
         this.outputSideBtn.setVisibility(this.autoExportBtn.getCurrentValue() == YesNo.YES);
         this.powerAlert.visible = this.getMenu().showWarning;
-    }
-
-    private static class AlertWidget extends AbstractWidget {
-        private final Blitter powerAlert;
-
-        public AlertWidget(Blitter powerAlert) {
-            super(0, 0, 18, 18, Component.empty());
-            this.powerAlert = powerAlert;
-        }
-
-        protected void renderWidget(@NotNull GuiGraphics guiGraphics, int i, int i1, float v) {
-            this.powerAlert.dest(this.getX(), this.getY()).blit(guiGraphics);
-        }
-
-        protected void updateWidgetNarration(@NotNull NarrationElementOutput narrationElementOutput) {
-        }
     }
 }
