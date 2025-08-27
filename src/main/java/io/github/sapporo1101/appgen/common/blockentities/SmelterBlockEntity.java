@@ -26,6 +26,7 @@ import appeng.util.inv.FilteredInternalInventory;
 import appeng.util.inv.filter.AEItemFilters;
 import com.glodblock.github.glodium.util.GlodUtil;
 import io.github.sapporo1101.appgen.common.AGSingletons;
+import io.github.sapporo1101.appgen.common.blocks.SmelterBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -79,6 +80,18 @@ public class SmelterBlockEntity extends AENetworkedPoweredBlockEntity implements
         this.getMainNode().setIdlePowerUsage(0).addService(IGridTickable.class, this);
         this.setInternalMaxPower(POWER_MAXIMUM_AMOUNT);
         this.configManager.registerSetting(Settings.AUTO_EXPORT, YesNo.NO);
+    }
+
+    private void updateBlockState(boolean working) {
+        if (this.level != null && !this.notLoaded() && !this.isRemoved()) {
+            BlockState current = this.level.getBlockState(this.worldPosition);
+            if (current.getBlock() instanceof SmelterBlock) {
+                BlockState newState = current.setValue(SmelterBlock.WORKING, working);
+                if (current != newState) {
+                    this.level.setBlock(this.worldPosition, newState, 2);
+                }
+            }
+        }
     }
 
     @Override
@@ -195,7 +208,7 @@ public class SmelterBlockEntity extends AENetworkedPoweredBlockEntity implements
 
         if (!this.hasWork && canSmelt(this.level.registryAccess(), recipeholder, inputStack, outputStack, 64, this)) {
             System.out.println("Smelter: start working with " + inputStack + " -> " + recipeholder);
-            this.hasWork = true;
+            this.setWorking(true);
             this.maxProgress = getMaxProgress(this.level, this);
         }
 
@@ -206,13 +219,13 @@ public class SmelterBlockEntity extends AENetworkedPoweredBlockEntity implements
                 System.out.println("Smelter: finish working with " + inputStack + " -> " + recipeholder);
                 this.setProgress(0);
                 if (smelt(level.registryAccess(), recipeholder, inputStack, outputStack, 64, this)) {
-                    this.hasWork = false;
+                    this.setWorking(false);
                 }
             }
         } else {
             System.out.println("Smelter: stop working");
             this.setProgress(0);
-            this.hasWork = false;
+            this.setWorking(false);
         }
         if (oldMaxProgress != this.maxProgress || oldProgress != this.progress || oldHasWork != this.hasWork) {
             this.saveChanges();
@@ -376,6 +389,15 @@ public class SmelterBlockEntity extends AENetworkedPoweredBlockEntity implements
     @Override
     public @Nullable RecipeHolder<?> getRecipeUsed() {
         return null;
+    }
+
+    public void setWorking(boolean work) {
+        if (work != this.hasWork) {
+            this.updateBlockState(work);
+            this.markForUpdate();
+        }
+
+        this.hasWork = work;
     }
 
     public int getMaxProgress() {
