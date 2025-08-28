@@ -220,12 +220,16 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
     private void onChangeInventory() {
         this.hasInventoryChanged = true;
         this.chargeCrystalTank();
-        getMainNode().ifPresent((grid, node) -> grid.getTickManager().wakeDevice(node));
+        this.getMainNode().ifPresent((grid, node) -> grid.getTickManager().wakeDevice(node));
     }
 
     private void onConfigChanged(IConfigManager manager, Setting<?> setting) {
-        if (setting == Settings.AUTO_EXPORT && configManager.getSetting(Settings.AUTO_EXPORT) == YesNo.YES) {
-            getMainNode().ifPresent((grid, node) -> grid.getTickManager().wakeDevice(node));
+        if (setting == Settings.AUTO_EXPORT) this.onOutputSideChanged();
+    }
+
+    private void onOutputSideChanged() {
+        if (this.hasAutoExportWork()) {
+            this.getMainNode().ifPresent((grid, node) -> grid.getTickManager().wakeDevice(node));
         }
         saveChanges();
     }
@@ -263,6 +267,15 @@ public class GenesisSynthesizerBlockEntity extends AENetworkedPoweredBlockEntity
 
     public Set<Direction> getOutputSides() {
         return this.outputSides;
+    }
+
+    public void setOutputSide(Direction side, boolean value) {
+        if (value) {
+            this.outputSides.add(side);
+        } else {
+            this.outputSides.remove(side);
+        }
+        this.onOutputSideChanged();
     }
 
     public int getProgress() {

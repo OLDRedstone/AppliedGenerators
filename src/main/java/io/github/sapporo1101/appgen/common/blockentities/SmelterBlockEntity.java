@@ -55,12 +55,13 @@ public class SmelterBlockEntity extends AENetworkedPoweredBlockEntity implements
 
     private static final int POWER_MAXIMUM_AMOUNT = 10_000;
     private static final int AE_PER_OPERATION = 4096;
+    private static final int STACK_SIZE = 64;
 
     private final RecipeType<SmeltingRecipe> recipeType = RecipeType.SMELTING;
     private final RecipeManager.CachedCheck<SingleRecipeInput, ? extends AbstractCookingRecipe> quickCheck = RecipeManager.createCheck(recipeType);
 
-    private final InternalInventory inputInv = new AppEngInternalInventory(this, 1, 64);
-    private final InternalInventory outputInv = new AppEngInternalInventory(this, 1, 64);
+    private final InternalInventory inputInv = new AppEngInternalInventory(this, 1, STACK_SIZE);
+    private final InternalInventory outputInv = new AppEngInternalInventory(this, 1, STACK_SIZE);
     private final InternalInventory inv = new CombinedInternalInventory(this.inputInv, this.outputInv);
     private final FilteredInternalInventory inputExposed = new FilteredInternalInventory(this.inputInv, AEItemFilters.INSERT_ONLY);
     private final FilteredInternalInventory outputExposed = new FilteredInternalInventory(this.outputInv, AEItemFilters.EXTRACT_ONLY);
@@ -176,14 +177,18 @@ public class SmelterBlockEntity extends AENetworkedPoweredBlockEntity implements
         if (this.level == null) return;
         ItemStack inputStack = this.inputInv.getStackInSlot(0);
         ItemStack outputStack = this.outputInv.getStackInSlot(0);
-        if (canSmelt(this.level.registryAccess(), getRecipeHolder(this.level, inputStack, this), inputStack, outputStack, 64, this)) {
+        if (canSmelt(this.level.registryAccess(), getRecipeHolder(this.level, inputStack, this), inputStack, outputStack, this)) {
             this.getMainNode().ifPresent((grid, node) -> grid.getTickManager().wakeDevice(node));
         }
     }
 
     private void onConfigChanged(IConfigManager manager, Setting<?> setting) {
-        if (setting == Settings.AUTO_EXPORT && configManager.getSetting(Settings.AUTO_EXPORT) == YesNo.YES) {
-            getMainNode().ifPresent((grid, node) -> grid.getTickManager().wakeDevice(node));
+        if (setting == Settings.AUTO_EXPORT) this.onOutputSideChanged();
+    }
+
+    private void onOutputSideChanged() {
+        if (this.hasAutoExportWork()) {
+            this.getMainNode().ifPresent((grid, node) -> grid.getTickManager().wakeDevice(node));
         }
         this.saveChanges();
     }
@@ -206,19 +211,19 @@ public class SmelterBlockEntity extends AENetworkedPoweredBlockEntity implements
         System.out.println("Smelter: has input or is working");
         RecipeHolder<?> recipeholder = getRecipeHolder(this.level, inputStack, this);
 
-        if (!this.hasWork && canSmelt(this.level.registryAccess(), recipeholder, inputStack, outputStack, 64, this)) {
+        if (!this.hasWork && canSmelt(this.level.registryAccess(), recipeholder, inputStack, outputStack, this)) {
             System.out.println("Smelter: start working with " + inputStack + " -> " + recipeholder);
             this.setWorking(true);
             this.maxProgress = getMaxProgress(this.level, this);
         }
 
-        if (this.hasWork && canSmelt(level.registryAccess(), recipeholder, inputStack, outputStack, 64, this)) {
+        if (this.hasWork && canSmelt(level.registryAccess(), recipeholder, inputStack, outputStack, this)) {
             this.getMainNode().ifPresent(grid -> useEnergy(grid, this, ticksSinceLastCall));
             System.out.println("Smelter: working... " + this.progress + "/" + this.maxProgress);
             if (this.progress >= this.maxProgress) {
                 System.out.println("Smelter: finish working with " + inputStack + " -> " + recipeholder);
                 this.setProgress(0);
-                if (smelt(level.registryAccess(), recipeholder, inputStack, outputStack, 64, this)) {
+                if (smelt(level.registryAccess(), recipeholder, inputStack, outputStack, this) && !canSmelt(level.registryAccess(), recipeholder, inputStack, outputStack, this)) {
                     this.setWorking(false);
                 }
             }
@@ -231,7 +236,7 @@ public class SmelterBlockEntity extends AENetworkedPoweredBlockEntity implements
             this.saveChanges();
         }
         if (this.pushOutResult()) return TickRateModulation.URGENT;
-        return canSmelt(level.registryAccess(), recipeholder, inputStack, outputStack, 64, this) ? TickRateModulation.URGENT : (this.hasAutoExportWork() ? TickRateModulation.SLOWER : TickRateModulation.SLEEP);
+        return canSmelt(level.registryAccess(), recipeholder, inputStack, outputStack, this) ? TickRateModulation.URGENT : (this.hasAutoExportWork() ? TickRateModulation.SLOWER : TickRateModulation.SLEEP);
     }
 
     private static RecipeHolder<?> getRecipeHolder(Level level, ItemStack inputStack, SmelterBlockEntity smelter) {
@@ -244,7 +249,7 @@ public class SmelterBlockEntity extends AENetworkedPoweredBlockEntity implements
         return recipeholder;
     }
 
-    private static boolean canSmelt(RegistryAccess registryAccess, @javax.annotation.Nullable RecipeHolder<?> recipe, ItemStack inputStack, ItemStack outputStack, @SuppressWarnings("SameParameterValue") int maxStackSize, SmelterBlockEntity smelter) {
+    private static boolean canSmelt(RegistryAccess registryAccess, @javax.annotation.Nullable RecipeHolder<?> recipe, ItemStack inputStack, ItemStack outputStack, SmelterBlockEntity smelter) {
         if (!inputStack.isEmpty() && recipe != null) {
             ItemStack resultStack = ((AbstractCookingRecipe) recipe.value()).assemble(new SingleRecipeInput(smelter.getInputInv().getStackInSlot(0)), registryAccess);
             if (resultStack.isEmpty()) {
@@ -255,7 +260,7 @@ public class SmelterBlockEntity extends AENetworkedPoweredBlockEntity implements
                 } else if (!ItemStack.isSameItemSameComponents(outputStack, resultStack)) {
                     return false;
                 } else {
-                    return outputStack.getCount() + resultStack.getCount() <= maxStackSize && outputStack.getCount() + resultStack.getCount() <= outputStack.getMaxStackSize() || outputStack.getCount() + resultStack.getCount() <= resultStack.getMaxStackSize();
+                    return outputStack.getCount() + resultStack.getCount() <= STACK_SIZE && outputStack.getCount() + resultStack.getCount() <= outputStack.getMaxStackSize() || outputStack.getCount() + resultStack.getCount() <= resultStack.getMaxStackSize();
                 }
             }
         } else {
@@ -263,9 +268,9 @@ public class SmelterBlockEntity extends AENetworkedPoweredBlockEntity implements
         }
     }
 
-    private static boolean smelt(RegistryAccess registryAccess, @javax.annotation.Nullable RecipeHolder<?> recipe, ItemStack inputStack, ItemStack outputStack, @SuppressWarnings("SameParameterValue") int maxStackSize, SmelterBlockEntity smelter) {
+    private static boolean smelt(RegistryAccess registryAccess, @javax.annotation.Nullable RecipeHolder<?> recipe, ItemStack inputStack, ItemStack outputStack, SmelterBlockEntity smelter) {
         System.out.print("Smelter: smelt action for " + inputStack + " -> " + recipe + ": ");
-        if (recipe != null && canSmelt(registryAccess, recipe, inputStack, outputStack, maxStackSize, smelter)) {
+        if (recipe != null && canSmelt(registryAccess, recipe, inputStack, outputStack, smelter)) {
             ItemStack resultStack = ((AbstractCookingRecipe) recipe.value()).assemble(new SingleRecipeInput(inputStack), registryAccess);
             if (outputStack.isEmpty()) {
                 smelter.outputInv.setItemDirect(0, resultStack.copy());
@@ -418,6 +423,15 @@ public class SmelterBlockEntity extends AENetworkedPoweredBlockEntity implements
 
     public Set<Direction> getOutputSides() {
         return this.outputSides;
+    }
+
+    public void setOutputSide(Direction side, boolean value) {
+        if (value) {
+            this.outputSides.add(side);
+        } else {
+            this.outputSides.remove(side);
+        }
+        this.onOutputSideChanged();
     }
 
     private boolean pushOutResult() {

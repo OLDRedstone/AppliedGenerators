@@ -54,11 +54,7 @@ public class SmelterMenu extends UpgradeableMenu<SmelterBlockEntity> implements 
 
     private void setOutputSide(String name, boolean value) {
         var side = Direction.byName(name);
-        if (value) {
-            this.getHost().getOutputSides().add(side);
-        } else {
-            this.getHost().getOutputSides().remove(side);
-        }
+        this.getHost().setOutputSide(side, value);
     }
 
     @Override
