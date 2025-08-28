@@ -1,0 +1,6 @@
+{
+    "parent": "appgen:block/smelter/template",
+    "textures": {
+        "front": "appgen:block/smelter/front_on"
+    }
+}

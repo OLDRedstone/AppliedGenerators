@@ -1,0 +1,224 @@
+{
+    "variants": {
+        "working=false,facing=down,spin=0": {
+            "model": "appgen:block/smelter/off",
+            "x": 90
+        },
+        "working=false,facing=down,spin=1": {
+            "ae2:z": 270,
+            "model": "appgen:block/smelter/off",
+            "x": 90
+        },
+        "working=false,facing=down,spin=2": {
+            "ae2:z": 180,
+            "model": "appgen:block/smelter/off",
+            "x": 90
+        },
+        "working=false,facing=down,spin=3": {
+            "ae2:z": 90,
+            "model": "appgen:block/smelter/off",
+            "x": 90
+        },
+        "working=false,facing=east,spin=0": {
+            "model": "appgen:block/smelter/off",
+            "y": 90
+        },
+        "working=false,facing=east,spin=1": {
+            "ae2:z": 270,
+            "model": "appgen:block/smelter/off",
+            "y": 90
+        },
+        "working=false,facing=east,spin=2": {
+            "ae2:z": 180,
+            "model": "appgen:block/smelter/off",
+            "y": 90
+        },
+        "working=false,facing=east,spin=3": {
+            "ae2:z": 90,
+            "model": "appgen:block/smelter/off",
+            "y": 90
+        },
+        "working=false,facing=north,spin=0": {
+            "model": "appgen:block/smelter/off"
+        },
+        "working=false,facing=north,spin=1": {
+            "ae2:z": 270,
+            "model": "appgen:block/smelter/off"
+        },
+        "working=false,facing=north,spin=2": {
+            "ae2:z": 180,
+            "model": "appgen:block/smelter/off"
+        },
+        "working=false,facing=north,spin=3": {
+            "ae2:z": 90,
+            "model": "appgen:block/smelter/off"
+        },
+        "working=false,facing=south,spin=0": {
+            "model": "appgen:block/smelter/off",
+            "y": 180
+        },
+        "working=false,facing=south,spin=1": {
+            "ae2:z": 90,
+            "model": "appgen:block/smelter/off",
+            "y": 180
+        },
+        "working=false,facing=south,spin=2": {
+            "ae2:z": 180,
+            "model": "appgen:block/smelter/off",
+            "y": 180
+        },
+        "working=false,facing=south,spin=3": {
+            "ae2:z": 270,
+            "model": "appgen:block/smelter/off",
+            "y": 180
+        },
+        "working=false,facing=up,spin=0": {
+            "ae2:z": 180,
+            "model": "appgen:block/smelter/off",
+            "x": 270
+        },
+        "working=false,facing=up,spin=1": {
+            "ae2:z": 90,
+            "model": "appgen:block/smelter/off",
+            "x": 270
+        },
+        "working=false,facing=up,spin=2": {
+            "model": "appgen:block/smelter/off",
+            "x": 270
+        },
+        "working=false,facing=up,spin=3": {
+            "ae2:z": 270,
+            "model": "appgen:block/smelter/off",
+            "x": 270
+        },
+        "working=false,facing=west,spin=0": {
+            "model": "appgen:block/smelter/off",
+            "y": 270
+        },
+        "working=false,facing=west,spin=1": {
+            "ae2:z": 270,
+            "model": "appgen:block/smelter/off",
+            "y": 270
+        },
+        "working=false,facing=west,spin=2": {
+            "ae2:z": 180,
+            "model": "appgen:block/smelter/off",
+            "y": 270
+        },
+        "working=false,facing=west,spin=3": {
+            "ae2:z": 90,
+            "model": "appgen:block/smelter/off",
+            "y": 270
+        },
+        "working=true,facing=down,spin=0": {
+            "model": "appgen:block/smelter/on",
+            "x": 90
+        },
+        "working=true,facing=down,spin=1": {
+            "ae2:z": 270,
+            "model": "appgen:block/smelter/on",
+            "x": 90
+        },
+        "working=true,facing=down,spin=2": {
+            "ae2:z": 180,
+            "model": "appgen:block/smelter/on",
+            "x": 90
+        },
+        "working=true,facing=down,spin=3": {
+            "ae2:z": 90,
+            "model": "appgen:block/smelter/on",
+            "x": 90
+        },
+        "working=true,facing=east,spin=0": {
+            "model": "appgen:block/smelter/on",
+            "y": 90
+        },
+        "working=true,facing=east,spin=1": {
+            "ae2:z": 270,
+            "model": "appgen:block/smelter/on",
+            "y": 90
+        },
+        "working=true,facing=east,spin=2": {
+            "ae2:z": 180,
+            "model": "appgen:block/smelter/on",
+            "y": 90
+        },
+        "working=true,facing=east,spin=3": {
+            "ae2:z": 90,
+            "model": "appgen:block/smelter/on",
+            "y": 90
+        },
+        "working=true,facing=north,spin=0": {
+            "model": "appgen:block/smelter/on"
+        },
+        "working=true,facing=north,spin=1": {
+            "ae2:z": 270,
+            "model": "appgen:block/smelter/on"
+        },
+        "working=true,facing=north,spin=2": {
+            "ae2:z": 180,
+            "model": "appgen:block/smelter/on"
+        },
+        "working=true,facing=north,spin=3": {
+            "ae2:z": 90,
+            "model": "appgen:block/smelter/on"
+        },
+        "working=true,facing=south,spin=0": {
+            "model": "appgen:block/smelter/on",
+            "y": 180
+        },
+        "working=true,facing=south,spin=1": {
+            "ae2:z": 90,
+            "model": "appgen:block/smelter/on",
+            "y": 180
+        },
+        "working=true,facing=south,spin=2": {
+            "ae2:z": 180,
+            "model": "appgen:block/smelter/on",
+            "y": 180
+        },
+        "working=true,facing=south,spin=3": {
+            "ae2:z": 270,
+            "model": "appgen:block/smelter/on",
+            "y": 180
+        },
+        "working=true,facing=up,spin=0": {
+            "ae2:z": 180,
+            "model": "appgen:block/smelter/on",
+            "x": 270
+        },
+        "working=true,facing=up,spin=1": {
+            "ae2:z": 90,
+            "model": "appgen:block/smelter/on",
+            "x": 270
+        },
+        "working=true,facing=up,spin=2": {
+            "model": "appgen:block/smelter/on",
+            "x": 270
+        },
+        "working=true,facing=up,spin=3": {
+            "ae2:z": 270,
+            "model": "appgen:block/smelter/on",
+            "x": 270
+        },
+        "working=true,facing=west,spin=0": {
+            "model": "appgen:block/smelter/on",
+            "y": 270
+        },
+        "working=true,facing=west,spin=1": {
+            "ae2:z": 270,
+            "model": "appgen:block/smelter/on",
+            "y": 270
+        },
+        "working=true,facing=west,spin=2": {
+            "ae2:z": 180,
+            "model": "appgen:block/smelter/on",
+            "y": 270
+        },
+        "working=true,facing=west,spin=3": {
+            "ae2:z": 90,
+            "model": "appgen:block/smelter/on",
+            "y": 270
+        }
+    }
+}
