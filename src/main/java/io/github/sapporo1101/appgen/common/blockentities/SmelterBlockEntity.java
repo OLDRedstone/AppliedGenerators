@@ -54,7 +54,7 @@ import java.util.Set;
 public class SmelterBlockEntity extends AENetworkedPoweredBlockEntity implements RecipeCraftingHolder, IGridTickable, IUpgradeableObject, IConfigurableObject {
 
     private static final int POWER_MAXIMUM_AMOUNT = 10_000;
-    private static final int AE_PER_OPERATION = 4096;
+    private static final int AE_PER_TICK = 20;
     private static final int STACK_SIZE = 64;
 
     private final RecipeType<SmeltingRecipe> recipeType = RecipeType.SMELTING;
@@ -200,6 +200,12 @@ public class SmelterBlockEntity extends AENetworkedPoweredBlockEntity implements
 
     @Override
     public TickRateModulation tickingRequest(IGridNode node, int ticksSinceLastCall) {
+        if (!this.getMainNode().isOnline()) {
+            this.setWorking(false);
+            this.saveChanges();
+            return TickRateModulation.SLOWER;
+        }
+
         int oldMaxProgress = this.maxProgress;
         int oldProgress = this.progress;
         boolean oldHasWork = this.hasWork;
@@ -304,7 +310,7 @@ public class SmelterBlockEntity extends AENetworkedPoweredBlockEntity implements
         final int progressReq = smelter.maxProgress - smelter.getProgress();
         final float powerRatio = progressReq < speedFactor ? (float) progressReq / speedFactor : 1;
         final int requiredTicks = Mth.ceil((float) smelter.maxProgress / speedFactor);
-        final int aeConsumption = Mth.floor(((float) AE_PER_OPERATION / requiredTicks) * powerRatio * ticks);
+        final int aeConsumption = Mth.floor(((float) getAePerOperation(smelter.level, smelter) / requiredTicks) * powerRatio * ticks);
         final double powerThreshold = aeConsumption - 0.01;
 
         double powerReq = smelter.extractAEPower(aeConsumption, Actionable.SIMULATE, PowerMultiplier.CONFIG);
@@ -350,6 +356,10 @@ public class SmelterBlockEntity extends AENetworkedPoweredBlockEntity implements
     private static int getMaxProgress(Level level, SmelterBlockEntity smelter) {
         SingleRecipeInput singlerecipeinput = new SingleRecipeInput(smelter.inputInv.getStackInSlot(0));
         return smelter.quickCheck.getRecipeFor(singlerecipeinput, level).map((recipeHolder) -> recipeHolder.value().getCookingTime()).orElse(200);
+    }
+
+    private static int getAePerOperation(Level level, SmelterBlockEntity smelter) {
+        return AE_PER_TICK * getMaxProgress(level, smelter);
     }
 
     @Override
