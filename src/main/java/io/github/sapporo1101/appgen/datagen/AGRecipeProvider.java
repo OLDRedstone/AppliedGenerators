@@ -30,6 +30,7 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.common.conditions.ModLoadedCondition;
 import net.neoforged.neoforge.common.crafting.SizedIngredient;
@@ -455,6 +456,17 @@ public class AGRecipeProvider extends RecipeProvider {
                 .define('T', AEBlocks.SKY_STONE_TANK)
                 .unlockedBy(HAS_ITEM, has(AEBlocks.NOT_SO_MYSTERIOUS_CUBE))
                 .save(recipeOutput, AppliedGenerators.id("crafting/genesis_synthesizer"));
+        // Smelter
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, AGSingletons.SMELTER)
+                .pattern("IEI")
+                .pattern("PFP")
+                .pattern("IEI")
+                .define('I', Items.IRON_INGOT)
+                .define('P', AEItems.CALCULATION_PROCESSOR)
+                .define('E', AGSingletons.EMBER_CRYSTAL_CHARGED)
+                .define('F', Blocks.FURNACE)
+                .unlockedBy(HAS_ITEM, has(Blocks.FURNACE))
+                .save(recipeOutput, AppliedGenerators.id("crafting/smelter"));
 
         // Smelting Recipes
         // Copper Ingot
